@@ -4,313 +4,156 @@ require('chai')
   .use(require('chai-bignumber')(BigNumber))
   .use(require('chai-as-promised'))
   .should();
+const { getCurrentTimestamp } = require('./utils/evm');
 
 const Proxy = artifacts.require('Proxy');
 const UniversalDB = artifacts.require('UniversalDB');
-const ActorDB = artifacts.require('ActorDB');
 const CampaignDB = artifacts.require('CampaignDB');
-const ProductDB = artifacts.require('ProductDB');
-const PurchaseDB = artifacts.require('PurchaseDB');
-const SpinProtocol = artifacts.require('SpinProtocol');
-const Escrow = artifacts.require('EscrowAndFees');
-const SpinToken = artifacts.require('MockSpinToken');
-const CONTRACT_NAME = 'CampaignDB';
-const DB_TABLE_NAME_CAMPAIGN = 'CampaignTable';
-const DB_TABLE_NAME_DEAL = 'DealTable';
+const CONTRACT_NAME_CAMPAIGN_DB = 'CampaignDB';
+
+// Error messages from CampaignDB contract
+const ERROR_ONLY_CONTRACT = 'Only specific contract';
+const ERROR_CAMPAIGN_ALREADY_EXIST = 'Campaign already exists';
+const ERROR_CAMPAIGN_DOES_NOT_EXIST = 'Campaign does not exist';
 
   
 contract('CampaignDB', ([creator, addr1, addr2, unauthorizedAddr, randomAddr]) => {
 
   beforeEach(async () => {
     this.proxy = await Proxy.new();
+
     this.universalDB = await UniversalDB.new();
-    this.actorDB = await ActorDB.new();
-    this.campaignDB = await CampaignDB.new();
-    this.productDB = await ProductDB.new();
-    this.purchaseDB = await PurchaseDB.new();
-    this.spinToken = await SpinToken.new();
-    this.escrow = await Escrow.new();
-    this.spinProtocol = await SpinProtocol.new();
-    await this.escrow.setToken(this.spinToken.address).should.be.fulfilled;
-    await this.spinProtocol.setEscrow(this.escrow.address).should.be.fulfilled;
-    await this.spinProtocol.setDataStore(
-      this.actorDB.address,
-      this.campaignDB.address,
-      this.productDB.address,
-      this.purchaseDB.address
-    ).should.be.fulfilled;
-    await this.campaignDB.setUniversalDB(this.universalDB.address).should.be.fulfilled;
+    this.universalDB.setProxy(this.proxy.address).should.be.fulfilled;
+
+    this.campaignDB = await CampaignDB.new(this.universalDB.address);
+    this.campaignDB.setProxy(this.proxy.address).should.be.fulfilled;
+
+    await this.proxy.addContract(CONTRACT_NAME_CAMPAIGN_DB, this.campaignDB.address).should.be.fulfilled;
+    // Add creator address as if it is SpinProtocol contracts who is a client for CampaginDB contract
+    // In this way, we can call CampaignDB functions directly.
+    await this.proxy.addContract('SpinProtocol', creator).should.be.fulfilled;
   });
 
   describe('CampaignDB::Authority', () => {
+    it('does not allow an unauthorized address to set proxy', async () => {
+      await this.campaignDB.setProxy(randomAddr, {from: unauthorizedAddr}).should.be.rejected;
+    });
+
+    it('does not allow an unauthorized address to set db pointer', async () => {
+      await this.campaignDB.setUniversalDB(randomAddr, {from: unauthorizedAddr}).should.be.rejected;
+    });
+
+    it('does not allow an unauthorized address to create a new campaign item in db', async () => {
+      let finishAt = (await getCurrentTimestamp()) + 100;
+      await this.campaignDB.create(1, 1, 1, 1, finishAt, 1, {from: unauthorizedAddr}).should.be.rejectedWith(ERROR_ONLY_CONTRACT);
+    });
+
+    it('does not allow an unauthorized address to update a campaign item in db', async () => {
+      let campaignId = 1;
+      let finishAt = (await getCurrentTimestamp()) + 100;
+      let newFinishAt = (await getCurrentTimestamp()) + 200;
+      let newRatio = 20;
+
+      await this.campaignDB.create(campaignId, 1, 1, 1, finishAt, 1).should.be.fulfilled;
+      await this.campaignDB.update(campaignId, newFinishAt, newRatio, {from: unauthorizedAddr}).should.be.rejectedWith(ERROR_ONLY_CONTRACT);
+    });
+
+    it('does not allow an unauthorized address to increment sale count of a campaign item in db', async () => {
+      let campaignId = 1;
+      let finishAt = (await getCurrentTimestamp()) + 100;
+      await this.campaignDB.create(campaignId, 1, 1, 1, finishAt, 1).should.be.fulfilled;
+      await this.campaignDB.incrementSaleCount(campaignId, {from: unauthorizedAddr}).should.be.rejectedWith(ERROR_ONLY_CONTRACT);
+    });
+  });
+
+  describe('CampaignDB::Features', () => {
+    it('sets proxy', async () => {
+      await this.campaignDB.setProxy(randomAddr).should.be.fulfilled;
+      let proxy = await this.campaignDB.proxy();
+      proxy.should.be.equal(randomAddr);
+    });
+
     it('sets db pointer', async () => {
       await this.campaignDB.setUniversalDB(randomAddr).should.be.fulfilled;
       let universalDB = await this.campaignDB.universalDB();
       universalDB.should.be.equal(randomAddr);
+    });
 
-      let key = await this.campaignDB.TABLE_KEY_CAMPAIGN();
-      let calKey = web3.utils.soliditySha3(DB_TABLE_NAME_CAMPAIGN);
-      console.log('Key:', key);
-      console.log('Cal:', calKey);
+    it('creates a new campaign item in db', async () => {
+      let campaignId = 124;
+      let supplierId = 45662;
+      let influencerId = 346452;
+      let productId = 2345462;
+      let finishAt = (await getCurrentTimestamp()) + 100;
+      let ratio = 20;
+
+      await this.campaignDB.create(
+        campaignId,
+        supplierId,
+        influencerId,
+        productId,
+        finishAt,
+        ratio
+      ).should.be.fulfilled;
+
+      let res = await this.campaignDB.get(campaignId);
+      res['supplierId'].toNumber().should.be.equal(supplierId);
+      res['influencerId'].toNumber().should.be.equal(influencerId);
+      res['productId'].toNumber().should.be.equal(productId);
+      res['finishAt'].toNumber().should.be.equal(finishAt);
+      res['ratio'].toNumber().should.be.equal(ratio);
+    });
+
+    it('updates a campaign item in db', async () => {
+      let campaignId = 1;
+      let finishAt = (await getCurrentTimestamp()) + 100;
+      let newFinishAt = (await getCurrentTimestamp()) + 200;
+      let newRatio = 20;
+
+      await this.campaignDB.create(campaignId, 1, 1, 1, finishAt, 1).should.be.fulfilled;
+      await this.campaignDB.update(campaignId, newFinishAt, newRatio).should.be.fulfilled;
+
+      let res = await this.campaignDB.get(campaignId);
+      res['finishAt'].toNumber().should.be.equal(newFinishAt);
+      res['ratio'].toNumber().should.be.equal(newRatio);
+    });
+
+    it('increments sale count of a campaign item in db', async () => {
+      let campaignId = 1;
+      let finishAt = (await getCurrentTimestamp()) + 100;
+
+      await this.campaignDB.create(campaignId, 1, 1, 1, finishAt, 1).should.be.fulfilled;
+      await this.campaignDB.incrementSaleCount(campaignId).should.be.fulfilled;
+      await this.campaignDB.incrementSaleCount(campaignId).should.be.fulfilled;
+
+      let res = await this.campaignDB.get(campaignId);
+      res['saleCount'].toNumber().should.be.equal(2);
     });
   });
 
-  // describe('CampaignDB::Authority', () => {
-  //   it('sets proxy and db', async () => {
-  //     await this.profileDB.setProxy(randomAddress).should.be.fulfilled;
-  //     await this.profileDB.setGenericDB(randomAddress).should.be.fulfilled;
+  describe('CampaignDB::Features::Negatives', () => {
+    it('does not allow to create a campaign item with invalid parameters', async () => {
+      let finishAt = (await getCurrentTimestamp()) + 100;
+      await this.campaignDB.create(0, 1, 2, 3, finishAt, 5).should.be.rejected;
+      await this.campaignDB.create(1, 0, 2, 3, finishAt, 5).should.be.rejected;
+      await this.campaignDB.create(2, 1, 0, 3, finishAt, 5).should.be.rejected;
+      await this.campaignDB.create(3, 1, 2, 0, finishAt, 5).should.be.rejected;
+      await this.campaignDB.create(4, 1, 2, 3, finishAt - 100, 5).should.be.rejected;
+    });
 
-  //     let proxy = await this.profileDB.proxy();
-  //     let genericDB = await this.profileDB.genericDB();
+    it('does not allow to create a duplicate item in db', async () => {
+      let finishAt = (await getCurrentTimestamp()) + 100;
+      await this.campaignDB.create(1, 1, 2, 3, finishAt, 5).should.be.fulfilled;
+      await this.campaignDB.create(1, 1, 2, 3, finishAt, 5).should.be.rejectedWith(ERROR_CAMPAIGN_ALREADY_EXIST);
+    });
 
-  //     proxy.should.be.equal(randomAddress);
-  //     genericDB.should.be.equal(randomAddress);
-  //   });
+    it('does not allow to update a non-existent campaign item in db', async () => {
+      let finishAt = (await getCurrentTimestamp()) + 100;
+      await this.campaignDB.update(123, finishAt, 1).should.be.rejectedWith(ERROR_CAMPAIGN_DOES_NOT_EXIST);
+    });
 
-  //   it('does not allow unauthorized address to access proxy/db setter functions', async () => {
-  //     await this.profileDB.setProxy(this.proxy.address, {from: unauthorizedUser}).should.be.rejected;
-  //     await this.profileDB.setGenericDB(this.genericDB.address, {from: unauthorizedUser}).should.be.rejected;
-  //   });
-
-  //   it('does not allow unauthorized address to access attribute setter functions', async () => {
-  //     await this.profileDB.create(userId, {from: unauthorizedUser}).should.be.rejected;
-
-  //     // Create a user with authorized address to test authorization for setter functions
-  //     await this.profileDB.create(userId).should.be.fulfilled;
-  //     // Check whether the node with the given user id is added to profile linked list
-  //     (await this.genericDB.doesNodeExist(CONTRACT_NAME, DB_TABLE_NAME, userId)).should.be.true;
-
-  //     await this.profileDB.setLoginStatus(userId, true, {from: unauthorizedUser}).should.be.rejected;
-  //     await this.profileDB.setAccountAttributes(userId, user1, web3.utils.utf8ToHex('asadad'), web3.utils.utf8ToHex('asdad'), {from: unauthorizedUser}).should.be.rejected;
-  //     await this.profileDB.setGamingAttributes(userId, 1, 2, 3, 4, 5, true, {from: unauthorizedUser}).should.be.rejected;
-  //     await this.profileDB.setFightingAttributes(userId, 1, 2, 3, 4, {from: unauthorizedUser}).should.be.rejected;
-  //     await this.profileDB.setFeeAttributes(userId, 1, 2, 3, false, {from: unauthorizedUser}).should.be.rejected;
-  //     await this.profileDB.setTokenEconomyAttributes(userId, 1, 2, true, {from: unauthorizedUser}).should.be.rejected;
-  //     await this.profileDB.setKittieAttributes(userId, 1, 2, 3, 'test', 'dead', {from: unauthorizedUser}).should.be.rejected;
-  //   });
-  // });
-
-  // describe('CampaignDB::Attributes', () => {
-  //   it('creates a profile', async () => {
-  //     await this.profileDB.create(userId).should.be.fulfilled;
-  //     // Check whether the node with the given user id is added to profile linked list
-  //     (await this.genericDB.doesNodeExist(CONTRACT_NAME, DB_TABLE_NAME, userId)).should.be.true;
-  //   });
-
-  //   it('sets/gets account attributes', async () => {
-  //     let genes = web3.utils.utf8ToHex('0x0101110110100101101011010');
-  //     let description = web3.utils.utf8ToHex('%$*_&random description which does not make sense at all...');
-  //     // First create a user in DB
-  //     await this.profileDB.create(userId).should.be.fulfilled;
-  //     // Set account attributes
-  //     await this.profileDB.setAccountAttributes(
-  //       userId,
-  //       user1,
-  //       genes,
-  //       description
-  //     ).should.be.fulfilled;
-  //     // Get attributes back for the given user and compare them with the actual values
-  //     let attrOwner = await this.genericDB.getAddressStorage(CONTRACT_NAME, web3.utils.soliditySha3(userId, 'ownerAddress'));
-  //     let attrGenes = await this.genericDB.getBytesStorage(CONTRACT_NAME, web3.utils.soliditySha3(userId, 'genes'));
-  //     let attrDescription = await this.genericDB.getBytesStorage(CONTRACT_NAME, web3.utils.soliditySha3(userId, 'description'));
-  //     attrOwner.should.be.equal(user1);
-  //     attrGenes.should.be.equal(genes);
-  //     attrDescription.should.be.equal(description);
-  //   });
-
-  //   it('sets/gets gaming attributes', async () => {
-  //     let totalWins = 20;
-  //     let totalLosses = 34;
-  //     let tokensWon = 12000;
-  //     let lastFeeDate = 1233242;
-  //     let feeHistory = 1236742;
-  //     let isFreeToPlay = true;
-  //     // First create a user in DB
-  //     await this.profileDB.create(userId).should.be.fulfilled;
-  //     // Set gaming attributes
-  //     await this.profileDB.setGamingAttributes(
-  //       userId,
-  //       totalWins,
-  //       totalLosses,
-  //       tokensWon,
-  //       lastFeeDate,
-  //       feeHistory,
-  //       isFreeToPlay
-  //     ).should.be.fulfilled;
-      
-  //     let attrWin = await this.genericDB.getUintStorage(CONTRACT_NAME, web3.utils.soliditySha3(userId, 'totalWins'));
-  //     let attrLoss = await this.genericDB.getUintStorage(CONTRACT_NAME, web3.utils.soliditySha3(userId, 'totalLosses'));
-  //     let attrTokens = await this.genericDB.getUintStorage(CONTRACT_NAME, web3.utils.soliditySha3(userId, 'tokensWon'));
-  //     let attrFeeDate = await this.genericDB.getUintStorage(CONTRACT_NAME, web3.utils.soliditySha3(userId, 'lastFeeDate'));
-  //     let attrFeeHistory = await this.genericDB.getUintStorage(CONTRACT_NAME, web3.utils.soliditySha3(userId, 'feeHistory'));
-  //     let attrIsFree = await this.genericDB.getBoolStorage(CONTRACT_NAME, web3.utils.soliditySha3(userId, 'isFreeToPlay'));
-
-  //     attrWin.toNumber().should.be.equal(totalWins);
-  //     attrLoss.toNumber().should.be.equal(totalLosses);
-  //     attrTokens.toNumber().should.be.equal(tokensWon);
-  //     attrFeeDate.toNumber().should.be.equal(lastFeeDate);
-  //     attrFeeHistory.toNumber().should.be.equal(feeHistory);
-  //     attrIsFree.should.be.equal(isFreeToPlay);
-  //   });
-
-  //   it('sets/gets fighting attributes', async () => {
-  //     let totalFights = 101;
-  //     let nextFight = 12348678;
-  //     let listingStart = 675413;
-  //     let listingEnd = 7562424;
-  //     // First create a user in DB
-  //     await this.profileDB.create(userId).should.be.fulfilled;
-  //     // Set fighting attributes
-  //     await this.profileDB.setFightingAttributes(
-  //       userId,
-  //       totalFights,
-  //       nextFight,
-  //       listingStart,
-  //       listingEnd
-  //     ).should.be.fulfilled;
-      
-  //     let attrTotalFights = await this.genericDB.getUintStorage(CONTRACT_NAME, web3.utils.soliditySha3(userId, 'totalFights'));
-  //     let attrNextFight = await this.genericDB.getUintStorage(CONTRACT_NAME, web3.utils.soliditySha3(userId, 'nextFight'));
-  //     let attrListingStart = await this.genericDB.getUintStorage(CONTRACT_NAME, web3.utils.soliditySha3(userId, 'listingStart'));
-  //     let attrListingEnd = await this.genericDB.getUintStorage(CONTRACT_NAME, web3.utils.soliditySha3(userId, 'listingEnd'));
-
-  //     attrTotalFights.toNumber().should.be.equal(totalFights);
-  //     attrNextFight.toNumber().should.be.equal(nextFight);
-  //     attrListingStart.toNumber().should.be.equal(listingStart);
-  //     attrListingEnd.toNumber().should.be.equal(listingEnd);
-  //   });
-
-  //   it('sets/gets fee attributes', async () => {
-  //     let feeType = 1;
-  //     let paidDate = 12348678;
-  //     let expirationDate = 11236777;
-  //     let isPaid = false;
-  //     // First create a user in DB
-  //     await this.profileDB.create(userId).should.be.fulfilled;
-  //     // Set fee attributes
-  //     await this.profileDB.setFeeAttributes(
-  //       userId,
-  //       feeType,
-  //       paidDate,
-  //       expirationDate,
-  //       isPaid
-  //     ).should.be.fulfilled;
-      
-  //     let attrFeeType = await this.genericDB.getUintStorage(CONTRACT_NAME, web3.utils.soliditySha3(userId, 'feeType'));
-  //     let attrPaidDate = await this.genericDB.getUintStorage(CONTRACT_NAME, web3.utils.soliditySha3(userId, 'paidDate'));
-  //     let attrExpirationDate = await this.genericDB.getUintStorage(CONTRACT_NAME, web3.utils.soliditySha3(userId, 'expirationDate'));
-  //     let attrIsPaid = await this.genericDB.getBoolStorage(CONTRACT_NAME, web3.utils.soliditySha3(userId, 'isPaid'));
-
-  //     attrFeeType.toNumber().should.be.equal(feeType);
-  //     attrPaidDate.toNumber().should.be.equal(paidDate);
-  //     attrExpirationDate.toNumber().should.be.equal(expirationDate);
-  //     attrIsPaid.should.be.equal(isPaid);
-  //   });
-
-  //   it('sets/gets token economy attributes', async () => {
-  //     let kittieFightTokens = 1000;
-  //     let superDAOTokens = 5000;
-  //     let isStakingSuperDAO = true;
-  //     // First create a user in DB
-  //     await this.profileDB.create(userId).should.be.fulfilled;
-  //     // Set token economy attributes
-  //     await this.profileDB.setTokenEconomyAttributes(
-  //       userId,
-  //       kittieFightTokens,
-  //       superDAOTokens,
-  //       isStakingSuperDAO
-  //     ).should.be.fulfilled;
-      
-  //     let attrKittieFightTokens = await this.genericDB.getUintStorage(CONTRACT_NAME, web3.utils.soliditySha3(userId, 'kittieFightTokens'));
-  //     let attrSuperDAOTokens = await this.genericDB.getUintStorage(CONTRACT_NAME, web3.utils.soliditySha3(userId, 'superDAOTokens'));
-  //     let attrIsStakingSuperDAO = await this.genericDB.getBoolStorage(CONTRACT_NAME, web3.utils.soliditySha3(userId, 'isStakingSuperDAO'));
-
-  //     attrKittieFightTokens.toNumber().should.be.equal(kittieFightTokens);
-  //     attrSuperDAOTokens.toNumber().should.be.equal(superDAOTokens);
-  //     attrIsStakingSuperDAO.should.be.equal(isStakingSuperDAO);
-  //   });
-
-  //   it('sets/gets kittie attributes', async () => {
-  //     let kittieId = 1000;
-  //     let kittieHash = 5000;
-  //     let deadAt = 1134567945;
-  //     let kittieReferalHash = 'asdasdkjifhfamdbv';
-  //     let kittieStatus = 'dead';
-  //     // First create a user in DB
-  //     await this.profileDB.create(userId).should.be.fulfilled;
-  //     // Set kittie attributes
-  //     await this.profileDB.setKittieAttributes(
-  //       userId,
-  //       kittieId,
-  //       kittieHash,
-  //       deadAt,
-  //       kittieReferalHash,
-  //       kittieStatus
-  //     ).should.be.fulfilled;
-      
-  //     let attrKittieId = await this.genericDB.getUintStorage(CONTRACT_NAME, web3.utils.soliditySha3(userId, 'kittieId'));
-  //     let attrKittieHash = await this.genericDB.getUintStorage(CONTRACT_NAME, web3.utils.soliditySha3(userId, 'kittieHash'));
-  //     let attrDeadAt = await this.genericDB.getUintStorage(CONTRACT_NAME, web3.utils.soliditySha3(userId, 'deadAt'));
-  //     let attrKittieReferalHash = await this.genericDB.getStringStorage(CONTRACT_NAME, web3.utils.soliditySha3(userId, 'kittieReferalHash'));
-  //     let attrKittieStatus = await this.genericDB.getStringStorage(CONTRACT_NAME, web3.utils.soliditySha3(userId, 'kittieStatus'));
-
-  //     attrKittieId.toNumber().should.be.equal(kittieId);
-  //     attrKittieHash.toNumber().should.be.equal(kittieHash);
-  //     attrDeadAt.toNumber().should.be.equal(deadAt);
-  //     attrKittieReferalHash.should.be.equal(kittieReferalHash);
-  //     attrKittieStatus.should.be.equal(kittieStatus);
-  //   });
-
-  //   it('sets/gets login status', async () => {
-  //     let isLoggedIn = true;
-  //     // First create a user in DB
-  //     await this.profileDB.create(userId).should.be.fulfilled;
-  //     // Set kittie attributes
-  //     await this.profileDB.setLoginStatus(userId, isLoggedIn).should.be.fulfilled;
-  //     // Get login status back
-  //     let attrIsLoggedIn = await this.genericDB.getBoolStorage(CONTRACT_NAME, web3.utils.soliditySha3(userId, 'isLoggedIn'));
-
-  //     attrIsLoggedIn.should.be.equal(isLoggedIn);
-  //   });
-
-  //   it('can iterate all profiles', async () => {
-  //     let userIds = [1234, 45667, 34456, 342452, 123178];
-
-  //     // First create some profiles in DB
-  //     for (let i = 0; i < userIds.length; i++) {
-  //       await this.profileDB.create(userIds[i]).should.be.fulfilled;
-  //     }
-
-  //     let totalUsers = (await this.genericDB.getLinkedListSize(CONTRACT_NAME, DB_TABLE_NAME)).toNumber();
-  //     totalUsers.should.be.equal(userIds.length);
-
-  //     let profile = 0; // Start from the HEAD. HEAD is always 0.
-  //     let index = totalUsers - 1;
-  //     do {
-  //       let ret = await this.genericDB.getAdjacent(CONTRACT_NAME, DB_TABLE_NAME, profile, true);
-  //       // ret value includes direction and node id. Ex => {'0': true, '1': 1234}
-  //       profile = ret['1'].toNumber();
-
-  //       // Means that we reach the end of the list
-  //       if (!profile) break;
-  //       // The first item in TRUE direction is the last item pushed => LIFO (stack)
-  //       profile.should.be.equal(userIds[index]);
-  //       index--;
-  //     } while (profile)
-  //   });
-  // });
-
-  // describe('CampaignDB::Attributes::Negatives', () => {
-  //   it('does not allow to create duplicate profiles', async () => {
-  //     await this.profileDB.create(userId).should.be.fulfilled;
-  //     // Check whether the node with the given user id is added to profile linked list
-  //     (await this.genericDB.doesNodeExist(CONTRACT_NAME, DB_TABLE_NAME, userId)).should.be.true;
-
-  //     await this.profileDB.create(userId).should.be.rejected;
-  //   });
-
-  //   it('does not allow to set an attribute for a non-existent profile', async () => {
-  //     await this.profileDB.setLoginStatus(userId, true).should.be.rejected;
-  //   });
-  // });
+    it('does not allow to increment sale count of a non-existent campaign item in db', async () => {
+      await this.campaignDB.incrementSaleCount(1).should.be.rejectedWith(ERROR_CAMPAIGN_DOES_NOT_EXIST);
+    });
+  });
 });

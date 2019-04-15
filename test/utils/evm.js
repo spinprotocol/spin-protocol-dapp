@@ -1,5 +1,5 @@
-function getCurrentTimestamp() {
-    return web3.eth.getBlock('latest').timestamp;
+async function getCurrentTimestamp() {
+  return (await web3.eth.getBlock('latest')).timestamp;
 }
 
 /**
