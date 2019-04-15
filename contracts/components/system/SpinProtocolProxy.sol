@@ -1,7 +1,7 @@
 pragma solidity 0.5.7;
 
 import "./ProxyBase.sol";
-import "../model/SpinProtocol.sol";
+import "../model/ISpinProtocol.sol";
 
 
 /**
@@ -23,7 +23,7 @@ contract SpinProtocolProxy is ProxyBase {
   )
     external onlyAdmin
   {
-    SpinProtocol(getContract(CONTRACT_NAME_SPIN_PROTOCOL)).recordPurchase(
+    ISpinProtocol(getContract(CONTRACT_NAME_SPIN_PROTOCOL)).recordPurchase(
       campaignId,
       purchaseId,
       customerId,
@@ -35,7 +35,7 @@ contract SpinProtocolProxy is ProxyBase {
   }
 
   function releaseRevenueShares(uint256 campaignId) external onlyAdmin {
-    SpinProtocol(getContract(CONTRACT_NAME_SPIN_PROTOCOL)).releaseRevenueShares(campaignId);
+    ISpinProtocol(getContract(CONTRACT_NAME_SPIN_PROTOCOL)).releaseRevenueShares(campaignId);
   }
 
   function registerActor(
@@ -45,7 +45,7 @@ contract SpinProtocolProxy is ProxyBase {
   )
     external onlyAdmin
   {
-    SpinProtocol(getContract(CONTRACT_NAME_SPIN_PROTOCOL)).registerActor(actorId, actorAddress, role);
+    ISpinProtocol(getContract(CONTRACT_NAME_SPIN_PROTOCOL)).registerActor(actorId, actorAddress, role);
   }
 
   function registerCampaign(
@@ -58,7 +58,7 @@ contract SpinProtocolProxy is ProxyBase {
   )
     external onlyAdmin
   {
-    SpinProtocol(getContract(CONTRACT_NAME_SPIN_PROTOCOL)).registerCampaign(
+    ISpinProtocol(getContract(CONTRACT_NAME_SPIN_PROTOCOL)).registerCampaign(
       campaignId,
       supplierId,
       influencerId,
@@ -75,6 +75,6 @@ contract SpinProtocolProxy is ProxyBase {
   )
     external onlyAdmin
   {
-    SpinProtocol(getContract(CONTRACT_NAME_SPIN_PROTOCOL)).registerProduct(productId, supplierId, description);
+    ISpinProtocol(getContract(CONTRACT_NAME_SPIN_PROTOCOL)).registerProduct(productId, supplierId, description);
   }
 }

@@ -13,19 +13,20 @@ contract CampaignDB is Proxied {
   UniversalDB public universalDB;
 
   string private constant TABLE_NAME_DEAL = "DealTable";
-  bytes32 public constant TABLE_KEY_CAMPAIGN = keccak256(abi.encodePacked("CampaignTable"));
+  bytes32 private constant TABLE_KEY_CAMPAIGN = keccak256(abi.encodePacked("CampaignTable"));
 
   string private constant ERROR_CAMPAIGN_ALREADY_EXIST = "Campaign already exists";
   string private constant ERROR_CAMPAIGN_DOES_NOT_EXIST = "Campaign does not exist";
-  string private constant ERROR_DEAL_ALREADY_EXIST = "Deal already exists";
-  string private constant ERROR_DEAL_DOES_NOT_EXIST = "Deal does not exist";
-  string private constant ERROR_DEAL_MAX_NUMBER_REACHED= "Deal slots full";
 
   event CampaignCreated(uint256 indexed campaignId, uint256 indexed supplierId);
   event CampaignUpdated(uint256 indexed campaignId, uint256 updatedAt);
-  event DealAdded(uint256 indexed campaignId, uint256 indexed dealId);
+  
 
-  function setUniversalDB(UniversalDB _universalDB) external onlyAdmin {
+  constructor(UniversalDB _universalDB) public {
+    setUniversalDB(_universalDB);
+  }
+
+  function setUniversalDB(UniversalDB _universalDB) public onlyAdmin {
     universalDB = _universalDB;
   }
 
@@ -59,13 +60,15 @@ contract CampaignDB is Proxied {
 
   function update(
     uint256 campaignId,
-    uint256 saleCount
+    uint256 finishAt,
+    uint256 ratio
   )
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
   {
     require(universalDB.doesNodeExist(CONTRACT_NAME_CAMPAIGN_DB, TABLE_KEY_CAMPAIGN, campaignId), ERROR_CAMPAIGN_DOES_NOT_EXIST);
-    universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "saleCount")), saleCount);
+    universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "finishAt")), finishAt);
+    universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "ratio")), ratio);
     emit CampaignUpdated(campaignId, block.timestamp);
   }
 

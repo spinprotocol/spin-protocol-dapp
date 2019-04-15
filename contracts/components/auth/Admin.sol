@@ -11,7 +11,7 @@ contract Admin {
 
   AccessRoles.Role private admins;
 
-  constructor() internal {
+  constructor() public {
     _addAdmin(msg.sender);
   }
 

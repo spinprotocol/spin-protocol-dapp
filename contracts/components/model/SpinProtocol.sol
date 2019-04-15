@@ -2,6 +2,8 @@ pragma solidity 0.5.7;
 
 import "./Registry.sol";
 import "./RevenueShareAndRewards.sol";
+import "../system/Proxied.sol";
+import "./ISpinProtocol.sol";
 
 
 /**
@@ -9,7 +11,7 @@ import "./RevenueShareAndRewards.sol";
  * @dev
  * @author Mustafa Morca - psychoplasma@gmail.com
  */
-contract SpinProtocol is Registry, RevenueShareAndRewards {
+contract SpinProtocol is Proxied, ISpinProtocol, Registry, RevenueShareAndRewards {
   
   function recordPurchase(
     uint256 campaignId,

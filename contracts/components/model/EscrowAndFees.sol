@@ -4,6 +4,7 @@ import "../../libs/SafeMath.sol";
 import "../../token/IERC20.sol";
 import "../auth/SystemRoles.sol";
 import "../system/Proxied.sol";
+import "./IEscrowAndFees.sol";
 
 
 /**
@@ -11,7 +12,7 @@ import "../system/Proxied.sol";
  * @dev Manages escrow of deposited tokens and fees
  * @author Mustafa Morca - psychoplasma@gmail.com
  */
-contract EscrowAndFees is SystemRoles, Proxied {
+contract EscrowAndFees is Proxied, SystemRoles, IEscrowAndFees {
   using SafeMath for uint256;
 
   // Keeps track of amount of escrowed tokens per address

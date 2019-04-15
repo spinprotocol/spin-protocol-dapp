@@ -19,7 +19,11 @@ contract PurchaseDB is Proxied {
 
   event PurchaseCreated(uint256 indexed purchaseId, uint256 purchasedAt);
 
-  function setUniversalDB(UniversalDB _universalDB) external onlyAdmin {
+  constructor(UniversalDB _universalDB) public {
+    setUniversalDB(_universalDB);
+  }
+
+  function setUniversalDB(UniversalDB _universalDB) public onlyAdmin {
     universalDB = _universalDB;
   }
 
@@ -36,6 +40,7 @@ contract PurchaseDB is Proxied {
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
   {
     require(purchaseId > 0);
+    require(campaignId > 0);
     require(customerId > 0);
     require(productId > 0);
     require(transactionId > 0);
@@ -53,10 +58,11 @@ contract PurchaseDB is Proxied {
   }
 
   function get(uint256 purchaseId)
-    public view returns (uint256 customerId, uint256 productId, uint256 transactionId, uint256 purchaseAmount, uint256 purchasedAt)
+    public view returns (uint256 customerId, uint256 campaignId, uint256 productId, uint256 transactionId, uint256 purchaseAmount, uint256 purchasedAt)
   {
     require(universalDB.doesNodeExist(CONTRACT_NAME_PURCHASE_DB, TABLE_KEY, purchaseId), ERROR_ALREADY_EXIST);
     customerId = universalDB.getUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(purchaseId, "customerId")));
+    campaignId = universalDB.getUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(purchaseId, "campaignId")));
     productId = universalDB.getUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(purchaseId, "productId")));
     transactionId = universalDB.getUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(purchaseId, "transactionId")));
     purchaseAmount = universalDB.getUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(purchaseId, "purchaseAmount")));

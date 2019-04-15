@@ -11,7 +11,7 @@ import "../components/system/Proxied.sol";
  * This contract is not supposed to re-deployed after it's deployed very first time. It should be persistent on the chain.
  * @author Mustafa Morca - psychoplasma@gmail.com
  */
-contract UniversalDB is EternalStorage, Proxied {
+contract UniversalDB is Proxied, EternalStorage {
   using LinkedListLib for LinkedListLib.LinkedList;
 
   function setIntStorage(

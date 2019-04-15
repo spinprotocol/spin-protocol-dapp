@@ -20,8 +20,13 @@ contract ActorDB is Proxied {
   event ActorCreated(uint256 indexed actorId, address indexed actorAddress);
   event ActorUpdated(uint256 indexed actorId, uint256 updatedAd);
 
+
+  constructor(UniversalDB _universalDB) public {
+    setUniversalDB(_universalDB);
+  }
+
   function setUniversalDB(UniversalDB _universalDB)
-    external
+    public
     onlyAdmin
   {
     universalDB = _universalDB;
@@ -44,19 +49,6 @@ contract ActorDB is Proxied {
     universalDB.setAddressStorage(CONTRACT_NAME_ACTOR_DB, keccak256(abi.encodePacked(actorId, "actorAddress")), actorAddress);
     universalDB.setStringStorage(CONTRACT_NAME_ACTOR_DB, keccak256(abi.encodePacked(actorId, "role")), role);
     emit ActorCreated(actorId, actorAddress);
-  }
-
-  function update(
-    uint256 actorId,
-    address actorAddress
-  )
-    external
-    onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
-  {
-    require(universalDB.doesNodeExist(CONTRACT_NAME_ACTOR_DB, TABLE_KEY, actorId), ERROR_DOES_NOT_EXIST);
-    require(actorAddress != address(0));
-    universalDB.setAddressStorage(CONTRACT_NAME_ACTOR_DB, keccak256(abi.encodePacked(actorId, "actorAddress")), actorAddress);
-    emit ActorUpdated(actorId, block.timestamp);
   }
 
   function updateAddress(

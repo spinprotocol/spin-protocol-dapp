@@ -1,7 +1,8 @@
 pragma solidity 0.5.7;
 
 import "./ProxyBase.sol";
-import "../model/EscrowAndFees.sol";
+import "../../token/IERC20.sol";
+import "../model/IEscrowAndFees.sol";
 
 
 /**
@@ -16,27 +17,27 @@ contract EscrowProxy is ProxyBase {
     external
     onlyAdmin
   {
-    EscrowAndFees(getContract(CONTRACT_NAME_ESCROW_AND_FEES)).setToken(_token);
+    IEscrowAndFees(getContract(CONTRACT_NAME_ESCROW_AND_FEES)).setToken(_token);
   }
 
   function setRegistrationFees(uint256[6] calldata _registrationFees)
     external
     onlyAdmin
   {
-    EscrowAndFees(getContract(CONTRACT_NAME_ESCROW_AND_FEES)).setRegistrationFees(_registrationFees);
+    IEscrowAndFees(getContract(CONTRACT_NAME_ESCROW_AND_FEES)).setRegistrationFees(_registrationFees);
   }
 
   function setFeeCollector(address _feeCollector)
     external
     onlyAdmin
   {
-    EscrowAndFees(getContract(CONTRACT_NAME_ESCROW_AND_FEES)).setFeeCollector(_feeCollector);
+    IEscrowAndFees(getContract(CONTRACT_NAME_ESCROW_AND_FEES)).setFeeCollector(_feeCollector);
   }
 
   function withdraw(uint256 amount)
     external
     onlyAdmin
   {
-    EscrowAndFees(getContract(CONTRACT_NAME_ESCROW_AND_FEES)).withdraw(amount);
+    IEscrowAndFees(getContract(CONTRACT_NAME_ESCROW_AND_FEES)).withdraw(amount);
   }
 }

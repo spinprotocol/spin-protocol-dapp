@@ -1,7 +1,6 @@
 pragma solidity 0.5.7;
 
 import "./Proxy.sol";
-import "./SystemContracts.sol";
 import "../auth/Admin.sol";
 
 

@@ -20,7 +20,12 @@ contract ProductDB is Proxied {
   event ProductCreated(uint256 indexed productId);
   event ProductUpdated(uint256 indexed productId, uint256 updatedAt);
 
-  function setUniversalDB(UniversalDB _universalDB) external onlyAdmin {
+
+  constructor(UniversalDB _universalDB) public {
+    setUniversalDB(_universalDB);
+  }
+
+  function setUniversalDB(UniversalDB _universalDB) public onlyAdmin {
     universalDB = _universalDB;
   }
 
@@ -33,6 +38,7 @@ contract ProductDB is Proxied {
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
   {
     require(productId > 0);
+    require(supplierId > 0);
     // Creates a linked list with the given keys, if it does not exist
     // And push the new deal pointer to the list
     require(universalDB.pushNodeToLinkedList(CONTRACT_NAME_PRODUCT_DB, TABLE_KEY, productId), ERROR_ALREADY_EXIST); 
