@@ -4,9 +4,7 @@ import "../../token/IERC20.sol";
 
 
 /**
- * @title EscrowProxy
- * @dev Creates proxy gateway for EscrowAndFees module so that
- * function calls to that module can be done only through Proxy contract.
+ * @title IEscrowAndFees
  * @author Mustafa Morca - psychoplasma@gmail.com
  */
 interface IEscrowAndFees {

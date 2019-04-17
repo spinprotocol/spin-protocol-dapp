@@ -20,6 +20,11 @@ contract ProductDB is Proxied {
   event ProductCreated(uint256 indexed productId);
   event ProductUpdated(uint256 indexed productId, uint256 updatedAt);
 
+  modifier onlyExistentProduct(uint256 productId) {
+    require(doesProductExist(productId), ERROR_DOES_NOT_EXIST);
+    _;
+  }
+
 
   constructor(UniversalDB _universalDB) public {
     setUniversalDB(_universalDB);
@@ -53,17 +58,22 @@ contract ProductDB is Proxied {
   )
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
+    onlyExistentProduct(productId)
   {
-    require(universalDB.doesNodeExist(CONTRACT_NAME_PRODUCT_DB, TABLE_KEY, productId), ERROR_DOES_NOT_EXIST);
     universalDB.setStringStorage(CONTRACT_NAME_PRODUCT_DB, keccak256(abi.encodePacked(productId, "description")), description);
     emit ProductUpdated(productId, block.timestamp);
   }
 
   function get(uint256 productId)
-    public view returns (uint256 supplierId, string memory description)
+    public
+    onlyExistentProduct(productId)
+    view returns (uint256 supplierId, string memory description)
   {
-    require(universalDB.doesNodeExist(CONTRACT_NAME_PRODUCT_DB, TABLE_KEY, productId), ERROR_ALREADY_EXIST);
     supplierId = universalDB.getUintStorage(CONTRACT_NAME_PRODUCT_DB, keccak256(abi.encodePacked(productId, "supplierId")));
     description = universalDB.getStringStorage(CONTRACT_NAME_PRODUCT_DB, keccak256(abi.encodePacked(productId, "description")));
+  }
+
+  function doesProductExist(uint256 productId) public view returns (bool) {
+    return universalDB.doesNodeExist(CONTRACT_NAME_PRODUCT_DB, TABLE_KEY, productId);
   }
 }

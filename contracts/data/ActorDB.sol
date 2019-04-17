@@ -20,6 +20,11 @@ contract ActorDB is Proxied {
   event ActorCreated(uint256 indexed actorId, address indexed actorAddress);
   event ActorUpdated(uint256 indexed actorId, uint256 updatedAd);
 
+  modifier onlyExistentActor(uint256 actorId) {
+    require(doesActorExist(actorId), ERROR_DOES_NOT_EXIST);
+    _;
+  }
+
 
   constructor(UniversalDB _universalDB) public {
     setUniversalDB(_universalDB);
@@ -57,8 +62,8 @@ contract ActorDB is Proxied {
   )
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
+    onlyExistentActor(actorId)
   {
-    require(universalDB.doesNodeExist(CONTRACT_NAME_ACTOR_DB, TABLE_KEY, actorId), ERROR_DOES_NOT_EXIST);
     require(actorAddress != address(0));
     universalDB.setAddressStorage(CONTRACT_NAME_ACTOR_DB, keccak256(abi.encodePacked(actorId, "actorAddress")), actorAddress);
     emit ActorUpdated(actorId, block.timestamp);
@@ -70,38 +75,46 @@ contract ActorDB is Proxied {
   )
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
+    onlyExistentActor(actorId)
   {
-    require(universalDB.doesNodeExist(CONTRACT_NAME_ACTOR_DB, TABLE_KEY, actorId), ERROR_DOES_NOT_EXIST);
     universalDB.setUintStorage(CONTRACT_NAME_ACTOR_DB, keccak256(abi.encodePacked(actorId, "sfame")), sfame);
     emit ActorUpdated(actorId, block.timestamp);
   }
 
   function get(uint256 actorId)
-    public view returns (address actorAddress, string memory role)
+    public
+    onlyExistentActor(actorId)
+    view returns (address actorAddress, string memory role)
   {
-    require(universalDB.doesNodeExist(CONTRACT_NAME_ACTOR_DB, TABLE_KEY, actorId), ERROR_DOES_NOT_EXIST);
     actorAddress = universalDB.getAddressStorage(CONTRACT_NAME_ACTOR_DB, keccak256(abi.encodePacked(actorId, "actorAddress")));
     role = universalDB.getStringStorage(CONTRACT_NAME_ACTOR_DB, keccak256(abi.encodePacked(actorId, "role")));
   }
 
   function getAddress(uint256 actorId)
-    public view returns (address)
+    public
+    onlyExistentActor(actorId)
+    view returns (address)
   {
-    require(universalDB.doesNodeExist(CONTRACT_NAME_ACTOR_DB, TABLE_KEY, actorId), ERROR_DOES_NOT_EXIST);
     return universalDB.getAddressStorage(CONTRACT_NAME_ACTOR_DB, keccak256(abi.encodePacked(actorId, "actorAddress")));
   }
 
   function getRole(uint256 actorId)
-    public view returns (string memory)
+    public
+    onlyExistentActor(actorId)
+    view returns (string memory)
   {
-    require(universalDB.doesNodeExist(CONTRACT_NAME_ACTOR_DB, TABLE_KEY, actorId), ERROR_DOES_NOT_EXIST);
     return universalDB.getStringStorage(CONTRACT_NAME_ACTOR_DB, keccak256(abi.encodePacked(actorId, "role")));
   }
 
   function getSFame(uint256 actorId)
-    public view returns (uint256)
+    public
+    onlyExistentActor(actorId)
+    view returns (uint256)
   {
-    require(universalDB.doesNodeExist(CONTRACT_NAME_ACTOR_DB, TABLE_KEY, actorId), ERROR_DOES_NOT_EXIST);
     return universalDB.getUintStorage(CONTRACT_NAME_ACTOR_DB, keccak256(abi.encodePacked(actorId, "sfame")));
+  }
+
+  function doesActorExist(uint256 actorId) public view returns (bool) {
+    return universalDB.doesNodeExist(CONTRACT_NAME_ACTOR_DB, TABLE_KEY, actorId);
   }
 }

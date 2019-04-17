@@ -2,9 +2,7 @@ pragma solidity 0.5.7;
 
 
 /**
- * @title EscrowProxy
- * @dev Creates proxy gateway for EscrowAndFees module so that
- * function calls to that module can be done only through Proxy contract.
+ * @title ISpinProtocol
  * @author Mustafa Morca - psychoplasma@gmail.com
  */
 interface ISpinProtocol {

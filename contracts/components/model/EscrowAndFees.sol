@@ -109,6 +109,7 @@ contract EscrowAndFees is Proxied, SystemRoles, IEscrowAndFees {
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
   {
+    // FIXME: Is there a different fee for campaign registration for supplier and influencer?  
     if (isInfluencer) {
       require(token.transferFrom(user, feeCollector, registrationFees.campaign));
     } else {
