@@ -9,6 +9,7 @@ pragma solidity 0.5.7;
 contract SystemContracts {
   string constant internal CONTRACT_NAME_ACTOR_DB = "ActorDB";
   string constant internal CONTRACT_NAME_CAMPAIGN_DB = "CampaignDB";
+  string constant internal CONTRACT_NAME_DEAL_DB = "DealDB";
   string constant internal CONTRACT_NAME_PRODUCT_DB = "ProductDB";
   string constant internal CONTRACT_NAME_PURCHASE_DB = "PurchaseDB";
   string constant internal CONTRACT_NAME_ESCROW_AND_FEES = "EscrowAndFees";

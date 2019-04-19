@@ -17,27 +17,47 @@ contract EscrowProxy is ProxyBase {
     external
     onlyAdmin
   {
-    IEscrowAndFees(getContract(CONTRACT_NAME_ESCROW_AND_FEES)).setToken(_token);
+    IEscrowAndFees(addressOfEscrowAndFees()).setToken(_token);
   }
 
-  function setRegistrationFees(uint256[6] calldata _registrationFees)
+  function setRegistrationFees(
+    uint256 campaignRegistrationFee, 
+    uint256 productRegistrationFee
+  )
     external
     onlyAdmin
   {
-    IEscrowAndFees(getContract(CONTRACT_NAME_ESCROW_AND_FEES)).setRegistrationFees(_registrationFees);
+    IEscrowAndFees(addressOfEscrowAndFees()).setRegistrationFees(campaignRegistrationFee, productRegistrationFee);
+  }
+
+  function setRewardRatios(
+    uint256 customerRatio,
+    uint256 influencerRatio,
+    uint256 supplierRatio,
+    uint256 serviceProviderRatio
+  )
+    external
+    onlyAdmin
+  {
+    IEscrowAndFees(addressOfEscrowAndFees()).setRewardRatios(
+      customerRatio,
+      influencerRatio,
+      supplierRatio,
+      serviceProviderRatio
+    );
   }
 
   function setFeeCollector(address _feeCollector)
     external
     onlyAdmin
   {
-    IEscrowAndFees(getContract(CONTRACT_NAME_ESCROW_AND_FEES)).setFeeCollector(_feeCollector);
+    IEscrowAndFees(addressOfEscrowAndFees()).setFeeCollector(_feeCollector);
   }
 
   function withdraw(uint256 amount)
     external
     onlyAdmin
   {
-    IEscrowAndFees(getContract(CONTRACT_NAME_ESCROW_AND_FEES)).withdraw(amount);
+    IEscrowAndFees(addressOfEscrowAndFees()).withdraw(amount);
   }
 }

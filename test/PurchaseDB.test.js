@@ -16,7 +16,7 @@ const ERROR_ALREADY_EXIST = 'Purchase already exists';
 const ERROR_DOES_NOT_EXIST = 'Purchase does not exist';
 
 
-contract('purchaseDB', ([creator, addr1, addr2, unauthorizedAddr, randomAddr]) => {
+contract('purchaseDB', ([creator, unauthorizedAddr, randomAddr]) => {
 
   beforeEach(async () => {
     this.proxy = await Proxy.new();
@@ -64,17 +64,17 @@ contract('purchaseDB', ([creator, addr1, addr2, unauthorizedAddr, randomAddr]) =
       let purchaseId = 124;
       let campaignId = 345;
       let customerId = 123345;
-      let productId = 67543;
+      let dealId = 67543;
       let transactionId = 23454;
       let purchaseAmount = 3581;
       let purchasedAt = 98237461;
 
       await this.purchaseDB.create(
         purchaseId,
-        campaignId,
-        customerId,
-        productId,
         transactionId,
+        customerId,
+        campaignId,
+        dealId,
         purchaseAmount,
         purchasedAt
       ).should.be.fulfilled;
@@ -82,7 +82,7 @@ contract('purchaseDB', ([creator, addr1, addr2, unauthorizedAddr, randomAddr]) =
       let res = await this.purchaseDB.get(purchaseId);
       res['campaignId'].toNumber().should.be.equal(campaignId);
       res['customerId'].toNumber().should.be.equal(customerId);
-      res['productId'].toNumber().should.be.equal(productId);
+      res['dealId'].toNumber().should.be.equal(dealId);
       res['transactionId'].toNumber().should.be.equal(transactionId);
       res['purchaseAmount'].toNumber().should.be.equal(purchaseAmount);
       res['purchasedAt'].toNumber().should.be.equal(purchasedAt);

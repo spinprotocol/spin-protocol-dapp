@@ -2,6 +2,7 @@ pragma solidity 0.5.7;
 
 import "../../data/ActorDB.sol";
 import "../../data/CampaignDB.sol";
+import "../../data/DealDB.sol";
 import "../../data/PurchaseDB.sol";
 import "../../data/ProductDB.sol";
 import "../auth/Admin.sol";
@@ -15,12 +16,14 @@ import "../auth/Admin.sol";
  */
 contract DBConnector is Admin {
   ActorDB public actorDB;
+  DealDB public dealDB;
   CampaignDB public campaignDB;
   ProductDB public productDB;
   PurchaseDB public purchaseDB;
 
   function setDataStore(
     ActorDB _actorDB,
+    DealDB _dealDB,
     CampaignDB _campaignDB,
     ProductDB _productDB,
     PurchaseDB _purchaseDB
@@ -28,6 +31,7 @@ contract DBConnector is Admin {
     public onlyAdmin
   {
     actorDB = _actorDB;
+    dealDB = _dealDB;
     campaignDB = _campaignDB;
     purchaseDB = _purchaseDB;
     productDB = _productDB;

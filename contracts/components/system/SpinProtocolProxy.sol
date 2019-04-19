@@ -5,8 +5,8 @@ import "../model/ISpinProtocol.sol";
 
 
 /**
- * @title EscrowProxy
- * @dev Creates proxy gateway for EscrowAndFees module so that
+ * @title SpinProtocolProxy
+ * @dev Creates proxy gateway for SpinProtocol module so that
  * function calls to that module can be done only through Proxy contract.
  * @author Mustafa Morca - psychoplasma@gmail.com
  */
@@ -23,7 +23,7 @@ contract SpinProtocolProxy is ProxyBase {
   )
     external onlyAdmin
   {
-    ISpinProtocol(getContract(CONTRACT_NAME_SPIN_PROTOCOL)).recordPurchase(
+    ISpinProtocol(addressOfSpinProtocol()).recordPurchase(
       campaignId,
       purchaseId,
       customerId,
@@ -34,8 +34,10 @@ contract SpinProtocolProxy is ProxyBase {
     );
   }
 
-  function releaseRevenueShares(uint256 campaignId) external onlyAdmin {
-    ISpinProtocol(getContract(CONTRACT_NAME_SPIN_PROTOCOL)).releaseRevenueShares(campaignId);
+  function releaseRevenueShares(uint256 campaignId)
+    external onlyAdmin
+  {
+    ISpinProtocol(addressOfSpinProtocol()).releaseRevenueShares(campaignId);
   }
 
   function registerActor(
@@ -45,7 +47,7 @@ contract SpinProtocolProxy is ProxyBase {
   )
     external onlyAdmin
   {
-    ISpinProtocol(getContract(CONTRACT_NAME_SPIN_PROTOCOL)).registerActor(actorId, actorAddress, role);
+    ISpinProtocol(addressOfSpinProtocol()).registerActor(actorId, actorAddress, role);
   }
 
   function registerCampaign(
@@ -58,7 +60,7 @@ contract SpinProtocolProxy is ProxyBase {
   )
     external onlyAdmin
   {
-    ISpinProtocol(getContract(CONTRACT_NAME_SPIN_PROTOCOL)).registerCampaign(
+    ISpinProtocol(addressOfSpinProtocol()).registerCampaign(
       campaignId,
       supplierId,
       influencerId,
@@ -71,10 +73,10 @@ contract SpinProtocolProxy is ProxyBase {
   function registerProduct(
     uint256 productId,
     uint256 supplierId,
-    string calldata description
+    string calldata metadata
   )
     external onlyAdmin
   {
-    ISpinProtocol(getContract(CONTRACT_NAME_SPIN_PROTOCOL)).registerProduct(productId, supplierId, description);
+    ISpinProtocol(addressOfSpinProtocol()).registerProduct(productId, supplierId, metadata);
   }
 }

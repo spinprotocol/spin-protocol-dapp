@@ -27,15 +27,22 @@ contract EscrowAndFees is Proxied, SystemRoles, IEscrowAndFees {
   address public feeCollector;
 
   struct RegistrationFees {
-    uint256 customer;
-    uint256 influencer;
-    uint256 supplier;
-    uint256 serviceProvider;
     uint256 campaign;
     uint256 product;
   }
 
+  struct RewardRatios {
+    uint256 customer;
+    uint256 influencer;
+    uint256 supplier;
+    uint256 serviceProvider;
+  }
+
   RegistrationFees public registrationFees;
+
+  RewardRatios public rewardRatios;
+
+  event ChargedFee(address indexed account, uint256 amount);
 
 
   function setToken(IERC20 _token)
@@ -45,32 +52,20 @@ contract EscrowAndFees is Proxied, SystemRoles, IEscrowAndFees {
     token = _token;
   }
 
-  function setRegistrationFees(uint256[6] calldata _registrationFees)
+  function setRegistrationFees(
+    uint256 campaignRegistrationFee, 
+    uint256 productRegistrationFee
+  )
     external
     onlyProxy
   {
-    if (_registrationFees[0] > 0) {
-      registrationFees.customer = _registrationFees[0];
+
+    if (campaignRegistrationFee > 0) {
+      registrationFees.campaign = campaignRegistrationFee;
     }
 
-    if (_registrationFees[1] > 0) {
-      registrationFees.influencer = _registrationFees[1];
-    }
-
-    if (_registrationFees[2] > 0) {
-      registrationFees.supplier = _registrationFees[2];
-    }
-
-    if (_registrationFees[3] > 0) {
-      registrationFees.serviceProvider = _registrationFees[3];
-    }
-
-    if (_registrationFees[4] > 0) {
-      registrationFees.campaign = _registrationFees[4];
-    }
-
-    if (_registrationFees[5] > 0) {
-      registrationFees.product = _registrationFees[5];
+    if (productRegistrationFee > 0) {
+      registrationFees.product = productRegistrationFee;
     }
   }
 
@@ -82,6 +77,21 @@ contract EscrowAndFees is Proxied, SystemRoles, IEscrowAndFees {
     feeCollector = _feeCollector;
   }
 
+  function setRewardRatios(
+    uint256 customerRatio,
+    uint256 influencerRatio,
+    uint256 supplierRatio,
+    uint256 serviceProviderRatio
+  )
+    external
+    onlyProxy
+  {
+    rewardRatios.customer = customerRatio;
+    rewardRatios.influencer = influencerRatio;
+    rewardRatios.supplier = supplierRatio;
+    rewardRatios.serviceProvider = serviceProviderRatio;
+  }
+
   function withdraw(uint256 amount)
     external
     onlyProxy
@@ -90,31 +100,11 @@ contract EscrowAndFees is Proxied, SystemRoles, IEscrowAndFees {
     require(token.transfer(msg.sender, amount));
   }
 
-  function chargeRegistrationFee(address user, string calldata role)
+  function chargeCampaignRegistrationFee(address user)
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
   {
-    if (checkRole(role, ROLE_INFLUENCER)) {
-      require(token.transferFrom(user, feeCollector, registrationFees.influencer));
-    } else if (checkRole(role, ROLE_SUPPLIER)) {
-      require(token.transferFrom(user, feeCollector, registrationFees.supplier));
-    } else if (checkRole(role, ROLE_SERVICE_PROVIDER)) {
-      require(token.transferFrom(user, feeCollector, registrationFees.serviceProvider));
-    } else if (checkRole(role, ROLE_CUSTOMER)) {
-      require(token.transferFrom(user, feeCollector, registrationFees.customer));
-    }
-  }
-
-  function chargeCampaignRegistrationFee(address user, bool isInfluencer)
-    external
-    onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
-  {
-    // FIXME: Is there a different fee for campaign registration for supplier and influencer?  
-    if (isInfluencer) {
-      require(token.transferFrom(user, feeCollector, registrationFees.campaign));
-    } else {
-      require(token.transferFrom(user, feeCollector, registrationFees.campaign));
-    }
+    require(token.transferFrom(user, feeCollector, registrationFees.campaign));
   }
 
   function chargeProductRegistrationFee(address user)
@@ -133,15 +123,6 @@ contract EscrowAndFees is Proxied, SystemRoles, IEscrowAndFees {
     require(token.transferFrom(owner, address(this), amount));
   }
 
-  function release(address owner, uint256 amount)
-    external
-    onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
-  {
-    escrowLedger[owner] = escrowLedger[owner].sub(amount);
-    totalLockedAmount = totalLockedAmount.sub(amount);
-    require(token.transfer(owner, amount));
-  }
-
   function releaseFrom(address from, address to, uint256 amount)
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
@@ -149,5 +130,14 @@ contract EscrowAndFees is Proxied, SystemRoles, IEscrowAndFees {
     escrowLedger[from] = escrowLedger[from].sub(amount);
     totalLockedAmount = totalLockedAmount.sub(amount);
     require(token.transfer(to, amount));
+  }
+
+  function getRewardRatios() external view returns (uint256, uint256, uint256, uint256) {
+    return (
+      rewardRatios.customer,
+      rewardRatios.influencer,
+      rewardRatios.supplier,
+      rewardRatios.serviceProvider
+    );
   }
 }

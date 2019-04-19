@@ -15,6 +15,7 @@ const CONTRACT_NAME_CAMPAIGN_DB = 'CampaignDB';
 const ERROR_ONLY_CONTRACT = 'Only specific contract';
 const ERROR_CAMPAIGN_ALREADY_EXIST = 'Campaign already exists';
 const ERROR_CAMPAIGN_DOES_NOT_EXIST = 'Campaign does not exist';
+const ERROR_SUPPLY_DEPLETED = "Campaign supply depleted";
 
   
 contract('CampaignDB', ([creator, addr1, addr2, unauthorizedAddr, randomAddr]) => {
@@ -43,26 +44,36 @@ contract('CampaignDB', ([creator, addr1, addr2, unauthorizedAddr, randomAddr]) =
       await this.campaignDB.setUniversalDB(randomAddr, {from: unauthorizedAddr}).should.be.rejected;
     });
 
-    it('does not allow an unauthorized address to create a new campaign item in db', async () => {
+    it('does not allow an unauthorized address to create a new campaign item', async () => {
       let finishAt = (await getCurrentTimestamp()) + 100;
-      await this.campaignDB.create(1, 1, 1, 1, finishAt, 1, {from: unauthorizedAddr}).should.be.rejectedWith(ERROR_ONLY_CONTRACT);
+      await this.campaignDB.create(1, 1, 1, 1, finishAt, {from: unauthorizedAddr}).should.be.rejectedWith(ERROR_ONLY_CONTRACT);
     });
 
-    it('does not allow an unauthorized address to update a campaign item in db', async () => {
+    it('does not allow an unauthorized address to update a campaign item', async () => {
       let campaignId = 1;
       let finishAt = (await getCurrentTimestamp()) + 100;
       let newFinishAt = (await getCurrentTimestamp()) + 200;
-      let newRatio = 20;
+      let newSupply = 20;
 
-      await this.campaignDB.create(campaignId, 1, 1, 1, finishAt, 1).should.be.fulfilled;
-      await this.campaignDB.update(campaignId, newFinishAt, newRatio, {from: unauthorizedAddr}).should.be.rejectedWith(ERROR_ONLY_CONTRACT);
+      await this.campaignDB.create(campaignId, 1, 1, 1, finishAt).should.be.fulfilled;
+      await this.campaignDB.update(campaignId, newSupply, newFinishAt, {from: unauthorizedAddr}).should.be.rejectedWith(ERROR_ONLY_CONTRACT);
     });
 
-    it('does not allow an unauthorized address to increment sale count of a campaign item in db', async () => {
+    it('does not allow an unauthorized address to add a deal for a campaign item', async () => {
       let campaignId = 1;
       let finishAt = (await getCurrentTimestamp()) + 100;
-      await this.campaignDB.create(campaignId, 1, 1, 1, finishAt, 1).should.be.fulfilled;
-      await this.campaignDB.incrementSaleCount(campaignId, {from: unauthorizedAddr}).should.be.rejectedWith(ERROR_ONLY_CONTRACT);
+      let totalSupply = 10;
+      let dealId = 5;
+      await this.campaignDB.create(campaignId, 1, 1, totalSupply, finishAt).should.be.fulfilled;
+      await this.campaignDB.addDeal(campaignId, dealId, {from: unauthorizedAddr}).should.be.rejectedWith(ERROR_ONLY_CONTRACT);
+    });
+
+    it('does not allow an unauthorized address to decrement current supply of the campaign item', async () => {
+      let campaignId = 1;
+      let finishAt = (await getCurrentTimestamp()) + 100;
+      let totalSupply = 10;
+      await this.campaignDB.create(campaignId, 1, 1, totalSupply, finishAt).should.be.fulfilled;
+      await this.campaignDB.decrementSupply(campaignId, {from: unauthorizedAddr}).should.be.rejectedWith(ERROR_ONLY_CONTRACT);
     });
   });
 
@@ -79,81 +90,108 @@ contract('CampaignDB', ([creator, addr1, addr2, unauthorizedAddr, randomAddr]) =
       universalDB.should.be.equal(randomAddr);
     });
 
-    it('creates a new campaign item in db', async () => {
+    it('creates a new campaign item', async () => {
       let campaignId = 124;
       let supplierId = 45662;
-      let influencerId = 346452;
       let productId = 2345462;
+      let totalSupply = 20;
       let finishAt = (await getCurrentTimestamp()) + 100;
-      let ratio = 20;
 
       await this.campaignDB.create(
         campaignId,
         supplierId,
-        influencerId,
         productId,
-        finishAt,
-        ratio
+        totalSupply,
+        finishAt
       ).should.be.fulfilled;
 
       let res = await this.campaignDB.get(campaignId);
       res['supplierId'].toNumber().should.be.equal(supplierId);
-      res['influencerId'].toNumber().should.be.equal(influencerId);
       res['productId'].toNumber().should.be.equal(productId);
       res['finishAt'].toNumber().should.be.equal(finishAt);
-      res['ratio'].toNumber().should.be.equal(ratio);
+      res['totalSupply'].toNumber().should.be.equal(totalSupply);
     });
 
-    it('updates a campaign item in db', async () => {
+    it('updates a campaign item', async () => {
       let campaignId = 1;
       let finishAt = (await getCurrentTimestamp()) + 100;
       let newFinishAt = (await getCurrentTimestamp()) + 200;
-      let newRatio = 20;
+      let newSupply = 20;
 
-      await this.campaignDB.create(campaignId, 1, 1, 1, finishAt, 1).should.be.fulfilled;
-      await this.campaignDB.update(campaignId, newFinishAt, newRatio).should.be.fulfilled;
+      await this.campaignDB.create(campaignId, 1, 1, 1, finishAt).should.be.fulfilled;
+      await this.campaignDB.update(campaignId, newSupply, newFinishAt).should.be.fulfilled;
 
       let res = await this.campaignDB.get(campaignId);
       res['finishAt'].toNumber().should.be.equal(newFinishAt);
-      res['ratio'].toNumber().should.be.equal(newRatio);
+      res['totalSupply'].toNumber().should.be.equal(newSupply);
     });
 
-    it('increments sale count of a campaign item in db', async () => {
+    it('adds a deal for the campaign item', async () => {
       let campaignId = 1;
+      let dealId = 3;
+      let supply = 10;
       let finishAt = (await getCurrentTimestamp()) + 100;
 
-      await this.campaignDB.create(campaignId, 1, 1, 1, finishAt, 1).should.be.fulfilled;
-      await this.campaignDB.incrementSaleCount(campaignId).should.be.fulfilled;
-      await this.campaignDB.incrementSaleCount(campaignId).should.be.fulfilled;
+      await this.campaignDB.create(campaignId, 1, 1, supply, finishAt).should.be.fulfilled;
+      await this.campaignDB.addDeal(campaignId, dealId).should.be.fulfilled;
 
-      let res = await this.campaignDB.get(campaignId);
-      res['saleCount'].toNumber().should.be.equal(2);
+      let deals = await this.campaignDB.getDeals(campaignId);
+      deals = deals.map(deal => deal.toNumber());
+      deals.should.include(dealId);
+    });
+
+    it('decrements current supply of the campaign item', async () => {
+      let campaignId = 1;
+      let supply = 10;
+      let finishAt = (await getCurrentTimestamp()) + 100;
+
+      await this.campaignDB.create(campaignId, 1, 1, supply, finishAt).should.be.fulfilled;
+      await this.campaignDB.decrementSupply(campaignId).should.be.fulfilled;
+      await this.campaignDB.decrementSupply(campaignId).should.be.fulfilled;
+
+      let currentSupply = await this.campaignDB.getCurrentSupply(campaignId);
+      currentSupply.toNumber().should.be.equal(supply - 2);
     });
   });
 
   describe('CampaignDB::Features::Negatives', () => {
     it('does not allow to create a campaign item with invalid parameters', async () => {
       let finishAt = (await getCurrentTimestamp()) + 100;
-      await this.campaignDB.create(0, 1, 2, 3, finishAt, 5).should.be.rejected;
-      await this.campaignDB.create(1, 0, 2, 3, finishAt, 5).should.be.rejected;
-      await this.campaignDB.create(2, 1, 0, 3, finishAt, 5).should.be.rejected;
-      await this.campaignDB.create(3, 1, 2, 0, finishAt, 5).should.be.rejected;
-      await this.campaignDB.create(4, 1, 2, 3, finishAt - 100, 5).should.be.rejected;
+      await this.campaignDB.create(0, 1, 2, 3, finishAt).should.be.rejected;
+      await this.campaignDB.create(1, 0, 2, 3, finishAt).should.be.rejected;
+      await this.campaignDB.create(2, 1, 0, 3, finishAt).should.be.rejected;
+      await this.campaignDB.create(3, 1, 2, 0, finishAt).should.be.rejected;
+      await this.campaignDB.create(4, 1, 2, 3, finishAt - 100).should.be.rejected;
     });
 
-    it('does not allow to create a duplicate item in db', async () => {
+    it('does not allow to create a duplicate item(with the same id)', async () => {
       let finishAt = (await getCurrentTimestamp()) + 100;
-      await this.campaignDB.create(1, 1, 2, 3, finishAt, 5).should.be.fulfilled;
-      await this.campaignDB.create(1, 1, 2, 3, finishAt, 5).should.be.rejectedWith(ERROR_CAMPAIGN_ALREADY_EXIST);
+      await this.campaignDB.create(1, 2, 3, 4, finishAt).should.be.fulfilled;
+      await this.campaignDB.create(1, 123, 452, 134, finishAt).should.be.rejectedWith(ERROR_CAMPAIGN_ALREADY_EXIST);
     });
 
-    it('does not allow to update a non-existent campaign item in db', async () => {
+    it('does not allow to update a non-existent campaign item', async () => {
       let finishAt = (await getCurrentTimestamp()) + 100;
-      await this.campaignDB.update(123, finishAt, 1).should.be.rejectedWith(ERROR_CAMPAIGN_DOES_NOT_EXIST);
+      await this.campaignDB.update(123, 1334, finishAt).should.be.rejectedWith(ERROR_CAMPAIGN_DOES_NOT_EXIST);
     });
 
-    it('does not allow to increment sale count of a non-existent campaign item in db', async () => {
-      await this.campaignDB.incrementSaleCount(1).should.be.rejectedWith(ERROR_CAMPAIGN_DOES_NOT_EXIST);
+    it('does not allow to add a deal for a non-existent campaign item', async () => {
+      await this.campaignDB.addDeal(3, 123).should.be.rejectedWith(ERROR_CAMPAIGN_DOES_NOT_EXIST);
+    });
+
+    it('does not allow to decrement current supply of a non-existent campaign item', async () => {
+      await this.campaignDB.decrementSupply(1).should.be.rejectedWith(ERROR_CAMPAIGN_DOES_NOT_EXIST);
+    });
+
+    it('does not allow to decrement current supply if the total supply is depleted', async () => {
+      let campaignId = 1;
+      let supply = 1;
+      let finishAt = (await getCurrentTimestamp()) + 100;
+
+      await this.campaignDB.create(campaignId, 1, 1, supply, finishAt).should.be.fulfilled;
+      await this.campaignDB.decrementSupply(campaignId).should.be.fulfilled;
+      // The supply is depleted now, therefore this transaction should be rejected
+      await this.campaignDB.decrementSupply(campaignId).should.be.rejectedWith(ERROR_SUPPLY_DEPLETED);
     });
   });
 });

@@ -35,10 +35,10 @@ contract PurchaseDB is Proxied {
 
   function create(
     uint256 purchaseId,
-    uint256 campaignId,
-    uint256 customerId,
-    uint256 productId,
     uint256 transactionId,
+    uint256 customerId,
+    uint256 campaignId,
+    uint256 dealId,
     uint256 purchaseAmount,
     uint256 purchasedAt
   )
@@ -48,16 +48,16 @@ contract PurchaseDB is Proxied {
     require(purchaseId > 0);
     require(campaignId > 0);
     require(customerId > 0);
-    require(productId > 0);
+    require(dealId > 0);
     require(transactionId > 0);
     // Creates a linked list with the given keys, if it does not exist
     // And push the new pointer to the list
     require(universalDB.pushNodeToLinkedList(CONTRACT_NAME_PURCHASE_DB, TABLE_KEY, purchaseId), ERROR_ALREADY_EXIST);
     
+    universalDB.setUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(purchaseId, "transactionId")), transactionId);
     universalDB.setUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(purchaseId, "customerId")), customerId);
     universalDB.setUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(purchaseId, "campaignId")), campaignId);
-    universalDB.setUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(purchaseId, "productId")), productId);
-    universalDB.setUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(purchaseId, "transactionId")), transactionId);
+    universalDB.setUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(purchaseId, "dealId")), dealId);
     universalDB.setUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(purchaseId, "purchaseAmount")), purchaseAmount);
     universalDB.setUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(purchaseId, "purchasedAt")), purchasedAt);
     emit PurchaseCreated(purchaseId, purchasedAt);
@@ -66,11 +66,11 @@ contract PurchaseDB is Proxied {
   function get(uint256 purchaseId)
     public
     onlyExistentPurchase(purchaseId)
-    view returns (uint256 customerId, uint256 campaignId, uint256 productId, uint256 transactionId, uint256 purchaseAmount, uint256 purchasedAt)
+    view returns (uint256 transactionId, uint256 customerId, uint256 campaignId, uint256 dealId, uint256 purchaseAmount, uint256 purchasedAt)
   {
     customerId = universalDB.getUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(purchaseId, "customerId")));
     campaignId = universalDB.getUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(purchaseId, "campaignId")));
-    productId = universalDB.getUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(purchaseId, "productId")));
+    dealId = universalDB.getUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(purchaseId, "dealId")));
     transactionId = universalDB.getUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(purchaseId, "transactionId")));
     purchaseAmount = universalDB.getUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(purchaseId, "purchaseAmount")));
     purchasedAt = universalDB.getUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(purchaseId, "purchasedAt")));

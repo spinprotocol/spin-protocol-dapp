@@ -11,5 +11,5 @@ import "./SpinProtocolProxy.sol";
  * @author Mustafa Morca - psychoplasma@gmail.com
  */
 contract Proxy is EscrowProxy, SpinProtocolProxy {
-
+  
 }

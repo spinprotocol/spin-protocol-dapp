@@ -13,7 +13,7 @@ import "../auth/Admin.sol";
 contract EscrowConnector is Admin {
   EscrowAndFees public escrow;
 
-  function setEscrow(EscrowAndFees _escrow) external onlyAdmin {
+  function setEscrow(EscrowAndFees _escrow) public onlyAdmin {
     escrow = _escrow;
   }
 }

@@ -19,6 +19,7 @@
     "eslint": "^5.16.0",
     "eth-gas-reporter": "^0.1.12",
     "solhint": "^2.0.0",
-    "truffle-hdwallet-provider": "^1.0.6"
+    "truffle-hdwallet-provider": "^1.0.6",
+    "web3": "^1.0.0-beta.52"
   }
 }

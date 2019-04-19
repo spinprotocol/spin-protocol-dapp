@@ -11,7 +11,17 @@ interface IEscrowAndFees {
 
   function setToken(IERC20 _token) external;
 
-  function setRegistrationFees(uint256[6] calldata _registrationFees) external;
+  function setRegistrationFees(
+    uint256 campaignRegistrationFee, 
+    uint256 productRegistrationFee
+  ) external;
+
+   function setRewardRatios(
+    uint256 customerRatio,
+    uint256 influencerRatio,
+    uint256 supplierRatio,
+    uint256 serviceProviderRatio
+  ) external;
 
   function setFeeCollector(address _feeCollector) external;
 

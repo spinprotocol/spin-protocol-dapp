@@ -37,6 +37,7 @@ contract ProductDB is Proxied {
   function create(
     uint256 productId,
     uint256 supplierId,
+    uint256 price,
     string calldata description
   )
     external
@@ -48,18 +49,21 @@ contract ProductDB is Proxied {
     // And push the new deal pointer to the list
     require(universalDB.pushNodeToLinkedList(CONTRACT_NAME_PRODUCT_DB, TABLE_KEY, productId), ERROR_ALREADY_EXIST); 
     universalDB.setUintStorage(CONTRACT_NAME_PRODUCT_DB, keccak256(abi.encodePacked(productId, "supplierId")), supplierId);
+    universalDB.setUintStorage(CONTRACT_NAME_PRODUCT_DB, keccak256(abi.encodePacked(productId, "price")), price);
     universalDB.setStringStorage(CONTRACT_NAME_PRODUCT_DB, keccak256(abi.encodePacked(productId, "description")), description);
     emit ProductCreated(productId);
   }
 
   function update(
     uint256 productId,
+    uint256 price,
     string calldata description
   )
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
     onlyExistentProduct(productId)
   {
+    universalDB.setUintStorage(CONTRACT_NAME_PRODUCT_DB, keccak256(abi.encodePacked(productId, "price")), price);
     universalDB.setStringStorage(CONTRACT_NAME_PRODUCT_DB, keccak256(abi.encodePacked(productId, "description")), description);
     emit ProductUpdated(productId, block.timestamp);
   }
@@ -67,9 +71,10 @@ contract ProductDB is Proxied {
   function get(uint256 productId)
     public
     onlyExistentProduct(productId)
-    view returns (uint256 supplierId, string memory description)
+    view returns (uint256 supplierId, uint256 price, string memory description)
   {
     supplierId = universalDB.getUintStorage(CONTRACT_NAME_PRODUCT_DB, keccak256(abi.encodePacked(productId, "supplierId")));
+    price = universalDB.getUintStorage(CONTRACT_NAME_PRODUCT_DB, keccak256(abi.encodePacked(productId, "price")));
     description = universalDB.getStringStorage(CONTRACT_NAME_PRODUCT_DB, keccak256(abi.encodePacked(productId, "description")));
   }
 

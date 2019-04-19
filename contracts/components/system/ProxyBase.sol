@@ -6,7 +6,7 @@ import "../auth/Admin.sol";
 
 /**
  * @title Proxy
- * @dev Manages & keeps every contract addresses in SpinProtocol system
+ * @dev Manages & keeps addresses of every contract in SpinProtocol system
  * @author Mustafa Morca - psychoplasma@gmail.com
  */
 contract ProxyBase is Admin, SystemContracts {
