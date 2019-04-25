@@ -13,8 +13,8 @@ const CONTRACT_NAME_ACTOR_DB = 'ActorDB';
 
 // Error messages from ActorDB contract
 const ERROR_ONLY_CONTRACT = 'Only specific contract';
-const ERROR_ALREADY_EXIST = 'Actor already exists';
-const ERROR_DOES_NOT_EXIST = 'Actor does not exist';
+const ERROR_ALREADY_EXIST = 'Item already exists';
+const ERROR_DOES_NOT_EXIST = 'Item does not exist';
 
   
 contract('ActorDB', ([creator, addr1, addr2, unauthorizedAddr, randomAddr]) => {
@@ -43,15 +43,14 @@ contract('ActorDB', ([creator, addr1, addr2, unauthorizedAddr, randomAddr]) => {
       await this.actorDB.setUniversalDB(randomAddr, {from: unauthorizedAddr}).should.be.rejected;
     });
 
-    it('does not allow an unauthorized address to create a new actor item in db', async () => {
+    it('does not allow an unauthorized address to create a new actor item', async () => {
       await this.actorDB.create(1, addr1, 'random_role', {from: unauthorizedAddr}).should.be.rejectedWith(ERROR_ONLY_CONTRACT);
     });
 
-    it('does not allow an unauthorized address to update an actor item in db', async () => {
+    it('does not allow an unauthorized address to update an actor item', async () => {
       let actorId = 1;
       await this.actorDB.create(actorId, addr1, 'fake_role').should.be.fulfilled;
       await this.actorDB.updateAddress(actorId, addr2, {from: unauthorizedAddr}).should.be.rejectedWith(ERROR_ONLY_CONTRACT);
-      await this.actorDB.updateSFame(actorId, 5434, {from: unauthorizedAddr}).should.be.rejectedWith(ERROR_ONLY_CONTRACT);
     });
   });
 
@@ -68,7 +67,7 @@ contract('ActorDB', ([creator, addr1, addr2, unauthorizedAddr, randomAddr]) => {
       universalDB.should.be.equal(randomAddr);
     });
 
-    it('creates a new actor item in db', async () => {
+    it('creates a new actor item', async () => {
       let actorId = 124;
       let actorAddress = addr1;
       let role = 'random_role';
@@ -81,19 +80,16 @@ contract('ActorDB', ([creator, addr1, addr2, unauthorizedAddr, randomAddr]) => {
       _role.should.be.equal(role);
     });
 
-    it('updates an actor item in db', async () => {
+    it('updates an actor item', async () => {
       let actorId = 124;
       let sfame = 123;
 
       await this.actorDB.create(actorId, addr1, 'random_role').should.be.fulfilled;
       await this.actorDB.updateAddress(actorId, addr2).should.be.fulfilled;
-      await this.actorDB.updateSFame(actorId, sfame).should.be.fulfilled;
 
       let _addr = await this.actorDB.getAddress(actorId);
-      let _sfame = await this.actorDB.getSFame(actorId);
 
       _addr.should.be.equal(addr2);
-      _sfame.toNumber().should.be.equal(sfame);
     });
   });
 
@@ -103,14 +99,13 @@ contract('ActorDB', ([creator, addr1, addr2, unauthorizedAddr, randomAddr]) => {
       await this.actorDB.create(1, ZERO_ADDRESS, 'fake_role').should.be.rejected;
     });
 
-    it('does not allow to create a duplicate item in db', async () => {
+    it('does not allow to create a duplicate item', async () => {
       await this.actorDB.create(1, addr1, 'fake_role').should.be.fulfilled;
       await this.actorDB.create(1, addr2, 'fake_role_2').should.be.rejectedWith(ERROR_ALREADY_EXIST);
     });
 
-    it('does not allow to update a non-existent actor item in db', async () => {
+    it('does not allow to update a non-existent actor item', async () => {
       await this.actorDB.updateAddress(123, addr2).should.be.rejectedWith(ERROR_DOES_NOT_EXIST);
-      await this.actorDB.updateSFame(123, 4562).should.be.rejectedWith(ERROR_DOES_NOT_EXIST);
     });
   });
 });

@@ -4,7 +4,7 @@ import "../libs/LinkedListLib.sol";
 
 /**
  * @title EternalStorage
- * @dev Holds all the necessary state variables to carry out the storage of any contract.
+ * @dev Holds all the neccessary state variables to carry out the storage of any contract.
  * @author Mustafa Morca - psychoplasma@gmail.com
  */
 contract EternalStorage {

@@ -4,7 +4,6 @@ import "../auth/SystemRoles.sol";
 import "../connectors/DBConnector.sol";
 import "../connectors/EscrowConnector.sol";
 import "../system/Proxied.sol";
-import "../../libs/SafeMath.sol";
 
 
 /**
@@ -13,7 +12,6 @@ import "../../libs/SafeMath.sol";
  * @author Mustafa Morca - psychoplasma@gmail.com
  */
 contract Registry is SystemRoles, EscrowConnector, DBConnector, Proxied {
-  using SafeMath for uint256;
 
   string constant private ERROR_ONLY_INFLUENCER = "Only influencer";
   string constant private ERROR_ONLY_SUPPLIER = "Only supplier";
@@ -24,8 +22,7 @@ contract Registry is SystemRoles, EscrowConnector, DBConnector, Proxied {
    * @dev Registers a user in SpinProtocol system with the given ethereum address and role
    * @param actorId uint256 Id of user to be registered
    * @param actorAddress uint256 Ethereum address of user to be registered
-   * @param role string Role of user in SpinProtocol.
-   * Possible values {'customer', 'influencer', 'supplier', 'service_provider', 'spin_protocol'}
+   * @param role string Role of user in SpinProtocol. Possible values {'customer', 'influencer', 'supplier', 'service_provider', 'spin_protocol'}
    */
   function registerActor(
     uint256 actorId,
@@ -59,7 +56,7 @@ contract Registry is SystemRoles, EscrowConnector, DBConnector, Proxied {
   {
     (address supplierAddress, string memory supplierRole) = actorDB.get(supplierId);
     require(checkRole(supplierRole, ROLE_SUPPLIER), ERROR_ONLY_SUPPLIER);
-    require(productDB.doesProductExist(productId), ERROR_PRODUCT_DOES_NOT_EXIST);
+    require(productDB.doesItemExist(productId), ERROR_PRODUCT_DOES_NOT_EXIST);
     campaignDB.create(campaignId, supplierId, productId, totalSupply, finishAt);
     escrow.chargeCampaignRegistrationFee(supplierAddress);
   }

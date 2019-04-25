@@ -59,7 +59,6 @@ contract EscrowAndFees is Proxied, SystemRoles, IEscrowAndFees {
     external
     onlyProxy
   {
-
     if (campaignRegistrationFee > 0) {
       registrationFees.campaign = campaignRegistrationFee;
     }
@@ -92,26 +91,26 @@ contract EscrowAndFees is Proxied, SystemRoles, IEscrowAndFees {
     rewardRatios.serviceProvider = serviceProviderRatio;
   }
 
-  function withdraw(uint256 amount)
+  function withdraw(address account, uint256 amount)
     external
     onlyProxy
   {
     require(token.balanceOf(address(this)) >= amount.add(totalLockedAmount));
-    require(token.transfer(msg.sender, amount));
+    require(token.transfer(account, amount));
   }
 
   function chargeCampaignRegistrationFee(address user)
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
   {
-    require(token.transferFrom(user, feeCollector, registrationFees.campaign));
+    _chargeFee(user, registrationFees.campaign);
   }
 
   function chargeProductRegistrationFee(address user)
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
   {
-    require(token.transferFrom(user, feeCollector, registrationFees.product));
+    _chargeFee(user, registrationFees.product);
   }
 
   function payBack(address to, uint256 amount)
@@ -147,5 +146,10 @@ contract EscrowAndFees is Proxied, SystemRoles, IEscrowAndFees {
       rewardRatios.supplier,
       rewardRatios.serviceProvider
     );
+  }
+
+  function _chargeFee(address account, uint256 fee) private {
+    require(token.transferFrom(account, feeCollector, fee));
+    emit ChargedFee(account, fee);
   }
 }

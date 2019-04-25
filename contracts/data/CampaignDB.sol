@@ -1,6 +1,6 @@
 pragma solidity 0.5.7;
 
-import "./UniversalDB.sol";
+import "./AbstractDB.sol";
 import "../components/system/Proxied.sol";
 
 
@@ -9,34 +9,20 @@ import "../components/system/Proxied.sol";
  * @dev Manages campaing storage
  * @author Mustafa Morca - psychoplasma@gmail.com
  */
-contract CampaignDB is Proxied {
-  UniversalDB public universalDB;
+contract CampaignDB is AbstractDB, Proxied {
 
   bytes32 private constant TABLE_KEY_CAMPAIGN = keccak256(abi.encodePacked("CampaignTable"));
   bytes32 private constant LINKED_LIST_KEY_DEAL = keccak256(abi.encodePacked("DealList"));
 
-  string private constant ERROR_CAMPAIGN_ALREADY_EXIST = "Campaign already exists";
-  string private constant ERROR_CAMPAIGN_DOES_NOT_EXIST = "Campaign does not exist";
   string private constant ERROR_DEAL_ALREADY_EXIST = "Deal already exists in this campaign";
   string private constant ERROR_SUPPLY_DEPLETED = "Campaign supply depleted";
 
   event CampaignCreated(uint256 indexed campaignId, uint256 indexed supplierId, uint256 indexed productId);
   event CampaignUpdated(uint256 indexed campaignId, uint256 updatedAt);
   
-  modifier onlyExistentCampaign(uint256 campaignId) {
-    require(doesCampaignExist(campaignId), ERROR_CAMPAIGN_DOES_NOT_EXIST);
-    _;
-  }
 
   constructor(UniversalDB _universalDB) public {
     setUniversalDB(_universalDB);
-  }
-
-  function setUniversalDB(UniversalDB _universalDB)
-    public
-    onlyAdmin
-  {
-    universalDB = _universalDB;
   }
 
   function create(
@@ -56,7 +42,7 @@ contract CampaignDB is Proxied {
     require(finishAt > block.timestamp);
     // Creates a linked list with the given keys, if it does not exist
     // And push the new deal pointer to the list
-    require(universalDB.pushNodeToLinkedList(CONTRACT_NAME_CAMPAIGN_DB, TABLE_KEY_CAMPAIGN, campaignId), ERROR_CAMPAIGN_ALREADY_EXIST);
+    require(universalDB.pushNodeToLinkedList(CONTRACT_NAME_CAMPAIGN_DB, TABLE_KEY_CAMPAIGN, campaignId), ERROR_ALREADY_EXIST);
     universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "supplierId")), supplierId);
     universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "productId")), productId);
     // Initial suppy is for reference
@@ -75,7 +61,7 @@ contract CampaignDB is Proxied {
   )
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
-    onlyExistentCampaign(campaignId)
+    onlyExistentItem(campaignId)
   {
     // Does not allow to set finish time in past
     require(finishAt > block.timestamp);
@@ -90,7 +76,7 @@ contract CampaignDB is Proxied {
   function addDeal(uint256 campaignId, uint256 dealId)
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
-    onlyExistentCampaign(campaignId)
+    onlyExistentItem(campaignId)
   {
     require(dealId > 0);
     // Add the deal id to deal linked list under this campaign item.
@@ -101,7 +87,7 @@ contract CampaignDB is Proxied {
   function decrementSupply(uint256 campaignId, uint256 amount)
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
-    onlyExistentCampaign(campaignId)
+    onlyExistentItem(campaignId)
   {
     uint256 currentSupply = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "currentSupply")));
     // If the current supply drops to zero, revert the transaction, because the product supply is already depleted
@@ -112,7 +98,7 @@ contract CampaignDB is Proxied {
 
   function get(uint256 campaignId)
     public
-    onlyExistentCampaign(campaignId)
+    onlyExistentItem(campaignId)
     view returns (uint256 supplierId, uint256 productId, uint256 createdAt, uint256 finishAt, uint256 totalSupply, uint256 currentSupply)
   {
     supplierId = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "supplierId")));
@@ -125,7 +111,7 @@ contract CampaignDB is Proxied {
 
   function getCurrentSupply(uint256 campaignId)
     public
-    onlyExistentCampaign(campaignId)
+    onlyExistentItem(campaignId)
     view returns (uint256)
   {
     return universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "currentSupply")));
@@ -133,7 +119,7 @@ contract CampaignDB is Proxied {
 
   function getTotalSupply(uint256 campaignId)
     public
-    onlyExistentCampaign(campaignId)
+    onlyExistentItem(campaignId)
     view returns (uint256)
   {
     return universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "totalSupply")));
@@ -141,7 +127,7 @@ contract CampaignDB is Proxied {
 
   function getDeals(uint256 campaignId)
     public
-    onlyExistentCampaign(campaignId)
+    onlyExistentItem(campaignId)
     view returns (uint256[] memory)
   {
     return universalDB.getNodes(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, LINKED_LIST_KEY_DEAL)));
@@ -149,7 +135,7 @@ contract CampaignDB is Proxied {
 
   function didCampaignEnd(uint256 campaignId)
     public
-    onlyExistentCampaign(campaignId)
+    onlyExistentItem(campaignId)
     view returns (bool)
   {
     return
@@ -157,9 +143,7 @@ contract CampaignDB is Proxied {
       universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "currentSupply"))) == 0;
   }
 
-  function doesCampaignExist(uint256 campaignId)
-    public view returns (bool)
-  {
+  function doesItemExist(uint256 campaignId) public view returns (bool) {
     return universalDB.doesNodeExist(CONTRACT_NAME_CAMPAIGN_DB, TABLE_KEY_CAMPAIGN, campaignId);
   }
 }

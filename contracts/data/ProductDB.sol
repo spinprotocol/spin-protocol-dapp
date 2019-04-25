@@ -1,6 +1,6 @@
 pragma solidity 0.5.7;
 
-import "./UniversalDB.sol";
+import "./AbstractDB.sol";
 import "../components/system/Proxied.sol";
 
 
@@ -9,29 +9,16 @@ import "../components/system/Proxied.sol";
  * @dev Manages product storage
  * @author Mustafa Morca - psychoplasma@gmail.com
  */
-contract ProductDB is Proxied {
-  UniversalDB public universalDB;
+contract ProductDB is AbstractDB, Proxied {
 
   bytes32 private constant TABLE_KEY = keccak256(abi.encodePacked("ProductTable"));
-
-  string private constant ERROR_ALREADY_EXIST = "Product already exists";
-  string private constant ERROR_DOES_NOT_EXIST = "Product does not exist";
 
   event ProductCreated(uint256 indexed productId);
   event ProductUpdated(uint256 indexed productId, uint256 updatedAt);
 
-  modifier onlyExistentProduct(uint256 productId) {
-    require(doesProductExist(productId), ERROR_DOES_NOT_EXIST);
-    _;
-  }
-
 
   constructor(UniversalDB _universalDB) public {
     setUniversalDB(_universalDB);
-  }
-
-  function setUniversalDB(UniversalDB _universalDB) public onlyAdmin {
-    universalDB = _universalDB;
   }
 
   function create(
@@ -61,7 +48,7 @@ contract ProductDB is Proxied {
   )
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
-    onlyExistentProduct(productId)
+    onlyExistentItem(productId)
   {
     universalDB.setUintStorage(CONTRACT_NAME_PRODUCT_DB, keccak256(abi.encodePacked(productId, "price")), price);
     universalDB.setStringStorage(CONTRACT_NAME_PRODUCT_DB, keccak256(abi.encodePacked(productId, "metadata")), metadata);
@@ -70,7 +57,7 @@ contract ProductDB is Proxied {
 
   function get(uint256 productId)
     public
-    onlyExistentProduct(productId)
+    onlyExistentItem(productId)
     view returns (uint256 supplierId, uint256 price, string memory metadata)
   {
     supplierId = universalDB.getUintStorage(CONTRACT_NAME_PRODUCT_DB, keccak256(abi.encodePacked(productId, "supplierId")));
@@ -78,7 +65,7 @@ contract ProductDB is Proxied {
     metadata = universalDB.getStringStorage(CONTRACT_NAME_PRODUCT_DB, keccak256(abi.encodePacked(productId, "metadata")));
   }
 
-  function doesProductExist(uint256 productId) public view returns (bool) {
+  function doesItemExist(uint256 productId) public view returns (bool) {
     return universalDB.doesNodeExist(CONTRACT_NAME_PRODUCT_DB, TABLE_KEY, productId);
   }
 }

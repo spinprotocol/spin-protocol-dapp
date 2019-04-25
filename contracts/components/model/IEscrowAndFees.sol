@@ -25,5 +25,5 @@ interface IEscrowAndFees {
 
   function setFeeCollector(address _feeCollector) external;
 
-  function withdraw(uint256 amount) external;
+  function withdraw(address account, uint256 amount) external;
 }

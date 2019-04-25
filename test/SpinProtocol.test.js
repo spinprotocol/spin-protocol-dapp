@@ -240,15 +240,14 @@ contract('SpinProtocol', ([creator, addr1, addr2, addr3, feeCollector, unauthori
     });
 
     it('releases R/S', async () => {
-      let purchaseId = 7523;
-      let purchaseAmount = 20;
+      let purchaseCount = 20;
       let campaignId = 2412;
       let finishAt = (await getCurrentTimestamp()) + 300;
       let totalSupply = 100;
       let productId = 4757;
       let productPrice = 10000;
       let productDescription = 'Fancy product';
-      let dealId = 234521;
+      let deal1Id = 234521;
       let dealRatio = 10;
       let supplierId = 1234;
       let influencerId = 1789231;
@@ -274,63 +273,36 @@ contract('SpinProtocol', ([creator, addr1, addr2, addr3, feeCollector, unauthori
       // Register a campaign
       await this.proxy.registerCampaign(campaignId, supplierId, productId, totalSupply, finishAt).should.be.fulfilled;
       // Create a deal
-      await this.proxy.attendCampaign(dealId, campaignId, influencerId, dealRatio).should.be.fulfilled;
+      await this.proxy.attendCampaign(deal1Id, campaignId, influencerId, dealRatio).should.be.fulfilled;
       // Create a deal
       await this.proxy.attendCampaign(deal2Id, campaignId, 5555, 10).should.be.fulfilled;
       // Create a deal
       await this.proxy.attendCampaign(deal3Id, campaignId, 7777, 10).should.be.fulfilled;
 
-      // Register a purchase
-      await this.proxy.recordPurchase(
-        purchaseId,
-        customerId,
-        campaignId,
-        dealId,
-        purchaseAmount,
-      ).should.be.fulfilled;
+      // Make a purchase from deal-1
+      await this.proxy.recordPurchase(23354, customerId, campaignId, deal1Id, purchaseCount).should.be.fulfilled;
+      // Make a purchase from deal-1
+      await this.proxy.recordPurchase(578, customerId, campaignId, deal1Id, purchaseCount).should.be.fulfilled;
+      // Make a purchase from deal-2
+      await this.proxy.recordPurchase(98274, customerId, campaignId, deal2Id, purchaseCount).should.be.fulfilled;
+      // Make a purchase from deal-3
+      await this.proxy.recordPurchase(345678, customerId, campaignId, deal3Id, purchaseCount).should.be.fulfilled;
 
-      // Register a purchase
-      await this.proxy.recordPurchase(
-        578,
-        customerId,
-        campaignId,
-        dealId,
-        purchaseAmount,
-      ).should.be.fulfilled;
-
-      // Register a purchase
-      await this.proxy.recordPurchase(
-        345678,
-        customerId,
-        campaignId,
-        deal3Id,
-        purchaseAmount,
-      ).should.be.fulfilled;
-
-      // Register a purchase
-      await this.proxy.recordPurchase(
-        98274,
-        customerId,
-        campaignId,
-        deal2Id,
-        purchaseAmount,
-      ).should.be.fulfilled;
-
+      // Wind block time forward to a time when the campaign ends
       await increaseTime(400);
+      // Release shares and rewards
+      await this.proxy.releaseRevenue(campaignId).should.be.fulfilled;
 
-      await this.proxy.releaseRevenueShares(campaignId).should.be.fulfilled;
+      let totalSaleCount = totalSupply - (await this.campaignDB.getCurrentSupply(campaignId)).toNumber();
 
-      totalSupply = (await this.campaignDB.getTotalSupply(campaignId)).toNumber();
-      let currentSupply = (await this.campaignDB.getCurrentSupply(campaignId)).toNumber();
-
-      let rs = calculateRS(totalSupply - currentSupply, productPrice, purchaseAmount * 2, dealRatio);
-
+      // Check balance for influencer-1
+      let rs = calculateRS(productPrice, totalSaleCount, purchaseCount * 2, dealRatio);
       influencerPostBalance = (await this.spinToken.balanceOf(influencerAddress)).toNumber();
       influencerPostBalance.should.be.equal(influencerPreBalance + rs);
     });
   });
 });
 
-function calculateRS(campaignSaleCount, productPrice, saleCount, ratio) {
-  return Number(productPrice * saleCount / campaignSaleCount / ratio);
+function calculateRS(productPrice, totalSaleCount, saleCount, dealRatio) {
+  return Number(totalSaleCount * productPrice * saleCount * dealRatio / 10000);
 }

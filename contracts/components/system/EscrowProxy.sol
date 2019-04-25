@@ -58,6 +58,6 @@ contract EscrowProxy is ProxyBase {
     external
     onlyAdmin
   {
-    IEscrowAndFees(addressOfEscrowAndFees()).withdraw(amount);
+    IEscrowAndFees(addressOfEscrowAndFees()).withdraw(msg.sender, amount);
   }
 }

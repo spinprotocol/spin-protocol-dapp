@@ -30,7 +30,7 @@ interface ISpinProtocol {
     uint256[] calldata purchaseAmounts
   ) external;
 
-  function releaseRevenueShares(uint256 campaignId) external;
+  function releaseRevenue(uint256 campaignId) external;
 
   function registerActor(
     uint256 actorId,

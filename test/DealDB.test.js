@@ -13,8 +13,8 @@ const CONTRACT_NAME_DEAL_DB = 'DealDB';
 
 // Error messages from DealDB contract
 const ERROR_ONLY_CONTRACT = 'Only specific contract';
-const ERROR_DEAL_ALREADY_EXIST = 'Deal already exists';
-const ERROR_DEAL_DOES_NOT_EXIST = 'Deal does not exist';
+const ERROR_DEAL_ALREADY_EXIST = 'Item already exists';
+const ERROR_DEAL_DOES_NOT_EXIST = 'Item does not exist';
 
   
 contract('DealDB', ([creator, addr1, addr2, unauthorizedAddr, randomAddr]) => {

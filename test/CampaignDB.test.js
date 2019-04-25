@@ -13,8 +13,8 @@ const CONTRACT_NAME_CAMPAIGN_DB = 'CampaignDB';
 
 // Error messages from CampaignDB contract
 const ERROR_ONLY_CONTRACT = 'Only specific contract';
-const ERROR_CAMPAIGN_ALREADY_EXIST = 'Campaign already exists';
-const ERROR_CAMPAIGN_DOES_NOT_EXIST = 'Campaign does not exist';
+const ERROR_CAMPAIGN_ALREADY_EXIST = 'Item already exists';
+const ERROR_CAMPAIGN_DOES_NOT_EXIST = 'Item does not exist';
 const ERROR_SUPPLY_DEPLETED = "Campaign supply depleted";
 
   

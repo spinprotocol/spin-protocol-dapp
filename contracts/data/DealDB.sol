@@ -1,6 +1,6 @@
 pragma solidity 0.5.7;
 
-import "./UniversalDB.sol";
+import "./AbstractDB.sol";
 import "../components/system/Proxied.sol";
 
 
@@ -9,32 +9,16 @@ import "../components/system/Proxied.sol";
  * @dev Manages deal storage
  * @author Mustafa Morca - psychoplasma@gmail.com
  */
-contract DealDB is Proxied {
-  UniversalDB public universalDB;
+contract DealDB is AbstractDB, Proxied {
 
   bytes32 private constant TABLE_KEY = keccak256(abi.encodePacked("DealTable"));
-
-  string private constant ERROR_ALREADY_EXIST = "Deal already exists";
-  string private constant ERROR_DOES_NOT_EXIST = "Deal does not exist";
 
   event DealCreated(uint256 indexed dealId, uint256 indexed influencerId, uint256 indexed campaignId);
   event DealUpdated(uint256 indexed dealId, uint256 updatedAt);
   
-  /**
-   * @dev Reverts if there is no deal record on database with the given id
-   * @param dealId uint256 Id of the deal
-   */
-  modifier onlyExistentDeal(uint256 dealId) {
-    require(doesDealExist(dealId), ERROR_DOES_NOT_EXIST);
-    _;
-  }
 
   constructor(UniversalDB _universalDB) public {
     setUniversalDB(_universalDB);
-  }
-
-  function setUniversalDB(UniversalDB _universalDB) public onlyAdmin {
-    universalDB = _universalDB;
   }
 
   function create(
@@ -62,7 +46,7 @@ contract DealDB is Proxied {
   function incrementSaleCount(uint256 dealId, uint256 amount)
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
-    onlyExistentDeal(dealId)
+    onlyExistentItem(dealId)
   {
     uint256 saleCount = universalDB.getUintStorage(CONTRACT_NAME_DEAL_DB, keccak256(abi.encodePacked(dealId, "saleCount")));
     // Assuming that there won't be as many sales as saleCount variable overflows
@@ -72,7 +56,7 @@ contract DealDB is Proxied {
 
   function get(uint256 dealId)
     public
-    onlyExistentDeal(dealId)
+    onlyExistentItem(dealId)
     view returns (uint256 influencerId, uint256 campaignId, uint256 createdAt, uint256 ratio, uint256 saleCount)
   {
     influencerId = universalDB.getUintStorage(CONTRACT_NAME_DEAL_DB, keccak256(abi.encodePacked(dealId, "influencerId")));
@@ -82,7 +66,7 @@ contract DealDB is Proxied {
     saleCount = universalDB.getUintStorage(CONTRACT_NAME_DEAL_DB, keccak256(abi.encodePacked(dealId, "saleCount")));
   }
 
-  function doesDealExist(uint256 dealId) public view returns (bool) {
+  function doesItemExist(uint256 dealId) public view returns (bool) {
     return universalDB.doesNodeExist(CONTRACT_NAME_DEAL_DB, TABLE_KEY, dealId);
   }
 }

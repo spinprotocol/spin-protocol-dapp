@@ -12,8 +12,8 @@ const CONTRACT_NAME_PURCHASE_DB = 'PurchaseDB';
 
 // Error messages from PurchaseDB contract
 const ERROR_ONLY_CONTRACT = 'Only specific contract';
-const ERROR_ALREADY_EXIST = 'Purchase already exists';
-const ERROR_DOES_NOT_EXIST = 'Purchase does not exist';
+const ERROR_ALREADY_EXIST = 'Item already exists';
+const ERROR_DOES_NOT_EXIST = 'Item does not exist';
 
 
 contract('PurchaseDB', ([creator, unauthorizedAddr, randomAddr]) => {
