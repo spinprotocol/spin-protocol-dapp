@@ -114,6 +114,14 @@ contract EscrowAndFees is Proxied, SystemRoles, IEscrowAndFees {
     require(token.transferFrom(user, feeCollector, registrationFees.product));
   }
 
+  function payBack(address to, uint256 amount)
+    external
+    onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
+  {
+    // totalLockedAmount = totalLockedAmount.sub(amount);
+    require(token.transfer(to, amount));
+  }
+
   function lock(address owner, uint256 amount)
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)

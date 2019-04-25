@@ -73,7 +73,7 @@ contract('CampaignDB', ([creator, addr1, addr2, unauthorizedAddr, randomAddr]) =
       let finishAt = (await getCurrentTimestamp()) + 100;
       let totalSupply = 10;
       await this.campaignDB.create(campaignId, 1, 1, totalSupply, finishAt).should.be.fulfilled;
-      await this.campaignDB.decrementSupply(campaignId, {from: unauthorizedAddr}).should.be.rejectedWith(ERROR_ONLY_CONTRACT);
+      await this.campaignDB.decrementSupply(campaignId, 1, {from: unauthorizedAddr}).should.be.rejectedWith(ERROR_ONLY_CONTRACT);
     });
   });
 
@@ -143,14 +143,14 @@ contract('CampaignDB', ([creator, addr1, addr2, unauthorizedAddr, randomAddr]) =
     it('decrements current supply of the campaign item', async () => {
       let campaignId = 1;
       let supply = 10;
+      let amount = 2;
       let finishAt = (await getCurrentTimestamp()) + 100;
 
       await this.campaignDB.create(campaignId, 1, 1, supply, finishAt).should.be.fulfilled;
-      await this.campaignDB.decrementSupply(campaignId).should.be.fulfilled;
-      await this.campaignDB.decrementSupply(campaignId).should.be.fulfilled;
+      await this.campaignDB.decrementSupply(campaignId, amount).should.be.fulfilled;
 
       let currentSupply = await this.campaignDB.getCurrentSupply(campaignId);
-      currentSupply.toNumber().should.be.equal(supply - 2);
+      currentSupply.toNumber().should.be.equal(supply - amount);
     });
   });
 
@@ -180,7 +180,7 @@ contract('CampaignDB', ([creator, addr1, addr2, unauthorizedAddr, randomAddr]) =
     });
 
     it('does not allow to decrement current supply of a non-existent campaign item', async () => {
-      await this.campaignDB.decrementSupply(1).should.be.rejectedWith(ERROR_CAMPAIGN_DOES_NOT_EXIST);
+      await this.campaignDB.decrementSupply(1, 5).should.be.rejectedWith(ERROR_CAMPAIGN_DOES_NOT_EXIST);
     });
 
     it('does not allow to decrement current supply if the total supply is depleted', async () => {
@@ -189,9 +189,9 @@ contract('CampaignDB', ([creator, addr1, addr2, unauthorizedAddr, randomAddr]) =
       let finishAt = (await getCurrentTimestamp()) + 100;
 
       await this.campaignDB.create(campaignId, 1, 1, supply, finishAt).should.be.fulfilled;
-      await this.campaignDB.decrementSupply(campaignId).should.be.fulfilled;
+      await this.campaignDB.decrementSupply(campaignId, 1).should.be.fulfilled;
       // The supply is depleted now, therefore this transaction should be rejected
-      await this.campaignDB.decrementSupply(campaignId).should.be.rejectedWith(ERROR_SUPPLY_DEPLETED);
+      await this.campaignDB.decrementSupply(campaignId, 1).should.be.rejectedWith(ERROR_SUPPLY_DEPLETED);
     });
   });
 });

@@ -98,15 +98,15 @@ contract CampaignDB is Proxied {
     require(universalDB.pushNodeToLinkedList(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, LINKED_LIST_KEY_DEAL)), dealId), ERROR_DEAL_ALREADY_EXIST);
   }
 
-  function decrementSupply(uint256 campaignId)
+  function decrementSupply(uint256 campaignId, uint256 amount)
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
     onlyExistentCampaign(campaignId)
   {
     uint256 currentSupply = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "currentSupply")));
     // If the current supply drops to zero, revert the transaction, because the product supply is already depleted
-    require(currentSupply > 0, ERROR_SUPPLY_DEPLETED);
-    universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "currentSupply")), currentSupply - 1);
+    require(currentSupply >= amount, ERROR_SUPPLY_DEPLETED);
+    universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "currentSupply")), currentSupply - amount);
     emit CampaignUpdated(campaignId, block.timestamp);
   }
 
@@ -142,18 +142,9 @@ contract CampaignDB is Proxied {
   function getDeals(uint256 campaignId)
     public
     onlyExistentCampaign(campaignId)
-    view returns (uint256[] memory deals)
+    view returns (uint256[] memory)
   {
-    bytes32 listKey = keccak256(abi.encodePacked(campaignId, LINKED_LIST_KEY_DEAL));
-    bool dir;
-    uint256 nextDeal;
-    uint256 i;
-    deals = new uint256[](universalDB.getLinkedListSize(CONTRACT_NAME_CAMPAIGN_DB, listKey));
-
-    do {
-      (dir, nextDeal) = universalDB.getAdjacent(CONTRACT_NAME_CAMPAIGN_DB, listKey, nextDeal, dir);
-      if (nextDeal > 0) {deals[i++] = nextDeal;}
-    } while (nextDeal != 0);
+    return universalDB.getNodes(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, LINKED_LIST_KEY_DEAL)));
   }
 
   function didCampaignEnd(uint256 campaignId)
@@ -162,7 +153,7 @@ contract CampaignDB is Proxied {
     view returns (bool)
   {
     return
-      universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "finishAt"))) > block.timestamp ||
+      universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "finishAt"))) < block.timestamp ||
       universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "currentSupply"))) == 0;
   }
 

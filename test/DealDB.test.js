@@ -50,7 +50,7 @@ contract('DealDB', ([creator, addr1, addr2, unauthorizedAddr, randomAddr]) => {
     it('does not allow an unauthorized address to increment sale count of a deal item', async () => {
       let dealId = 1;
       await this.dealDB.create(dealId, 1, 1, 1).should.be.fulfilled;
-      await this.dealDB.incrementSaleCount(dealId, {from: unauthorizedAddr}).should.be.rejectedWith(ERROR_ONLY_CONTRACT);
+      await this.dealDB.incrementSaleCount(dealId, 1, {from: unauthorizedAddr}).should.be.rejectedWith(ERROR_ONLY_CONTRACT);
     });
   });
 
@@ -88,13 +88,13 @@ contract('DealDB', ([creator, addr1, addr2, unauthorizedAddr, randomAddr]) => {
 
     it('increments sale count of a deal item', async () => {
       let dealId = 1;
+      let amount = 2;
 
       await this.dealDB.create(dealId, 1, 1, 1).should.be.fulfilled;
-      await this.dealDB.incrementSaleCount(dealId).should.be.fulfilled;
-      await this.dealDB.incrementSaleCount(dealId).should.be.fulfilled;
+      await this.dealDB.incrementSaleCount(dealId, amount).should.be.fulfilled;
 
       let res = await this.dealDB.get(dealId);
-      res['saleCount'].toNumber().should.be.equal(2);
+      res['saleCount'].toNumber().should.be.equal(amount);
     });
   });
 
@@ -111,7 +111,7 @@ contract('DealDB', ([creator, addr1, addr2, unauthorizedAddr, randomAddr]) => {
     });
 
     it('does not allow to increment sale count of a non-existent deal item in db', async () => {
-      await this.dealDB.incrementSaleCount(1).should.be.rejectedWith(ERROR_DEAL_DOES_NOT_EXIST);
+      await this.dealDB.incrementSaleCount(1, 5).should.be.rejectedWith(ERROR_DEAL_DOES_NOT_EXIST);
     });
   });
 });

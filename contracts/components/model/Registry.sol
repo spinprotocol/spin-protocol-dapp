@@ -4,6 +4,7 @@ import "../auth/SystemRoles.sol";
 import "../connectors/DBConnector.sol";
 import "../connectors/EscrowConnector.sol";
 import "../system/Proxied.sol";
+import "../../libs/SafeMath.sol";
 
 
 /**
@@ -12,6 +13,7 @@ import "../system/Proxied.sol";
  * @author Mustafa Morca - psychoplasma@gmail.com
  */
 contract Registry is SystemRoles, EscrowConnector, DBConnector, Proxied {
+  using SafeMath for uint256;
 
   string constant private ERROR_ONLY_INFLUENCER = "Only influencer";
   string constant private ERROR_ONLY_SUPPLIER = "Only supplier";
@@ -79,10 +81,9 @@ contract Registry is SystemRoles, EscrowConnector, DBConnector, Proxied {
   )
     external onlyProxy
   {
-    (address supplierAddress, string memory role) = actorDB.get(supplierId);
+    (,string memory role) = actorDB.get(supplierId);
     require(checkRole(role, ROLE_SUPPLIER), ERROR_ONLY_SUPPLIER);
     productDB.create(productId, supplierId, price, metadata);
-    escrow.chargeProductRegistrationFee(supplierAddress);
   }
 
   /**
@@ -105,7 +106,7 @@ contract Registry is SystemRoles, EscrowConnector, DBConnector, Proxied {
     (, string memory influencerRole) = actorDB.get(influencerId);
     // Allow only influencer role to attend a campaign
     require(checkRole(influencerRole, ROLE_INFLUENCER), ERROR_ONLY_INFLUENCER);
-    // Check if the campaign is still available
+    // Check if the campaign is still active
     require(!campaignDB.didCampaignEnd(campaignId), ERROR_CAMPAIGN_ENDED);
     // Create a new deal item
     dealDB.create(dealId, campaignId, influencerId, ratio);
@@ -114,25 +115,83 @@ contract Registry is SystemRoles, EscrowConnector, DBConnector, Proxied {
   }
 
   /**
-   * @dev Registers a new purchase. Therefore the campaign and 
-   * the influencer should already exist in the system before the deal registration.
-   * If the campaign has already ended the transaction will be reverted.
-   * @param campaignId uint256 Id of the campaign for this deal to be registered
+   * @dev Registers a new purchase.
+   * @param purchaseId uint256 Id of this purchase, should be generated off-chain
+   * @param customerId uint256 Id of the customer
+   * @param campaignId uint256 Id of the campaign that this purchased belongs
+   * @param dealId uint256 Id of the deal that this purchased is made through
+   * @param purchaseAmount uint256 Amount of purchased item in unit
    */
   function recordPurchase(
     uint256 purchaseId,
-    uint256 transactionId,
     uint256 customerId,
     uint256 campaignId,
     uint256 dealId,
-    uint256 purchaseAmount,
-    uint256 purchasedAt
+    uint256 purchaseAmount
   )
-    public onlyProxy
+    external onlyProxy
   {
-    purchaseDB.create(purchaseId, transactionId, customerId, campaignId, dealId, purchaseAmount, purchasedAt);
-    dealDB.incrementSaleCount(dealId);
-    campaignDB.decrementSupply(campaignId);
-    // TODO: Record purchase for the given customer under the given campagin
+    _recordPurchase(
+      purchaseId,
+      customerId,
+      campaignId,
+      dealId,
+      purchaseAmount
+    );
+  }
+
+  /**
+   * @dev Registers a new purchase.
+   * @param purchaseIds uint256[] Id of this purchase, should be generated off-chain
+   * @param customerIds uint256[] Id of the customer
+   * @param campaignIds uint256[] Id of the campaign that this purchased belongs
+   * @param dealIds uint256[] Id of the deal that this purchased is made through
+   * @param purchaseAmounts uint256[] Amount of purchased item in unit
+   */
+  function recordPurchaseBatch(
+    uint256[] calldata purchaseIds,
+    uint256[] calldata customerIds,
+    uint256[] calldata campaignIds,
+    uint256[] calldata dealIds,
+    uint256[] calldata purchaseAmounts
+  )
+    external onlyProxy
+  {
+    for (uint i = 0; i < purchaseIds.length; i++) {
+      _recordPurchase(
+        purchaseIds[i],
+        customerIds[i],
+        campaignIds[i],
+        dealIds[i],
+        purchaseAmounts[i]
+      );
+    }
+  }
+
+  /**
+   * @dev Registers a new purchase.
+   * @param purchaseId uint256 Id of this purchase, should be generated off-chain
+   * @param customerId uint256 Id of the customer
+   * @param campaignId uint256 Id of the campaign that this purchased belongs
+   * @param dealId uint256 Id of the deal that this purchased is made through
+   * @param purchaseAmount uint256 Amount of purchased item in unit
+   */
+  function _recordPurchase(
+    uint256 purchaseId,
+    uint256 customerId,
+    uint256 campaignId,
+    uint256 dealId,
+    uint256 purchaseAmount
+  )
+    internal
+  {
+    // Check if the campaign is still active
+    require(!campaignDB.didCampaignEnd(campaignId), ERROR_CAMPAIGN_ENDED);
+
+    dealDB.incrementSaleCount(dealId, purchaseAmount);
+    campaignDB.decrementSupply(campaignId, purchaseAmount);
+    purchaseDB.create(purchaseId, customerId, campaignId, dealId, purchaseAmount);
+
+    // FIXME: Assuming that payments are done to this contracts in tokens for each purchase
   }
 }

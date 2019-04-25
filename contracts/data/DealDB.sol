@@ -59,14 +59,14 @@ contract DealDB is Proxied {
     emit DealCreated(dealId, influencerId, campaignId);
   }
 
-  function incrementSaleCount(uint256 dealId)
+  function incrementSaleCount(uint256 dealId, uint256 amount)
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
     onlyExistentDeal(dealId)
   {
     uint256 saleCount = universalDB.getUintStorage(CONTRACT_NAME_DEAL_DB, keccak256(abi.encodePacked(dealId, "saleCount")));
     // Assuming that there won't be as many sales as saleCount variable overflows
-    universalDB.setUintStorage(CONTRACT_NAME_DEAL_DB, keccak256(abi.encodePacked(dealId, "saleCount")), saleCount + 1);
+    universalDB.setUintStorage(CONTRACT_NAME_DEAL_DB, keccak256(abi.encodePacked(dealId, "saleCount")), saleCount + amount);
     emit DealUpdated(dealId, block.timestamp);
   }
 

@@ -16,7 +16,7 @@ const ERROR_ALREADY_EXIST = 'Purchase already exists';
 const ERROR_DOES_NOT_EXIST = 'Purchase does not exist';
 
 
-contract('purchaseDB', ([creator, unauthorizedAddr, randomAddr]) => {
+contract('PurchaseDB', ([creator, unauthorizedAddr, randomAddr]) => {
 
   beforeEach(async () => {
     this.proxy = await Proxy.new();
@@ -43,7 +43,7 @@ contract('purchaseDB', ([creator, unauthorizedAddr, randomAddr]) => {
     });
 
     it('does not allow an unauthorized address to create a new purchase item in db', async () => {
-      await this.purchaseDB.create(1, 2, 3, 4, 5, 6, 7, {from: unauthorizedAddr}).should.be.rejectedWith(ERROR_ONLY_CONTRACT);
+      await this.purchaseDB.create(1, 2, 3, 4, 5, {from: unauthorizedAddr}).should.be.rejectedWith(ERROR_ONLY_CONTRACT);
     });
   });
 
@@ -60,47 +60,39 @@ contract('purchaseDB', ([creator, unauthorizedAddr, randomAddr]) => {
       universalDB.should.be.equal(randomAddr);
     });
 
-    it('creates a new purchase item in db', async () => {
+    it('creates a new purchase item', async () => {
       let purchaseId = 124;
       let campaignId = 345;
       let customerId = 123345;
       let dealId = 67543;
-      let transactionId = 23454;
       let purchaseAmount = 3581;
-      let purchasedAt = 98237461;
 
       await this.purchaseDB.create(
         purchaseId,
-        transactionId,
         customerId,
         campaignId,
         dealId,
-        purchaseAmount,
-        purchasedAt
+        purchaseAmount
       ).should.be.fulfilled;
 
-      let res = await this.purchaseDB.get(purchaseId);
-      res['campaignId'].toNumber().should.be.equal(campaignId);
+      let res = await this.purchaseDB.get(campaignId, purchaseId);
       res['customerId'].toNumber().should.be.equal(customerId);
       res['dealId'].toNumber().should.be.equal(dealId);
-      res['transactionId'].toNumber().should.be.equal(transactionId);
       res['purchaseAmount'].toNumber().should.be.equal(purchaseAmount);
-      res['purchasedAt'].toNumber().should.be.equal(purchasedAt);
     });
   });
 
   describe('PurchaseDB::Features::Negatives', () => {
     it('does not allow to create a purchase item with invalid parameters', async () => {
-      await this.purchaseDB.create(0, 1, 2, 3, 4, 5, 6).should.be.rejected;
-      await this.purchaseDB.create(1, 0, 2, 3, 4, 5, 6).should.be.rejected;
-      await this.purchaseDB.create(1, 2, 0, 3, 4, 5, 6).should.be.rejected;
-      await this.purchaseDB.create(1, 2, 3, 0, 4, 5, 6).should.be.rejected;
-      await this.purchaseDB.create(1, 2, 3, 4, 0, 5, 6).should.be.rejected;
+      await this.purchaseDB.create(0, 2, 3, 4, 5).should.be.rejected;
+      await this.purchaseDB.create(1, 0, 3, 4, 5).should.be.rejected;
+      await this.purchaseDB.create(1, 3, 0, 4, 5).should.be.rejected;
+      await this.purchaseDB.create(1, 3, 4, 0, 5).should.be.rejected;
     });
 
-    it('does not allow to create a duplicate item in db', async () => {
-      await this.purchaseDB.create(1, 2, 3, 4, 5, 6, 7).should.be.fulfilled;
-      await this.purchaseDB.create(1, 20, 30, 40, 50, 60, 70).should.be.rejectedWith(ERROR_ALREADY_EXIST);
+    it('does not allow to create a duplicate item', async () => {
+      await this.purchaseDB.create(1, 3, 4, 5, 6).should.be.fulfilled;
+      await this.purchaseDB.create(1, 30, 4, 50, 60).should.be.rejectedWith(ERROR_ALREADY_EXIST);
     });
   });
 });

@@ -177,6 +177,24 @@ contract UniversalDB is Proxied, EternalStorage {
     return linkedListStorage[keccak256(abi.encodePacked(contractName, key))].getAdjacent(nodeId, dir);
   }
 
+  function getNodes(
+    string memory contractName,
+    bytes32 key
+  )
+    public
+    view returns (uint256[] memory nodes)
+  {
+    uint256 nextNode;
+    uint256 i;
+    uint256 len = getLinkedListSize(contractName, key);
+    nodes = new uint256[](len);
+
+    do {
+      (,nextNode) = getAdjacent(contractName, key, nextNode, true);
+      if (nextNode > 0) {nodes[i++] = nextNode;}
+    } while (nextNode != 0 && i < len);
+  }
+
   function doesListExist(
     string memory contractName,
     bytes32 key

@@ -38,7 +38,7 @@ contract ProductDB is Proxied {
     uint256 productId,
     uint256 supplierId,
     uint256 price,
-    string calldata description
+    string calldata metadata
   )
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
@@ -50,32 +50,32 @@ contract ProductDB is Proxied {
     require(universalDB.pushNodeToLinkedList(CONTRACT_NAME_PRODUCT_DB, TABLE_KEY, productId), ERROR_ALREADY_EXIST); 
     universalDB.setUintStorage(CONTRACT_NAME_PRODUCT_DB, keccak256(abi.encodePacked(productId, "supplierId")), supplierId);
     universalDB.setUintStorage(CONTRACT_NAME_PRODUCT_DB, keccak256(abi.encodePacked(productId, "price")), price);
-    universalDB.setStringStorage(CONTRACT_NAME_PRODUCT_DB, keccak256(abi.encodePacked(productId, "description")), description);
+    universalDB.setStringStorage(CONTRACT_NAME_PRODUCT_DB, keccak256(abi.encodePacked(productId, "metadata")), metadata);
     emit ProductCreated(productId);
   }
 
   function update(
     uint256 productId,
     uint256 price,
-    string calldata description
+    string calldata metadata
   )
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
     onlyExistentProduct(productId)
   {
     universalDB.setUintStorage(CONTRACT_NAME_PRODUCT_DB, keccak256(abi.encodePacked(productId, "price")), price);
-    universalDB.setStringStorage(CONTRACT_NAME_PRODUCT_DB, keccak256(abi.encodePacked(productId, "description")), description);
+    universalDB.setStringStorage(CONTRACT_NAME_PRODUCT_DB, keccak256(abi.encodePacked(productId, "metadata")), metadata);
     emit ProductUpdated(productId, block.timestamp);
   }
 
   function get(uint256 productId)
     public
     onlyExistentProduct(productId)
-    view returns (uint256 supplierId, uint256 price, string memory description)
+    view returns (uint256 supplierId, uint256 price, string memory metadata)
   {
     supplierId = universalDB.getUintStorage(CONTRACT_NAME_PRODUCT_DB, keccak256(abi.encodePacked(productId, "supplierId")));
     price = universalDB.getUintStorage(CONTRACT_NAME_PRODUCT_DB, keccak256(abi.encodePacked(productId, "price")));
-    description = universalDB.getStringStorage(CONTRACT_NAME_PRODUCT_DB, keccak256(abi.encodePacked(productId, "description")));
+    metadata = universalDB.getStringStorage(CONTRACT_NAME_PRODUCT_DB, keccak256(abi.encodePacked(productId, "metadata")));
   }
 
   function doesProductExist(uint256 productId) public view returns (bool) {

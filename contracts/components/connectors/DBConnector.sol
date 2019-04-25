@@ -23,8 +23,8 @@ contract DBConnector is Admin {
 
   function setDataStore(
     ActorDB _actorDB,
-    DealDB _dealDB,
     CampaignDB _campaignDB,
+    DealDB _dealDB,
     ProductDB _productDB,
     PurchaseDB _purchaseDB
   )

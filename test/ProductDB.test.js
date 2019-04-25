@@ -77,7 +77,7 @@ contract('ProductDB', ([creator, unauthorizedAddr, randomAddr]) => {
       let res = await this.productDB.get(productId);
       res['supplierId'].toNumber().should.be.equal(supplierId);
       res['price'].toNumber().should.be.equal(price);
-      res['description'].should.be.equal(description);
+      res['metadata'].should.be.equal(description);
     });
 
     it('updates a product item in db', async () => {
@@ -92,7 +92,7 @@ contract('ProductDB', ([creator, unauthorizedAddr, randomAddr]) => {
 
       let res = await this.productDB.get(productId);
       res['price'].toNumber().should.be.equal(newPrice);
-      res['description'].should.be.equal(newDescription);
+      res['metadata'].should.be.equal(newDescription);
     });
   });
 

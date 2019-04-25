@@ -7,14 +7,27 @@ pragma solidity 0.5.7;
  */
 interface ISpinProtocol {
 
-  function recordPurchase(
+  function attendCampaign(
+    uint256 dealId,
     uint256 campaignId,
+    uint256 influencerId,
+    uint256 ratio
+  ) external;
+
+  function recordPurchase(
     uint256 purchaseId,
     uint256 customerId,
-    uint256 productId,
-    uint256 transactionId,
-    uint256 purchaseAmount,
-    uint256 purchasedAt
+    uint256 campaignId,
+    uint256 dealId,
+    uint256 purchaseAmount
+  ) external;
+
+  function recordPurchaseBatch(
+    uint256[] calldata purchaseIds,
+    uint256[] calldata customerIds,
+    uint256[] calldata campaignIds,
+    uint256[] calldata dealIds,
+    uint256[] calldata purchaseAmounts
   ) external;
 
   function releaseRevenueShares(uint256 campaignId) external;
@@ -28,15 +41,15 @@ interface ISpinProtocol {
   function registerCampaign(
     uint256 campaignId,
     uint256 supplierId,
-    uint256 influencerId,
     uint256 productId,
-    uint256 finishAt,
-    uint256 ratio
+    uint256 totalSupply,
+    uint256 finishAt
   ) external;
 
   function registerProduct(
     uint256 productId,
     uint256 supplierId,
-    string calldata description
+    uint256 price,
+    string calldata metadata
   ) external;
 }
