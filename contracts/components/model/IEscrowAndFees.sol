@@ -16,7 +16,7 @@ interface IEscrowAndFees {
     uint256 productRegistrationFee
   ) external;
 
-   function setRewardRatios(
+   function setShareAndRewardRatios(
     uint256 customerRatio,
     uint256 influencerRatio,
     uint256 supplierRatio,

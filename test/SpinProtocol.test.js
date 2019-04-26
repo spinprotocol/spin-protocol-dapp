@@ -27,11 +27,17 @@ const REGISTRATION_FEES = {
   campaign: new BigNumber(5),
   product: new BigNumber(10)
 };
+const SHARE_AND_REWARD_RATIOS = {
+  customerRatio: 500,
+  influencerRatio: 1000,
+  supplierRatio: 5000,
+  serviceProviderRatio: 2000
+};
 const ESCROW_INITIAL_FUNDING = new BigNumber(20000000);
 const USER_INITIAL_FUNDING = new BigNumber(10000);
 
   
-contract('SpinProtocol', ([creator, addr1, addr2, addr3, feeCollector, unauthorizedAddr, randomAddr]) => {
+contract('SpinProtocol', ([creator, addr1, addr2, addr3, addr4, addr5, addr6, feeCollector, unauthorizedAddr, randomAddr]) => {
 
   beforeEach(async () => {
     // Deploy system contracts
@@ -94,6 +100,13 @@ contract('SpinProtocol', ([creator, addr1, addr2, addr3, feeCollector, unauthori
       await this.proxy.setRegistrationFees(
         REGISTRATION_FEES.campaign,
         REGISTRATION_FEES.product
+      ).should.be.fulfilled;
+      // Set share & reward ratios
+      await this.proxy.setShareAndRewardRatios(
+        SHARE_AND_REWARD_RATIOS.customerRatio,
+        SHARE_AND_REWARD_RATIOS.influencerRatio,
+        SHARE_AND_REWARD_RATIOS.supplierRatio,
+        SHARE_AND_REWARD_RATIOS.serviceProviderRatio
       ).should.be.fulfilled;
       // Send some tokens to system user
       await this.spinToken.transfer(addr1, USER_INITIAL_FUNDING).should.be.fulfilled;
@@ -267,6 +280,7 @@ contract('SpinProtocol', ([creator, addr1, addr2, addr3, feeCollector, unauthori
       await this.proxy.registerActor(5555, unauthorizedAddr, SYSTEM_ROLES.influencer).should.be.fulfilled;
       await this.proxy.registerActor(7777, randomAddr, SYSTEM_ROLES.influencer).should.be.fulfilled;
       await this.proxy.registerActor(customerId, customerAddress, SYSTEM_ROLES.customer).should.be.fulfilled;
+      await this.proxy.registerActor(131231, randomAddr, SYSTEM_ROLES.customer).should.be.fulfilled;
 
       // Register a product
       await this.proxy.registerProduct(productId, supplierId, productPrice, productDescription).should.be.fulfilled;
@@ -286,7 +300,7 @@ contract('SpinProtocol', ([creator, addr1, addr2, addr3, feeCollector, unauthori
       // Make a purchase from deal-2
       await this.proxy.recordPurchase(98274, customerId, campaignId, deal2Id, purchaseCount).should.be.fulfilled;
       // Make a purchase from deal-3
-      await this.proxy.recordPurchase(345678, customerId, campaignId, deal3Id, purchaseCount).should.be.fulfilled;
+      await this.proxy.recordPurchase(345678, 131231, campaignId, deal3Id, purchaseCount).should.be.fulfilled;
 
       // Wind block time forward to a time when the campaign ends
       await increaseTime(400);
@@ -299,6 +313,60 @@ contract('SpinProtocol', ([creator, addr1, addr2, addr3, feeCollector, unauthori
       let rs = calculateRS(productPrice, totalSaleCount, purchaseCount * 2, dealRatio);
       influencerPostBalance = (await this.spinToken.balanceOf(influencerAddress)).toNumber();
       influencerPostBalance.should.be.equal(influencerPreBalance + rs);
+    });
+
+    it('releases customer rewards', async () => {
+      let purchaseCount = 20;
+      let campaignId = 2412;
+      let finishAt = (await getCurrentTimestamp()) + 300;
+      let totalSupply = 100;
+      let productId = 4757;
+      let productPrice = 10000;
+      let productDescription = 'Fancy product';
+      let dealId = 234521;
+      let dealRatio = 10;
+      let supplierId = 1234;
+      let influencerId = 1789231;
+      let customer1Id = 93735;
+      let customer2Id = 123142;
+      let customer3Id = 5676745;
+      let customer4Id = 23456;
+
+      // First register a supplier, influencer and a customer
+      await this.proxy.registerActor(supplierId, addr1, SYSTEM_ROLES.supplier).should.be.fulfilled;
+      await this.proxy.registerActor(influencerId, addr2, SYSTEM_ROLES.influencer).should.be.fulfilled;
+      await this.proxy.registerActor(customer1Id, addr3, SYSTEM_ROLES.customer).should.be.fulfilled;
+      await this.proxy.registerActor(customer2Id, addr4, SYSTEM_ROLES.customer).should.be.fulfilled;
+      await this.proxy.registerActor(customer3Id, addr5, SYSTEM_ROLES.customer).should.be.fulfilled;
+      await this.proxy.registerActor(customer4Id, addr6, SYSTEM_ROLES.customer).should.be.fulfilled;
+
+      // Register a product
+      await this.proxy.registerProduct(productId, supplierId, productPrice, productDescription).should.be.fulfilled;
+      // Register a campaign
+      await this.proxy.registerCampaign(campaignId, supplierId, productId, totalSupply, finishAt).should.be.fulfilled;
+      // Create a deal
+      await this.proxy.attendCampaign(dealId, campaignId, influencerId, dealRatio).should.be.fulfilled;
+
+      // Make a purchase as customer-1
+      await this.proxy.recordPurchase(23354, customer1Id, campaignId, dealId, purchaseCount).should.be.fulfilled;
+      // Make a purchase as customer-2
+      await this.proxy.recordPurchase(578, customer2Id, campaignId, dealId, purchaseCount).should.be.fulfilled;
+      // Make a purchase as customer-3
+      await this.proxy.recordPurchase(98274, customer3Id, campaignId, dealId, purchaseCount).should.be.fulfilled;
+      // Make a purchase as customer-4
+      await this.proxy.recordPurchase(345678, customer4Id, campaignId, dealId, purchaseCount).should.be.fulfilled;
+
+      // Wind block time forward to a time when the campaign ends
+      await increaseTime(400);
+      // Release shares and rewards
+      await this.proxy.releaseRewards(campaignId).should.be.fulfilled;
+
+      // let totalSaleCount = totalSupply - (await this.campaignDB.getCurrentSupply(campaignId)).toNumber();
+
+      // // Check balance for influencer-1
+      // let rs = calculateRS(productPrice, totalSaleCount, purchaseCount * 2, dealRatio);
+      // influencerPostBalance = (await this.spinToken.balanceOf(influencerAddress)).toNumber();
+      // influencerPostBalance.should.be.equal(influencerPreBalance + rs);
     });
   });
 });

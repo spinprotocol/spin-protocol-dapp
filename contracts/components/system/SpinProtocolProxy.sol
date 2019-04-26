@@ -71,6 +71,12 @@ contract SpinProtocolProxy is ProxyBase {
     ISpinProtocol(addressOfSpinProtocol()).releaseRevenue(campaignId);
   }
 
+  function releaseRewards(uint256 campaignId)
+    external onlyAdmin
+  {
+    ISpinProtocol(addressOfSpinProtocol()).releaseRewards(campaignId);
+  }
+
   function registerActor(
     uint256 actorId,
     address actorAddress,

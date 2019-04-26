@@ -31,7 +31,7 @@ contract EscrowAndFees is Proxied, SystemRoles, IEscrowAndFees {
     uint256 product;
   }
 
-  struct RewardRatios {
+  struct ShareAndRewardRatios {
     uint256 customer;
     uint256 influencer;
     uint256 supplier;
@@ -40,7 +40,7 @@ contract EscrowAndFees is Proxied, SystemRoles, IEscrowAndFees {
 
   RegistrationFees public registrationFees;
 
-  RewardRatios public rewardRatios;
+  ShareAndRewardRatios public shareAndRewardRatios;
 
   event ChargedFee(address indexed account, uint256 amount);
 
@@ -76,7 +76,7 @@ contract EscrowAndFees is Proxied, SystemRoles, IEscrowAndFees {
     feeCollector = _feeCollector;
   }
 
-  function setRewardRatios(
+  function setShareAndRewardRatios(
     uint256 customerRatio,
     uint256 influencerRatio,
     uint256 supplierRatio,
@@ -85,10 +85,10 @@ contract EscrowAndFees is Proxied, SystemRoles, IEscrowAndFees {
     external
     onlyProxy
   {
-    rewardRatios.customer = customerRatio;
-    rewardRatios.influencer = influencerRatio;
-    rewardRatios.supplier = supplierRatio;
-    rewardRatios.serviceProvider = serviceProviderRatio;
+    shareAndRewardRatios.customer = customerRatio;
+    shareAndRewardRatios.influencer = influencerRatio;
+    shareAndRewardRatios.supplier = supplierRatio;
+    shareAndRewardRatios.serviceProvider = serviceProviderRatio;
   }
 
   function withdraw(address account, uint256 amount)
@@ -139,12 +139,12 @@ contract EscrowAndFees is Proxied, SystemRoles, IEscrowAndFees {
     require(token.transfer(to, amount));
   }
 
-  function getRewardRatios() external view returns (uint256, uint256, uint256, uint256) {
+  function getShareAndRewardRatios() external view returns (uint256, uint256, uint256, uint256) {
     return (
-      rewardRatios.customer,
-      rewardRatios.influencer,
-      rewardRatios.supplier,
-      rewardRatios.serviceProvider
+      shareAndRewardRatios.customer,
+      shareAndRewardRatios.influencer,
+      shareAndRewardRatios.supplier,
+      shareAndRewardRatios.serviceProvider
     );
   }
 

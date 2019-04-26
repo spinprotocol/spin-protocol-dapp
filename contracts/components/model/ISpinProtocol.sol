@@ -32,6 +32,8 @@ interface ISpinProtocol {
 
   function releaseRevenue(uint256 campaignId) external;
 
+  function releaseRewards(uint256 campaignId) external;
+
   function registerActor(
     uint256 actorId,
     address actorAddress,

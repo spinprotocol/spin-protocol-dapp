@@ -30,7 +30,7 @@ contract EscrowProxy is ProxyBase {
     IEscrowAndFees(addressOfEscrowAndFees()).setRegistrationFees(campaignRegistrationFee, productRegistrationFee);
   }
 
-  function setRewardRatios(
+  function setShareAndRewardRatios(
     uint256 customerRatio,
     uint256 influencerRatio,
     uint256 supplierRatio,
@@ -39,7 +39,7 @@ contract EscrowProxy is ProxyBase {
     external
     onlyAdmin
   {
-    IEscrowAndFees(addressOfEscrowAndFees()).setRewardRatios(
+    IEscrowAndFees(addressOfEscrowAndFees()).setShareAndRewardRatios(
       customerRatio,
       influencerRatio,
       supplierRatio,
