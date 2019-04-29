@@ -21,7 +21,6 @@ contract RevenueShareAndRewards is EscrowConnector, DBConnector, Proxied {
    * Can be called by only Proxy contract
    * @param campaignId uint256 Id of the campaign
    */
-   // TODO: Need to mark distributed shares and rewards for the users
   function releaseRevenue(uint256 campaignId) external onlyProxy {
     // Get campaing data
     (
@@ -42,7 +41,7 @@ contract RevenueShareAndRewards is EscrowConnector, DBConnector, Proxied {
     // Calculate total revenue from the campaing
     uint256 revenue = _calculateRevenue(productId, campaignSaleCount);
     // Calculate and distribute shares to the influencers for each deal
-    _releaseInfluencerShares(campaignId, revenue, influencerShareMultiplier);
+    _releaseInfluencerShare(campaignId, revenue, influencerShareMultiplier);
     // Send the remaining revenue to the supplier
     _releaseSupplierShare(supplierId, revenue, supplierShareMultiplier);
   }
@@ -70,7 +69,7 @@ contract RevenueShareAndRewards is EscrowConnector, DBConnector, Proxied {
     // Calculate total revenue from the campaing
     uint256 revenue = _calculateRevenue(productId, campaignSaleCount);
     // Calculate and distribute rewards to the customers who has bought products in this campaign
-    _releaseCustomerRewards(campaignId, revenue);
+    _releaseCustomerReward(campaignId, revenue);
   }
 
   /**
@@ -80,7 +79,7 @@ contract RevenueShareAndRewards is EscrowConnector, DBConnector, Proxied {
    * @param influencerShareMultiplier uint256 A constant multiplier for share calculation
    */
    // FIXME: We may want to limit the number of deals under a campaign, because we may hit the block gas limit if there are too many deals due to iteration!!!
-  function _releaseInfluencerShares(uint256 campaignId, uint256 revenue, uint256 influencerShareMultiplier) private {
+  function _releaseInfluencerShare(uint256 campaignId, uint256 revenue, uint256 influencerShareMultiplier) private {
     // Get the all deals under this campaign
     uint256[] memory deals = campaignDB.getDeals(campaignId);
     // And distribute the shares for each deal's influencer
@@ -120,7 +119,7 @@ contract RevenueShareAndRewards is EscrowConnector, DBConnector, Proxied {
    * @param revenue uint256 Total revenue of this campaign
    */
    // FIXME: We need to think about the size of purchase list under this campaign (maybe we can limit this when recording purchases), because we may hit the block gas limit if there are too many items in the list!!!
-  function _releaseCustomerRewards(uint256 campaignId, uint256 revenue) private {
+  function _releaseCustomerReward(uint256 campaignId, uint256 revenue) private {
     (uint256 customerRewardRatio,,,) = escrow.getShareAndRewardRatios();
     // Get the all purchases under this campaign
     // Notice that getList() function gets only the references (ids) of the purchases
@@ -129,7 +128,7 @@ contract RevenueShareAndRewards is EscrowConnector, DBConnector, Proxied {
     // And distribute the rewards for each customer who purchased products from this campaign
     for (uint i = 0; i < purchases.length; i++) {
       (uint256 customerId,,uint256 purchaseAmount, bool isRewardable) = purchaseDB.get(campaignId, purchases[i]);
-      uint256 reward = _calculateReward(revenue, purchaseAmount, customerRewardRatio);
+      uint256 reward = _calculateCustomerReward(revenue, purchaseAmount, customerRewardRatio);
       // If the reward has already been paid back, just skip
       // And in order to save some gas if the reward is zero, skip
       if (isRewardable && reward > 0) {
@@ -179,7 +178,7 @@ contract RevenueShareAndRewards is EscrowConnector, DBConnector, Proxied {
    * @param rewardMultiplier uint256 Ratio constant for reward calculation. For a better granulity, multiplier should be multiplied by 100 always. For example 20% => 2000
    */
   // TODO: Implementation should be updated when the calculation model is finalized
-  function _calculateReward(uint256 revenue, uint256 purchaseCount, uint256 rewardMultiplier) private pure returns (uint256) {
-    return revenue.mul(purchaseCount).mul(rewardMultiplier).div(10000).div(1000);
+  function _calculateCustomerReward(uint256 revenue, uint256 purchaseCount, uint256 rewardMultiplier) private pure returns (uint256) {
+    return revenue.mul(purchaseCount).mul(rewardMultiplier).div(10000);
   }
 }
