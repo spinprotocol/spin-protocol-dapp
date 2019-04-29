@@ -27,10 +27,10 @@ const REGISTRATION_FEES = {
   campaign: new BigNumber(5),
   product: new BigNumber(10)
 };
-const SHARE_AND_REWARD_RATIOS = {
+const SHARE_AND_REWARD_MULTIPLIERS = {
   customerRatio: 500,
-  influencerRatio: 1000,
-  supplierRatio: 5000,
+  influencerRatio: 10,
+  supplierRatio: 50,
   serviceProviderRatio: 2000
 };
 const ESCROW_INITIAL_FUNDING = new BigNumber(20000000);
@@ -103,10 +103,10 @@ contract('SpinProtocol', ([creator, addr1, addr2, addr3, addr4, addr5, addr6, fe
       ).should.be.fulfilled;
       // Set share & reward ratios
       await this.proxy.setShareAndRewardRatios(
-        SHARE_AND_REWARD_RATIOS.customerRatio,
-        SHARE_AND_REWARD_RATIOS.influencerRatio,
-        SHARE_AND_REWARD_RATIOS.supplierRatio,
-        SHARE_AND_REWARD_RATIOS.serviceProviderRatio
+        SHARE_AND_REWARD_MULTIPLIERS.customerRatio,
+        SHARE_AND_REWARD_MULTIPLIERS.influencerRatio,
+        SHARE_AND_REWARD_MULTIPLIERS.supplierRatio,
+        SHARE_AND_REWARD_MULTIPLIERS.serviceProviderRatio
       ).should.be.fulfilled;
       // Send some tokens to system user
       await this.spinToken.transfer(addr1, USER_INITIAL_FUNDING).should.be.fulfilled;
@@ -268,8 +268,10 @@ contract('SpinProtocol', ([creator, addr1, addr2, addr3, addr4, addr5, addr6, fe
       let supplierAddress = addr1;
       let influencerAddress = addr2;
       let customerAddress = addr3;
-      let influencerPreBalance = (await this.spinToken.balanceOf(influencerAddress)).toNumber();
+      let influencerPreBalance;
       let influencerPostBalance;
+      let supplierPreBalance;
+      let supplierPostBalance;
 
       let deal2Id = 66666;
       let deal3Id = 88888;
@@ -302,6 +304,10 @@ contract('SpinProtocol', ([creator, addr1, addr2, addr3, addr4, addr5, addr6, fe
       // Make a purchase from deal-3
       await this.proxy.recordPurchase(345678, 131231, campaignId, deal3Id, purchaseCount).should.be.fulfilled;
 
+      // Get pre balances before share release
+      supplierPreBalance = (await this.spinToken.balanceOf(supplierAddress)).toNumber();
+      influencerPreBalance = (await this.spinToken.balanceOf(influencerAddress)).toNumber();
+
       // Wind block time forward to a time when the campaign ends
       await increaseTime(400);
       // Release shares and rewards
@@ -310,9 +316,14 @@ contract('SpinProtocol', ([creator, addr1, addr2, addr3, addr4, addr5, addr6, fe
       let totalSaleCount = totalSupply - (await this.campaignDB.getCurrentSupply(campaignId)).toNumber();
 
       // Check balance for influencer-1
-      let rs = calculateRS(productPrice, totalSaleCount, purchaseCount * 2, dealRatio);
+      let influencerShare = calculateInfluencerShare(productPrice, totalSaleCount, purchaseCount * 2, dealRatio, SHARE_AND_REWARD_MULTIPLIERS.influencerRatio);
       influencerPostBalance = (await this.spinToken.balanceOf(influencerAddress)).toNumber();
-      influencerPostBalance.should.be.equal(influencerPreBalance + rs);
+      influencerPostBalance.should.be.equal(influencerPreBalance + influencerShare);
+
+      // Check balance for supplier
+      let supplierShare = calculateSupplierShare(productPrice, totalSaleCount, SHARE_AND_REWARD_MULTIPLIERS.supplierRatio);
+      supplierPostBalance = (await this.spinToken.balanceOf(supplierAddress)).toNumber();
+      supplierPostBalance.should.be.equal(supplierPreBalance + supplierShare);
     });
 
     it('releases customer rewards', async () => {
@@ -364,13 +375,21 @@ contract('SpinProtocol', ([creator, addr1, addr2, addr3, addr4, addr5, addr6, fe
       // let totalSaleCount = totalSupply - (await this.campaignDB.getCurrentSupply(campaignId)).toNumber();
 
       // // Check balance for influencer-1
-      // let rs = calculateRS(productPrice, totalSaleCount, purchaseCount * 2, dealRatio);
+      // let rs = calculateInfluencerShare(productPrice, totalSaleCount, purchaseCount * 2, dealRatio);
       // influencerPostBalance = (await this.spinToken.balanceOf(influencerAddress)).toNumber();
       // influencerPostBalance.should.be.equal(influencerPreBalance + rs);
     });
   });
 });
 
-function calculateRS(productPrice, totalSaleCount, saleCount, dealRatio) {
-  return Number(totalSaleCount * productPrice * saleCount * dealRatio / 10000);
+function calculateInfluencerShare(productPrice, totalSaleCount, saleCount, dealRatio, multiplier) {
+  return Number(totalSaleCount * productPrice * saleCount * dealRatio / 10000 * multiplier / 10000);
+}
+
+function calculateSupplierShare(productPrice, totalSaleCount, supplierRatio) {
+  return Number(totalSaleCount * productPrice * supplierRatio / 10000);
+}
+
+function calculateCustomerReward(productPrice, totalSaleCount, purchaseCount, customerRatio) {
+  return Number(totalSaleCount * productPrice * purchaseCount * dealRatio / 10000 / 1000);
 }

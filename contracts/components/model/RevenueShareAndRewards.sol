@@ -36,13 +36,15 @@ contract RevenueShareAndRewards is EscrowConnector, DBConnector, Proxied {
     // Do not allow to release before the campaign ends
     require(finishAt < block.timestamp, ERROR_CAMPAIGN_NOT_ENDED);
 
+    (,uint256 influencerShareMultiplier, uint256 supplierShareMultiplier,) = escrow.getShareAndRewardRatios();
+
     uint256 campaignSaleCount = totalSupply.sub(currentSupply);
     // Calculate total revenue from the campaing
     uint256 revenue = _calculateRevenue(productId, campaignSaleCount);
     // Calculate and distribute shares to the influencers for each deal
-    _releaseInfluencerShares(campaignId, revenue);
+    _releaseInfluencerShares(campaignId, revenue, influencerShareMultiplier);
     // Send the remaining revenue to the supplier
-    _releaseSupplierShare(supplierId, revenue, campaignSaleCount);
+    _releaseSupplierShare(supplierId, revenue, supplierShareMultiplier);
   }
 
   /**
@@ -75,17 +77,19 @@ contract RevenueShareAndRewards is EscrowConnector, DBConnector, Proxied {
    * @dev Calculates and distribute the shares earned by influencers who made sales in this campaing.
    * @param campaignId uint256 Id of the campaign
    * @param revenue uint256 Total revenue of this campaign
+   * @param influencerShareMultiplier uint256 A constant multiplier for share calculation
    */
    // FIXME: We may want to limit the number of deals under a campaign, because we may hit the block gas limit if there are too many deals due to iteration!!!
-  function _releaseInfluencerShares(uint256 campaignId, uint256 revenue) private {
+  function _releaseInfluencerShares(uint256 campaignId, uint256 revenue, uint256 influencerShareMultiplier) private {
     // Get the all deals under this campaign
     uint256[] memory deals = campaignDB.getDeals(campaignId);
     // And distribute the shares for each deal's influencer
     for (uint i = 0; i < deals.length; i++) {
-      (uint256 influencerId,,,uint256 ratio, uint256 saleCount) = dealDB.get(deals[i]);
-      uint256 share = _calculateInfluencerShare(revenue, saleCount, ratio);
+      (uint256 influencerId,,,uint256 dealRatio, uint256 saleCount, bool isShareReleasable) = dealDB.get(deals[i]);
+      uint256 share = _calculateInfluencerShare(revenue, saleCount, dealRatio, influencerShareMultiplier);
       // In order to save some gas, do nothing if share is zero
-      if (share > 0) {
+      if (isShareReleasable && share > 0) {
+        dealDB.setShareReleased(deals[i]);
         escrow.payBack(actorDB.getAddress(influencerId), share);
       }
     }
@@ -95,11 +99,9 @@ contract RevenueShareAndRewards is EscrowConnector, DBConnector, Proxied {
    * @dev Distributes the supplier's share
    * @param supplierId uint256 Id of the campaign
    * @param revenue uint256 Total revenue of this campaign
-   * @param campaignSaleCount uint256 Total number of sale made in this campaign
    */
-  function _releaseSupplierShare(uint256 supplierId, uint256 revenue, uint256 campaignSaleCount) private {
-    (,,uint256 supplierShareRatio,) = escrow.getShareAndRewardRatios();
-    uint256 share = _calculateSupplierShare(revenue, campaignSaleCount, supplierShareRatio);
+  function _releaseSupplierShare(uint256 supplierId, uint256 revenue, uint256 supplierShareMultiplier) private {
+    uint256 share = _calculateSupplierShare(revenue, supplierShareMultiplier);
     // In order to save some gas, do nothing if reward is zero
     if (share > 0) {
       escrow.payBack(actorDB.getAddress(supplierId), share);
@@ -151,33 +153,33 @@ contract RevenueShareAndRewards is EscrowConnector, DBConnector, Proxied {
   /**
    * @dev Calculates the revenue share for a supplier
    * @param revenue uint256 Total revenue of this campaign
-   * @param campaignSaleCount uint256 Total number of sale made in this campaign
-   * @param ratio uint256 Some pre-defined ratio. Ratio should be multiplied by 100 always. For example 20% => 2000
+   * @param shareMultiplier uint256 Some pre-defined ratio. For a better granulity, ratio should be multiplied by 100 always. For example 20% => 2000
    */
   // TODO: Implementation should be updated when the calculation model is finalized
-  function _calculateSupplierShare(uint256 revenue, uint256 campaignSaleCount, uint256 ratio) private pure returns (uint256) {
-    return revenue.mul(campaignSaleCount).mul(ratio).div(10000).div(1000);
+  function _calculateSupplierShare(uint256 revenue, uint256 shareMultiplier) private pure returns (uint256) {
+    return revenue.mul(shareMultiplier).div(10000);
   }
 
   /**
    * @dev Calculates the revenue share for an influencer
    * @param revenue uint256 Total revenue of this campaign
    * @param saleCount uint256 Total number of sale made by an influencer in this campaign
-   * @param dealRatio uint256 Deal ratio agreed between suppiler and influencer for this campaign. Ratio should be multiplied by 100 always. For example 20% => 2000
+   * @param dealRatio uint256 Deal ratio agreed between suppiler and influencer for this campaign. For a better granulity, ratio should be multiplied by 100 always. For example 20% => 2000
+   * @param shareMultiplier uint256 A constant multiplier for share calculation
    */
   // TODO: Implementation should be updated  when the calculation model is finalized
-  function _calculateInfluencerShare(uint256 revenue, uint256 saleCount, uint256 dealRatio) private pure returns (uint256) {
-    return revenue.mul(saleCount).mul(dealRatio).div(10000);
+  function _calculateInfluencerShare(uint256 revenue, uint256 saleCount, uint256 dealRatio, uint256 shareMultiplier) private pure returns (uint256) {
+    return revenue.mul(saleCount).mul(dealRatio).div(10000).mul(shareMultiplier).div(10000);
   }
 
   /**
    * @dev Calculates the amount of reward earned by a customer
    * @param revenue uint256 Total revenue of this campaign
    * @param purchaseCount uint256 Total number of purchase made by a customer in this campaign
-   * @param ratio uint256 Ratio constant for reward calculation 
+   * @param rewardMultiplier uint256 Ratio constant for reward calculation. For a better granulity, multiplier should be multiplied by 100 always. For example 20% => 2000
    */
   // TODO: Implementation should be updated when the calculation model is finalized
-  function _calculateReward(uint256 revenue, uint256 purchaseCount, uint256 ratio) private pure returns (uint256) {
-    return revenue.mul(purchaseCount).mul(ratio).div(10000).div(1000);
+  function _calculateReward(uint256 revenue, uint256 purchaseCount, uint256 rewardMultiplier) private pure returns (uint256) {
+    return revenue.mul(purchaseCount).mul(rewardMultiplier).div(10000).div(1000);
   }
 }
