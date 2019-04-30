@@ -1,4 +1,5 @@
 const HDWalletProvider = require('truffle-hdwallet-provider');
+const PrivateKeyConnector = require('connect-privkey-to-provider');
 const credentials = require('./credentials.json');
 
 module.exports = {
@@ -33,6 +34,14 @@ module.exports = {
       gasPrice: 21000000000,  // Gas price on deployment
       confirmations: 5,       // # of confs to wait between deployments. (default: 0)
       timeoutBlocks: 50,      // # of blocks before a deployment times out  (minimum/default: 50)
+    },
+    boabab: {
+      provider: new PrivateKeyConnector(credentials.privateKey.boabab, 'https://api.baobab.klaytn.net:8651'),
+      network_id: 1001,          // Rinkeby's id
+      gas: 20000000,           // Rinkeby has a lower block limit than mainnet
+      gasPrice: null,  // Gas price on deployment
+      confirmations: 5,       // # of confs to wait between deployments. (default: 0)
+      timeoutBlocks: 50,      // # of blocks before a deployment times out  (minimum/default: 50)
     }
   },
   mocha: {
@@ -46,7 +55,7 @@ module.exports = {
   },
   compilers: {
     solc: {
-      version: "0.5.7",    // Fetch exact version from solc-bin (default: truffle's version)
+      version: "0.4.24",    // Fetch exact version from solc-bin (default: truffle's version)
       settings: {          // See the solidity docs for advice about optimization and evmVersion
        optimizer: {
           enabled: true,

@@ -1,4 +1,4 @@
-pragma solidity 0.5.7;
+pragma solidity 0.4.24;
 
 import "./AbstractDB.sol";
 import "../components/system/Proxied.sol";
@@ -25,7 +25,7 @@ contract ProductDB is AbstractDB, Proxied {
     uint256 productId,
     uint256 supplierId,
     uint256 price,
-    string calldata metadata
+    string  metadata
   )
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
@@ -44,7 +44,7 @@ contract ProductDB is AbstractDB, Proxied {
   function update(
     uint256 productId,
     uint256 price,
-    string calldata metadata
+    string  metadata
   )
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)

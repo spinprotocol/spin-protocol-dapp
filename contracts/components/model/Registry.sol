@@ -1,4 +1,4 @@
-pragma solidity 0.5.7;
+pragma solidity 0.4.24;
 
 import "../auth/SystemRoles.sol";
 import "../connectors/DBConnector.sol";
@@ -27,7 +27,7 @@ contract Registry is SystemRoles, EscrowConnector, DBConnector, Proxied {
   function registerActor(
     uint256 actorId,
     address actorAddress,
-    string calldata role
+    string  role
   )
     external onlyProxy
   {
@@ -74,7 +74,7 @@ contract Registry is SystemRoles, EscrowConnector, DBConnector, Proxied {
     uint256 productId,
     uint256 supplierId,
     uint256 price,
-    string calldata metadata
+    string  metadata
   )
     external onlyProxy
   {
@@ -146,11 +146,11 @@ contract Registry is SystemRoles, EscrowConnector, DBConnector, Proxied {
    * @param purchaseAmounts uint256[] Amount of purchased item in unit
    */
   function recordPurchaseBatch(
-    uint256[] calldata purchaseIds,
-    uint256[] calldata customerIds,
-    uint256[] calldata campaignIds,
-    uint256[] calldata dealIds,
-    uint256[] calldata purchaseAmounts
+    uint256[]  purchaseIds,
+    uint256[]  customerIds,
+    uint256[]  campaignIds,
+    uint256[]  dealIds,
+    uint256[]  purchaseAmounts
   )
     external onlyProxy
   {

@@ -1,4 +1,4 @@
-pragma solidity 0.5.7;
+pragma solidity 0.4.24;
 
 import "./UniversalDB.sol";
 import "../components/auth/Admin.sol";

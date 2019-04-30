@@ -1,4 +1,4 @@
-pragma solidity 0.5.7;
+pragma solidity 0.4.24;
 
 import "./AbstractDB.sol";
 import "../components/system/Proxied.sol";
@@ -24,7 +24,7 @@ contract ActorDB is AbstractDB, Proxied {
   function create(
     uint256 actorId,
     address actorAddress,
-    string calldata role
+    string  role
   )
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)

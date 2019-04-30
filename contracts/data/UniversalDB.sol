@@ -1,4 +1,4 @@
-pragma solidity 0.5.7;
+pragma solidity 0.4.24;
 
 import "./EternalStorage.sol";
 import "../libs/LinkedListLib.sol";
@@ -15,7 +15,7 @@ contract UniversalDB is Proxied, EternalStorage {
   using LinkedListLib for LinkedListLib.LinkedList;
 
   function setIntStorage(
-    string calldata contractName,
+    string  contractName,
     bytes32 key,
     int256 value
   )
@@ -35,7 +35,7 @@ contract UniversalDB is Proxied, EternalStorage {
   }
 
   function setUintStorage(
-    string calldata contractName,
+    string  contractName,
     bytes32 key,
     uint256 value
   )
@@ -55,9 +55,9 @@ contract UniversalDB is Proxied, EternalStorage {
   }
 
   function setStringStorage(
-    string calldata contractName,
+    string  contractName,
     bytes32 key,
-    string calldata value
+    string  value
   )
     external
     onlyAuthorizedContract(contractName)
@@ -75,7 +75,7 @@ contract UniversalDB is Proxied, EternalStorage {
   }
 
   function setAddressStorage(
-    string calldata contractName,
+    string  contractName,
     bytes32 key,
     address value
   )
@@ -95,9 +95,9 @@ contract UniversalDB is Proxied, EternalStorage {
   }
 
   function setBytesStorage(
-    string calldata contractName,
+    string  contractName,
     bytes32 key,
-    bytes calldata value
+    bytes  value
   )
     external
     onlyAuthorizedContract(contractName)
@@ -115,7 +115,7 @@ contract UniversalDB is Proxied, EternalStorage {
   }
 
   function setBoolStorage(
-    string calldata contractName,
+    string  contractName,
     bytes32 key,
     bool value
   )
@@ -135,7 +135,7 @@ contract UniversalDB is Proxied, EternalStorage {
   }
 
   function pushNodeToLinkedList(
-    string calldata contractName,
+    string  contractName,
     bytes32 key,
     uint256 nodeId
   )
@@ -151,7 +151,7 @@ contract UniversalDB is Proxied, EternalStorage {
   }
 
   function removeNodeFromLinkedList(
-    string calldata contractName,
+    string  contractName,
     bytes32 key,
     uint256 nodeId
   )
