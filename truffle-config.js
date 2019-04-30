@@ -1,16 +1,36 @@
 const HDWalletProvider = require('truffle-hdwallet-provider');
 const PrivateKeyConnector = require('connect-privkey-to-provider');
 const credentials = require('./credentials.json');
+const { match } = require('ffp-js');
+
+const providerFactory = 
+  match
+    .case(network => network === 'rinkeby')(
+      _ => new HDWalletProvider(credentials.mnemonics.testnet, `https://${network}.infura.io/v3/${credentials.infuraKey}`))
+    .case(network => network === 'ropsten')(
+      _ => new HDWalletProvider(credentials.mnemonics.testnet, `https://${network}.infura.io/v3/${credentials.infuraKey}`))
+    .case(network => network === 'mainnet')(
+      _ => new HDWalletProvider(credentials.mnemonics.mainnet, `https://${network}.infura.io/v3/${credentials.infuraKey}`))
+    .case(network => network === 'baobab')(
+      _ => new PrivateKeyConnector(credentials.privateKey.testnet, `https://api.${network}.klaytn.net:8651`))
+    .case(network => network === 'klaytn')(
+      _ => new PrivateKeyConnector(credentials.privateKey.mainnet, `https://api.${network}.klaytn.net:8651`))
+    .else(_ => '')
+    
 
 module.exports = {
   networks: {
+
+    /**
+     * Ethereum Network
+     */
     development: {
      host: "127.0.0.1",     // Localhost (default: none)
      port: 8545,            // Standard Ethereum port (default: none)
      network_id: "*",       // Any network (default: none)
     },
     rinkeby: {
-      provider: () => new HDWalletProvider(credentials.mnemonics.testnet, `https://rinkeby.infura.io/v3/${credentials.infuraKey}`),
+      provider: providerFactory('rinkeby'),
       network_id: 4,       // Rinkeby's id
       gas: 7400000,        // Rinkeby has a lower block limit than mainnet
       confirmations: 5,    // # of confs to wait between deployments. (default: 0)
@@ -19,7 +39,7 @@ module.exports = {
       skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
     },
     ropsten: {
-      provider: () => new HDWalletProvider(credentials.mnemonics.testnet, `https://ropsten.infura.io/v3/${credentials.infuraKey}`),
+      provider: providerFactory('ropsten'),
       network_id: 3,       // Ropsten's id
       gas: 8000000,        // Ropsten has a lower block limit than mainnet
       gasPrice: 10000000000,  // Gas price on deployment
@@ -28,21 +48,31 @@ module.exports = {
       skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
     },
     mainnet: {
-      provider: () => new HDWalletProvider(credentials.mnemonics.mainnet, `https://mainnet.infura.io/v3/${credentials.infuraKey}`),
-      network_id: 1,          // Rinkeby's id
-      gas: 8000000,           // Rinkeby has a lower block limit than mainnet
-      gasPrice: 21000000000,  // Gas price on deployment
-      confirmations: 5,       // # of confs to wait between deployments. (default: 0)
-      timeoutBlocks: 50,      // # of blocks before a deployment times out  (minimum/default: 50)
+      provider: providerFactory('mainnet'),
+      network_id: 1,          
+      gas: 8000000,  
+      gasPrice: 21000000000,
+      confirmations: 5,
+      timeoutBlocks: 50,
     },
-    boabab: {
-      provider: new PrivateKeyConnector(credentials.privateKey.boabab, 'https://api.baobab.klaytn.net:8651'),
-      network_id: 1001,          // Rinkeby's id
-      gas: 20000000,           // Rinkeby has a lower block limit than mainnet
-      gasPrice: null,  // Gas price on deployment
-      confirmations: 5,       // # of confs to wait between deployments. (default: 0)
-      timeoutBlocks: 50,      // # of blocks before a deployment times out  (minimum/default: 50)
-    }
+
+    /**
+     * Klaytn Network
+     */
+    kalytn_boabab: {
+      provider: providerFactory('baobab'),
+      network_id: 1001,
+      gas: 20000000,
+      gasPrice: null,
+      confirmations: 5
+    },
+    kalytn_mainnet: {
+      provider: providerFactory('baobab'),
+      network_id: 1001,
+      gas: 20000000,
+      gasPrice: null,
+      confirmations: 5
+    },
   },
   mocha: {
     useColors: true,
