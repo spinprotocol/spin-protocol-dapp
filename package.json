@@ -7,7 +7,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "deploy": "truffle migrate --network $NETWORK > logs/deployments/$(date +%Y%m%d-%H%M%S).log",
+    "test": "truffle test $FILENAME --network test"
   },
   "author": "Mustafa Morca",
   "license": "ISC",
