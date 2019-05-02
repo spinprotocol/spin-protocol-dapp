@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.4.24;
 
 import "../model/EscrowAndFees.sol";
 import "../auth/Admin.sol";

@@ -1,4 +1,4 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.4.24;
 
 import "../../data/ActorDB.sol";
 import "../../data/CampaignDB.sol";
