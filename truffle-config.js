@@ -6,15 +6,15 @@ const { match } = require('ffp-js');
 const providerFactory = 
   match
     .case(network => network === 'rinkeby')(
-      _ => new HDWalletProvider(credentials.mnemonics.testnet, `https://${network}.infura.io/v3/${credentials.infuraKey}`))
+      network => new HDWalletProvider(credentials.ethereum.mnemonics.testnet, `https://${network}.infura.io/v3/${credentials.infuraKey}`))
     .case(network => network === 'ropsten')(
-      _ => new HDWalletProvider(credentials.mnemonics.testnet, `https://${network}.infura.io/v3/${credentials.infuraKey}`))
+      network => new HDWalletProvider(credentials.ethereum.mnemonics.testnet, `https://${network}.infura.io/v3/${credentials.infuraKey}`))
     .case(network => network === 'mainnet')(
-      _ => new HDWalletProvider(credentials.mnemonics.mainnet, `https://${network}.infura.io/v3/${credentials.infuraKey}`))
+      network => new HDWalletProvider(credentials.ethereum.mnemonics.mainnet, `https://${network}.infura.io/v3/${credentials.infuraKey}`))
     .case(network => network === 'baobab')(
-      _ => new PrivateKeyConnector(credentials.privateKey.testnet, `https://api.${network}.klaytn.net:8651`))
+      network => new PrivateKeyConnector(credentials.klaytn.privateKey.testnet, `https://api.${network}.klaytn.net:8651`))
     .case(network => network === 'klaytn')(
-      _ => new PrivateKeyConnector(credentials.privateKey.mainnet, `https://api.${network}.klaytn.net:8651`))
+      network => new PrivateKeyConnector(credentials.klaytn.privateKey.mainnet, `https://api.${network}.klaytn.net:8651`))
     .else(_ => '')
     
 
