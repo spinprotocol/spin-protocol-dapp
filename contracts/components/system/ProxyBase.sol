@@ -29,7 +29,6 @@ contract ProxyBase is Admin, SystemContracts {
   }
 
   function getContract(string memory name) public view returns (address) {
-    require(contracts[name] != address(0));
     return contracts[name];
   }
 

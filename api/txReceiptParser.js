@@ -1,13 +1,12 @@
-import { utils } from 'ethers';
+const { utils } = require('ethers');
 
-export function parseTxResponse(response) {
+exports.parseTxResponse = function(response) {
   return {
     hash: response.hash,
     timestamp: response.timestamp ? response.timestamp.toString(10) : '-',
     blockNumber: response.blockNumber ? response.blockNumber.toString(10) : 'in progress',
     blockHash: response.blockHash || 'in progress',
     confirmations: response.confirmations || 'in progress',
-    creates: response.creates || '-',
     to: response.to,
     from: response.from,
     data: response.data,
@@ -19,7 +18,7 @@ export function parseTxResponse(response) {
   };
 }
 
-export function parseTxReceipt(receipt) {
+exports.parseTxReceipt = function(receipt) {
   return {
     hash: receipt.transactionHash,
     blockNumber: receipt.blockNumber ? receipt.blockNumber.toString(10) : 'in progress',

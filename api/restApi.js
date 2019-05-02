@@ -1,7 +1,11 @@
-import axios from 'axios';
+const axios = require('axios');
 
-
-export async function get(url, headers) {
+/**
+ * Wrapper function for `axios.get()` which directly resolves with
+ * the data field of response object or rejects with the error
+ * message field of error object.
+ */
+exporta.get = async function(url, headers) {
   try {
     let res = await axios.get(url, {headers});
     return Promise.resolve(res.data);
@@ -10,7 +14,12 @@ export async function get(url, headers) {
   }
 }
 
-export async function post(url, data, headers) {
+/**
+ * Wrapper function for `axios.post()` which directly resolves with
+ * the data field of response object or rejects with the error
+ * message field of error object.
+ */
+exports.post = async function (url, data, headers) {
   try {
     let res = await axios.post(url, data, {headers});
     return Promise.resolve(res.data);
