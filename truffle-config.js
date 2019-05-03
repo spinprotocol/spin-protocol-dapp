@@ -59,20 +59,28 @@ module.exports = {
     /**
      * Klaytn Network
      */
-    kalytn_boabab: {
+    klaytn_boabab: {
       provider: providerFactory('baobab'),
       network_id: 1001,
       gas: 20000000,
       gasPrice: null,
       confirmations: 5
     },
-    kalytn_mainnet: {
+    klaytn_mainnet: {
       provider: providerFactory('baobab'),
       network_id: 1001,
       gas: 20000000,
       gasPrice: null,
       confirmations: 5
     },
+    klaytn_local: {
+      host: '127.0.0.1',
+      port: 8551,
+      from: '0x3dec1e5bd5220b13fc52e27e2332aa3fa756a06e', // enter your account address
+      network_id: '1001', // Baobab network id
+      gas: 20000000, // transaction gas limit
+      gasPrice: 25000000000, // gasPrice of Baobab is 25 Gpeb
+    }
   },
   mocha: {
     useColors: true,
