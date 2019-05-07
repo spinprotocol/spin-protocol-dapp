@@ -50,7 +50,6 @@ async function getNativeBalance(provider, address) {
  */
 async function getTokenBalance(token, address, options={format:true, decimals:18}) {
   let balance = await readContract(token, 'balanceOf', {owner: address});
-  balance = parseQueryResult(balance, query.outputTypes);
 
   if (options && options.format) {
     return formatToken(balance, options.decimals || 18);
@@ -90,25 +89,23 @@ async function getContractState(contract) {
  * @param {Contract} contract
  * @param {string} fnName Name of the function to be called
  * @param {*} params Parameters of the function to be called
- * @param {string|number} gasPrice
- * @param {string|number} gasLimit
- * @param {string|number} confirmations Number of blocks to wait after the tx is mined
+ * @param {{gasPrice:string,gasLimit:string|number,confirmations:string|number}} [overrides] All override params are optional
  * @returns {Promise<providers.TransactionResponse>} Tx response
  */
-async function writeContract(contract, fnName, params, gasPrice, gasLimit, confirmations) {
+async function writeContract(contract, fnName, params, overrides={gasPrice:undefined, gasLimit:undefined, confirmations:null}) {
   // Put the inputs in the same order as the function takes them
   const inputs = orderInputs(contract, fnName, params);
 
-  console.log('sendTxFn#inputs:', inputs);
+  console.log('writeContract#inputs:', inputs);
 
   let res = await contract[fnName](...inputs, {
-    gasPrice: utils.parseUnits(gasPrice, 'gwei').toHexString(),
-    gasLimit: gasLimit && !isNaN(gasLimit) ? Number(gasLimit) : undefined
+    gasPrice: overrides.gasPrice ? utils.parseUnits(overrides.gasPrice, 'gwei'): undefined,
+    gasLimit: overrides.gasLimit && !isNaN(overrides.gasLimit) ? Number(overrides.gasLimit) : undefined
   });
 
-  console.log('sendTxFn#txResponse:', res);
+  console.log('writeContract#txResponse:', res);
 
-  return res.wait(confirmations);
+  return res.wait(overrides.confirmations);
 }
 
 /**
