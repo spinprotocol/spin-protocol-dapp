@@ -28,19 +28,19 @@ const Deployer = (deployer) => {
     /* DB contracts */
     .then(_ => deployer.deploy(UniversalDB))
     .then(_ => fileWriter(UniversalDB))
-    // .then(_ => deployer.deploy(CampaignDB, UniversalDB.address))
-    // .then(_ => fileWriter(CampaignDB._json.contractName, CampaignDB._json.abi, CampaignDB.address))
-    // .then(_ => deployer.deploy(DealDB, UniversalDB.address))
-    // .then(_ => fileWriter(DealDB._json.contractName, DealDB._json.abi, DealDB.address))
-    // .then(_ => deployer.deploy(ProductDB, UniversalDB.address))
-    // .then(_ => fileWriter(ProductDB._json.contractName, ProductDB._json.abi, ProductDB.address))
-    // .then(_ => deployer.deploy(PurchaseDB, UniversalDB.address))
-    // .then(_ => fileWriter(PurchaseDB._json.contractName, PurchaseDB._json.abi, PurchaseDB.address))
-    // .then(_ => deployer.deploy(SpinProtocol))
+    .then(_ => deployer.deploy(CampaignDB, UniversalDB.address))
+    .then(_ => fileWriter(CampaignDB))
+    .then(_ => deployer.deploy(DealDB, UniversalDB.address))
+    .then(_ => fileWriter(DealDB))
+    .then(_ => deployer.deploy(ProductDB, UniversalDB.address))
+    .then(_ => fileWriter(ProductDB))
+    .then(_ => deployer.deploy(PurchaseDB, UniversalDB.address))
+    .then(_ => fileWriter(PurchaseDB))
     /* Logic contracts */
-    // .then(_ => fileWriter(SpinProtocol._json.contractName, SpinProtocol._json.abi, SpinProtocol.address))
-    // .then(_ => deployer.deploy(EscrowAndFees))
-    // .then(_ => fileWriter(EscrowAndFees._json.contractName, EscrowAndFees._json.abi, EscrowAndFees.address))
+    .then(_ => deployer.deploy(SpinProtocol))
+    .then(_ => fileWriter(SpinProtocol))
+    .then(_ => deployer.deploy(EscrowAndFees))
+    .then(_ => fileWriter(EscrowAndFees))
     .catch(e => Promise.reject(new Error('Deployer failed. Error:', e)));
 };
 

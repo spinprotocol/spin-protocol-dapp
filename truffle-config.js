@@ -59,7 +59,7 @@ module.exports = {
     /**
      * Klaytn Network
      */
-    klaytn_boabab: {
+    klaytn_baobab: {
       provider: providerFactory('baobab'),
       network_id: 1001,
       gas: 20000000,
