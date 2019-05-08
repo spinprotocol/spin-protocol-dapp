@@ -10,11 +10,11 @@ Starting migrations...
 
    Deploying 'Migrations'
    ----------------------
-   > transaction hash:    0x7e70c9eec127af1f82746f2aa9eb51fada66fc1b22df4d8d024755c3a872ee6c
-   > Blocks: 1            Seconds: 25
-   > contract address:    0xfeea2b8B40BbA439380773B13EB1CbC6097b9C41
+   > transaction hash:    0x7c2d39807fa521ae0cdab1fefd1ee0394a7c46de783814e8e4cba36482cf36c2
+   > Blocks: 5            Seconds: 73
+   > contract address:    0xBF443C1baCe54C5846306803Da8DB9200C8DC839
    > account:             0x0F548D8aAbAB2a0A9F73E14819ec599AdC32f24E
-   > balance:             4.413891134
+   > balance:             3.915748858
    > gas used:            221171
    > gas price:           10 gwei
    > value sent:          0 ETH
@@ -22,9 +22,9 @@ Starting migrations...
 
    Pausing for 3 confirmations...
    ------------------------------
-   > confirmation number: 1 (block: 5505398)
-   > confirmation number: 2 (block: 5505399)
-   > confirmation number: 3 (block: 5505400)
+   > confirmation number: 1 (block: 5554535)
+   > confirmation number: 2 (block: 5554536)
+   > confirmation number: 3 (block: 5554537)
 
    > Saving migration to chain.
    > Saving artifacts
@@ -37,29 +37,29 @@ Starting migrations...
 
    Deploying 'Proxy'
    -----------------
-   > transaction hash:    0x79d0432a5581f58f8a2adc494d344a91781976f88b3dbce9c362ffd8d4c40f8f
-   > Blocks: 0            Seconds: 21
-   > contract address:    0x5f10F5D3103bE9352809be96b37AAB83b4C6A2cb
+   > transaction hash:    0xd78f829f9c23eef1b5f74c805d9b81c6113c5d2615302b70b71a1e0b063fc518
+   > Blocks: 11           Seconds: 189
+   > contract address:    0xaA9e5eA51b7C3Db021Ce0F0Fc8974C398BBF17E8
    > account:             0x0F548D8aAbAB2a0A9F73E14819ec599AdC32f24E
-   > balance:             4.397170524
-   > gas used:            1630132
+   > balance:             3.899377038
+   > gas used:            1595253
    > gas price:           10 gwei
    > value sent:          0 ETH
-   > total cost:          0.01630132 ETH
+   > total cost:          0.01595253 ETH
 
    Pausing for 3 confirmations...
    ------------------------------
-   > confirmation number: 1 (block: 5505408)
-   > confirmation number: 2 (block: 5505409)
-   > confirmation number: 3 (block: 5505410)
+   > confirmation number: 1 (block: 5554554)
+   > confirmation number: 2 (block: 5554555)
+   > confirmation number: 4 (block: 5554557)
 
    Deploying 'UniversalDB'
    -----------------------
-   > transaction hash:    0x0fc16d846b2f49f32ba926501e754f6626913a9f51adcdb02c9333c0bd750ee3
-   > Blocks: 3            Seconds: 65
-   > contract address:    0x063e305760C4cefCa3839C8ac2083E374Eae2780
+   > transaction hash:    0x3404905886d1d6f8ad46616209df1b21c685dba737580893b2714763341435e9
+   > Blocks: 2            Seconds: 45
+   > contract address:    0xA34D269233E5fCFD1cC8587Ab6B84c31F246db41
    > account:             0x0F548D8aAbAB2a0A9F73E14819ec599AdC32f24E
-   > balance:             4.373625994
+   > balance:             3.875832508
    > gas used:            2354453
    > gas price:           10 gwei
    > value sent:          0 ETH
@@ -67,17 +67,16 @@ Starting migrations...
 
    Pausing for 3 confirmations...
    ------------------------------
-   > confirmation number: 1 (block: 5505415)
-   > confirmation number: 2 (block: 5505416)
-   > confirmation number: 3 (block: 5505417)
+   > confirmation number: 1 (block: 5554561)
+   > confirmation number: 3 (block: 5554563)
 
    Deploying 'ActorDB'
    -------------------
-   > transaction hash:    0x9507777dd449898304a0d3a7603c228d768b03ae8ba9b0f52d16786e811b93a5
-   > Blocks: 3            Seconds: 85
-   > contract address:    0xb19563Fa23AE2240e0a7eA191d5CdED17f5092AA
+   > transaction hash:    0x5ded7d39379db9774b5114b8fcf7afcda12277c67e93182e472af458395eb875
+   > Blocks: 1            Seconds: 49
+   > contract address:    0x1b0168555129a09E6B2dA832199B70c0965749f2
    > account:             0x0F548D8aAbAB2a0A9F73E14819ec599AdC32f24E
-   > balance:             4.355310514
+   > balance:             3.857517028
    > gas used:            1831548
    > gas price:           10 gwei
    > value sent:          0 ETH
@@ -85,35 +84,35 @@ Starting migrations...
 
    Pausing for 3 confirmations...
    ------------------------------
-   > confirmation number: 1 (block: 5505422)
-   > confirmation number: 2 (block: 5505423)
-   > confirmation number: 3 (block: 5505424)
+   > confirmation number: 1 (block: 5554567)
+   > confirmation number: 2 (block: 5554568)
+   > confirmation number: 3 (block: 5554569)
 
    Deploying 'CampaignDB'
    ----------------------
-   > transaction hash:    0x4f1d5e5550606ab92fbb78a70e223112b6d4a0422707cdecd7b073bf40cfea16
-   > Blocks: 2            Seconds: 29
-   > contract address:    0xAE13fB4085f2B971f1aa5340A5bcDAe030C64719
+   > transaction hash:    0xc61fd34bb6fc66af413de14295d5cfc80f11795f7a846128d955bddb06580087
+   > Blocks: 1            Seconds: 25
+   > contract address:    0xbE1Fd8e2ecb965f778cc8e600E927408753c9422
    > account:             0x0F548D8aAbAB2a0A9F73E14819ec599AdC32f24E
-   > balance:             4.321763314
-   > gas used:            3354720
+   > balance:             3.823969188
+   > gas used:            3354784
    > gas price:           10 gwei
    > value sent:          0 ETH
-   > total cost:          0.0335472 ETH
+   > total cost:          0.03354784 ETH
 
    Pausing for 3 confirmations...
    ------------------------------
-   > confirmation number: 1 (block: 5505429)
-   > confirmation number: 2 (block: 5505430)
-   > confirmation number: 3 (block: 5505431)
+   > confirmation number: 1 (block: 5554572)
+   > confirmation number: 2 (block: 5554573)
+   > confirmation number: 3 (block: 5554574)
 
    Deploying 'DealDB'
    ------------------
-   > transaction hash:    0xf5cc09080c29d96308e3b3700b63b93e3654f463010b6aa50fae4f5d1d787c0e
-   > Blocks: 2            Seconds: 33
-   > contract address:    0x3548FE892737a348c46AF5c074a1531F84a2bEA7
+   > transaction hash:    0xa919dc5ff53a39ab456d8d899f2eeb98c642715e5b56530be7378c297e3fbbd8
+   > Blocks: 5            Seconds: 81
+   > contract address:    0xb60856c8293fe9400ea8873327635b9AFe6022AB
    > account:             0x0F548D8aAbAB2a0A9F73E14819ec599AdC32f24E
-   > balance:             4.299481314
+   > balance:             3.801687188
    > gas used:            2228200
    > gas price:           10 gwei
    > value sent:          0 ETH
@@ -121,17 +120,17 @@ Starting migrations...
 
    Pausing for 3 confirmations...
    ------------------------------
-   > confirmation number: 1 (block: 5505435)
-   > confirmation number: 2 (block: 5505436)
-   > confirmation number: 4 (block: 5505438)
+   > confirmation number: 1 (block: 5554581)
+   > confirmation number: 2 (block: 5554582)
+   > confirmation number: 3 (block: 5554583)
 
    Deploying 'ProductDB'
    ---------------------
-   > transaction hash:    0xac8b6319427a0ad3cf81deb1fec6278c11d43cbd2bcfa2d19cb003fa54dfecbd
-   > Blocks: 5            Seconds: 89
-   > contract address:    0x8A2B02E15e6cD8dec18CEC137f3ae7e3709300Bf
+   > transaction hash:    0xceafbc372ff6f4bd2dd741ce34634aeb402889db431f14438b8c30d1f58d8482
+   > Blocks: 3            Seconds: 89
+   > contract address:    0x992d86b3181b5210f5D2aF5109F4C7729043B309
    > account:             0x0F548D8aAbAB2a0A9F73E14819ec599AdC32f24E
-   > balance:             4.281588394
+   > balance:             3.783794268
    > gas used:            1789292
    > gas price:           10 gwei
    > value sent:          0 ETH
@@ -139,17 +138,17 @@ Starting migrations...
 
    Pausing for 3 confirmations...
    ------------------------------
-   > confirmation number: 1 (block: 5505445)
-   > confirmation number: 2 (block: 5505446)
-   > confirmation number: 3 (block: 5505447)
+   > confirmation number: 1 (block: 5554589)
+   > confirmation number: 2 (block: 5554590)
+   > confirmation number: 3 (block: 5554591)
 
    Deploying 'PurchaseDB'
    ----------------------
-   > transaction hash:    0x6107f296c8d051d181d04a4202725b089fab853de1b8ea1a4f914459ef2559ef
-   > Blocks: 5            Seconds: 109
-   > contract address:    0x69e0EFdA7052C91B8f5421a295677c2be961EEA9
+   > transaction hash:    0x82df54e132e3626acc486d914d1c1db324ab112fbd897877c53d2c54841a25c6
+   > Blocks: 5            Seconds: 97
+   > contract address:    0x32c2b4561209Db7c39Ec6832cA591D25a16541D7
    > account:             0x0F548D8aAbAB2a0A9F73E14819ec599AdC32f24E
-   > balance:             4.258738004
+   > balance:             3.760943878
    > gas used:            2285039
    > gas price:           10 gwei
    > value sent:          0 ETH
@@ -157,17 +156,17 @@ Starting migrations...
 
    Pausing for 3 confirmations...
    ------------------------------
-   > confirmation number: 1 (block: 5505455)
-   > confirmation number: 2 (block: 5505456)
-   > confirmation number: 3 (block: 5505457)
+   > confirmation number: 1 (block: 5554599)
+   > confirmation number: 2 (block: 5554600)
+   > confirmation number: 3 (block: 5554601)
 
    Deploying 'SpinProtocol'
    ------------------------
-   > transaction hash:    0x18a5715e845cbc96b98c9b86fba4f71703bcce2510c33a81be0554d402d91761
-   > Blocks: 1            Seconds: 25
-   > contract address:    0xE82A2c82E4458bab5E69aD0cDcd564d4813c463e
+   > transaction hash:    0x5a7d1c86ba1637c5df9842844fae0ec5454766d798c1d3ce62d26aafbc32ccfc
+   > Blocks: 6            Seconds: 117
+   > contract address:    0x04Ed89530Be1D2d26bb0C57Af6621A74f3675549
    > account:             0x0F548D8aAbAB2a0A9F73E14819ec599AdC32f24E
-   > balance:             4.231592514
+   > balance:             3.733798388
    > gas used:            2714549
    > gas price:           10 gwei
    > value sent:          0 ETH
@@ -175,17 +174,16 @@ Starting migrations...
 
    Pausing for 3 confirmations...
    ------------------------------
-   > confirmation number: 1 (block: 5505461)
-   > confirmation number: 2 (block: 5505462)
-   > confirmation number: 3 (block: 5505463)
+   > confirmation number: 2 (block: 5554611)
+   > confirmation number: 3 (block: 5554612)
 
    Deploying 'EscrowAndFees'
    -------------------------
-   > transaction hash:    0xca78bf95c6cdb1f24c193bc1f0c25e8e3bdd8681dd916685a08d3cbcfaa12503
-   > Blocks: 4            Seconds: 101
-   > contract address:    0x922a7B83FB435A924dF429Af01B49C13D95e3FBA
+   > transaction hash:    0x292bcb08be0e50009947f724c947dfd60516812b9f00ee3945f074b967ac597c
+   > Blocks: 1            Seconds: 5
+   > contract address:    0x0beE630DC0Cdc1593d36b7C8334C529B52d070d2
    > account:             0x0F548D8aAbAB2a0A9F73E14819ec599AdC32f24E
-   > balance:             4.219784274
+   > balance:             3.721990148
    > gas used:            1180824
    > gas price:           10 gwei
    > value sent:          0 ETH
@@ -193,16 +191,17 @@ Starting migrations...
 
    Pausing for 3 confirmations...
    ------------------------------
-   > confirmation number: 2 (block: 5505470)
-   > confirmation number: 3 (block: 5505471)
+   > confirmation number: 1 (block: 5554615)
+   > confirmation number: 2 (block: 5554616)
+   > confirmation number: 3 (block: 5554617)
 
    > Saving migration to chain.
    > Saving artifacts
    -------------------------------------
-   > Total cost:          0.19368757 ETH
+   > Total cost:          0.19333942 ETH
 
 
 Summary
 =======
 > Total deployments:   10
-> Final cost:          0.19589928 ETH
+> Final cost:          0.19555113 ETH

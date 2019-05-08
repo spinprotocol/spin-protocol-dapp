@@ -8,7 +8,8 @@
   },
   "scripts": {
     "deploy": "truffle migrate --network $NETWORK > logs/deployments/$(date +%Y%m%d-%H%M%S).log",
-    "test": "truffle test $FILENAME --network test"
+    "test": "truffle test $FILENAME --network test",
+    "sys-init": "node ./scripts/SystemInitializer.js"
   },
   "author": "Mustafa Morca",
   "license": "ISC",

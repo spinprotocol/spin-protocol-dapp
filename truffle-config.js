@@ -9,7 +9,7 @@ module.exports = {
      network_id: "*",       // Any network (default: none)
     },
     rinkeby: {
-      provider: () => new HDWalletProvider(credentials.mnemonics.testnet, `https://rinkeby.infura.io/v3/${credentials.infuraKey}`),
+      provider: () => new HDWalletProvider(credentials.mnemonics.rinkeby, `https://rinkeby.infura.io/v3/${credentials.infuraKey}`),
       network_id: 4,       // Rinkeby's id
       gas: 7400000,        // Rinkeby has a lower block limit than mainnet
       confirmations: 5,    // # of confs to wait between deployments. (default: 0)
@@ -18,7 +18,7 @@ module.exports = {
       skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
     },
     ropsten: {
-      provider: () => new HDWalletProvider(credentials.mnemonics.testnet, `https://ropsten.infura.io/v3/${credentials.infuraKey}`),
+      provider: () => new HDWalletProvider(credentials.mnemonics.ropsten, `https://ropsten.infura.io/v3/${credentials.infuraKey}`),
       network_id: 3,       // Ropsten's id
       gas: 8000000,        // Ropsten has a lower block limit than mainnet
       gasPrice: 10000000000,  // Gas price on deployment
