@@ -68,7 +68,7 @@ module.exports = {
     },
     klaytn_mainnet: {
       provider: providerFactory('baobab'),
-      network_id: 1001,
+      network_id: 1,
       gas: 20000000,
       gasPrice: null,
       confirmations: 5
