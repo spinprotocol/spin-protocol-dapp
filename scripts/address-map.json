@@ -1,0 +1,74 @@
+{
+  "ropsten": {
+    "SpinProtocol": "0x04Ed89530Be1D2d26bb0C57Af6621A74f3675549",
+    "EscrowAndFees": "0x0beE630DC0Cdc1593d36b7C8334C529B52d070d2",
+    "Proxy": "0xaA9e5eA51b7C3Db021Ce0F0Fc8974C398BBF17E8",
+    "UniversalDB": "0xA34D269233E5fCFD1cC8587Ab6B84c31F246db41",
+    "ActorDB": "0x1b0168555129a09E6B2dA832199B70c0965749f2",
+    "CampaignDB": "0xbE1Fd8e2ecb965f778cc8e600E927408753c9422",
+    "DealDB": "0xb60856c8293fe9400ea8873327635b9AFe6022AB",
+    "ProductDB": "0x992d86b3181b5210f5D2aF5109F4C7729043B309",
+    "PurchaseDB": "0x32c2b4561209Db7c39Ec6832cA591D25a16541D7",
+    "SpinToken": "0x7ece7ebea80de3f16e3c0a36b49739ccf17978ba"
+  },
+  "rinkeby": {
+    "SpinProtocol": "",
+    "EscrowAndFees": "",
+    "Proxy": "",
+    "UniversalDB": "",
+    "ActorDB": "",
+    "CampaignDB": "",
+    "DealDB": "",
+    "ProductDB": "",
+    "PurchaseDB": "",
+    "SpinToken": ""
+  },
+  "ethereum-mainnet": {
+    "SpinProtocol": "",
+    "EscrowAndFees": "",
+    "Proxy": "",
+    "UniversalDB": "",
+    "ActorDB": "",
+    "CampaignDB": "",
+    "DealDB": "",
+    "ProductDB": "",
+    "PurchaseDB": "",
+    "SpinToken": ""
+  },
+  "baobab": {
+    "SpinProtocol": "",
+    "EscrowAndFees": "",
+    "Proxy": "",
+    "UniversalDB": "",
+    "ActorDB": "",
+    "CampaignDB": "",
+    "DealDB": "",
+    "ProductDB": "",
+    "PurchaseDB": "",
+    "SpinToken": "0x91d47fe9c5d892851060d6db6b31d264bb8a4d1b"
+  },
+  "aspen": {
+    "SpinProtocol": "",
+    "EscrowAndFees": "",
+    "Proxy": "",
+    "UniversalDB": "",
+    "ActorDB": "",
+    "CampaignDB": "",
+    "DealDB": "",
+    "ProductDB": "",
+    "PurchaseDB": "",
+    "SpinToken": ""
+  },
+  "klaytn-mainnet": {
+    "SpinProtocol": "",
+    "EscrowAndFees": "",
+    "Proxy": "",
+    "UniversalDB": "",
+    "ActorDB": "",
+    "CampaignDB": "",
+    "DealDB": "",
+    "ProductDB": "",
+    "PurchaseDB": "",
+    "SpinToken": ""
+  }
+}
