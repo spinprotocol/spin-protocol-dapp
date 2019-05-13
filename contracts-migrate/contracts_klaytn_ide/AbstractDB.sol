@@ -1,11 +1,12 @@
 pragma solidity ^0.4.24;
 
 import "./UniversalDB.sol";
-import "../components/auth/Admin.sol";
+import "./Admin.sol";
 
 
 /**
  * @title AbstractDB
+ * @author Mustafa Morca - psychoplasma@gmail.com
  */
 contract AbstractDB is Admin {
   UniversalDB public universalDB;

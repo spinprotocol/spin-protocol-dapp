@@ -1,9 +1,9 @@
 pragma solidity ^0.4.24;
 
-import "../../libs/SafeMath.sol";
-import "../../token/IERC20.sol";
-import "../auth/SystemRoles.sol";
-import "../system/Proxied.sol";
+import "./SafeMath.sol";
+import "./IERC20.sol";
+import "./SystemRoles.sol";
+import "./Proxied.sol";
 import "./IEscrowAndFees.sol";
 
 

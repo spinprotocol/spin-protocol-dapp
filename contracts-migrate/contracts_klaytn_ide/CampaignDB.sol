@@ -1,12 +1,13 @@
 pragma solidity ^0.4.24;
 
 import "./AbstractDB.sol";
-import "../components/system/Proxied.sol";
+import "./Proxied.sol";
 
 
 /**
  * @title CampaignDB
  * @dev Manages campaing storage
+ * @author Mustafa Morca - psychoplasma@gmail.com
  */
 contract CampaignDB is AbstractDB, Proxied {
 

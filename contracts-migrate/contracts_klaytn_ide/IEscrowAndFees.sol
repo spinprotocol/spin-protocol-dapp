@@ -1,6 +1,6 @@
 pragma solidity ^0.4.24;
 
-import "../../token/IERC20.sol";
+import "./IERC20.sol";
 
 
 /**

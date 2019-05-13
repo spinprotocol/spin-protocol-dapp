@@ -1,9 +1,9 @@
 pragma solidity ^0.4.24;
 
-import "../../libs/SafeMath.sol";
-import "../connectors/DBConnector.sol";
-import "../connectors/EscrowConnector.sol";
-import "../system/Proxied.sol";
+import "./SafeMath.sol";
+import "./DBConnector.sol";
+import "./EscrowConnector.sol";
+import "./Proxied.sol";
 
 
 /**

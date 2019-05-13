@@ -1,7 +1,7 @@
 pragma solidity ^0.4.24;
 
-import "../model/EscrowAndFees.sol";
-import "../auth/Admin.sol";
+import "./EscrowAndFees.sol";
+import "./Admin.sol";
 
 
 /**

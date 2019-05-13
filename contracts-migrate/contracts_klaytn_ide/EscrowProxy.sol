@@ -1,8 +1,8 @@
 pragma solidity ^0.4.24;
 
 import "./ProxyBase.sol";
-import "../../token/IERC20.sol";
-import "../model/IEscrowAndFees.sol";
+import "./IERC20.sol";
+import "./IEscrowAndFees.sol";
 
 
 /**

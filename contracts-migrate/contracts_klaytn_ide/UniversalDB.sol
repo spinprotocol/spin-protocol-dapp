@@ -1,14 +1,15 @@
 pragma solidity ^0.4.24;
 
 import "./EternalStorage.sol";
-import "../libs/LinkedListLib.sol";
-import "../components/system/Proxied.sol";
+import "./LinkedListLib.sol";
+import "./Proxied.sol";
 
 
 /**
  * @title Generic Eternal Storage Unit which can only be accessed through the proxied contracts
  * @dev This contract holds all the necessary state variables to carry out the storage of any contract.
  * This contract is not supposed to re-deployed after it's deployed very first time. It should be persistent on the chain.
+ * @author Mustafa Morca - psychoplasma@gmail.com
  */
 contract UniversalDB is Proxied, EternalStorage {
   using LinkedListLib for LinkedListLib.LinkedList;
