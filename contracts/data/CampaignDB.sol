@@ -11,46 +11,46 @@ import "../components/system/Proxied.sol";
 contract CampaignDB is AbstractDB, Proxied {
 
   bytes32 private constant TABLE_KEY_CAMPAIGN = keccak256(abi.encodePacked("CampaignTable"));
-  bytes32 private constant LINKED_LIST_KEY_DEAL = keccak256(abi.encodePacked("DealList"));
+  // bytes32 private constant LINKED_LIST_KEY_DEAL = keccak256(abi.encodePacked("DealList"));
 
   string private constant ERROR_DEAL_ALREADY_EXIST = "Deal already exists in this campaign";
   string private constant ERROR_SUPPLY_DEPLETED = "Campaign supply depleted";
 
-  event CampaignCreated(uint256 indexed campaignId, uint256 indexed supplierId, uint256 indexed productId);
+  // string private constant CAMPAIGN_STATE_REGISTERED = "Registered";
+  // string private constant CAMPAIGN_STATE_START = "Start";
+  // string private constant CAMPAIGN_STATE_END = "End";
+
+  event CampaignCreated(uint256 indexed campaignId, uint256 indexed revenueRatio, uint256 indexed productId);
   event CampaignUpdated(uint256 indexed campaignId, uint256 updatedAt);
   
-
   constructor(UniversalDB _universalDB) public {
     setUniversalDB(_universalDB);
   }
 
   function create(
     uint256 campaignId,
-    uint256 supplierId,
     uint256 productId,
-    uint256 totalSupply,
-    uint256 finishAt
+    uint256 revenueRatio,
+    uint256 totalSupply
   )
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
   {
     require(campaignId > 0);
-    require(supplierId > 0);
     require(productId > 0);
+    require(revenueRatio > 0);
     require(totalSupply > 0);
-    require(finishAt > block.timestamp);
-    // Creates a linked list with the given keys, if it does not exist
-    // And push the new deal pointer to the list
     require(universalDB.pushNodeToLinkedList(CONTRACT_NAME_CAMPAIGN_DB, TABLE_KEY_CAMPAIGN, campaignId), ERROR_ALREADY_EXIST);
-    universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "supplierId")), supplierId);
+
     universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "productId")), productId);
-    // Initial suppy is for reference
+    universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "revenueRatio")), revenueRatio);
+    
     universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "totalSupply")), totalSupply);
-    // Current supply is to keep track of change in supply
     universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "currentSupply")), totalSupply);
+
     universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "createdAt")), block.timestamp);
-    universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "finishAt")), finishAt);
-    emit CampaignCreated(campaignId, supplierId, productId);
+    universalDB.setStringStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "state")), "registered");
+    emit CampaignCreated(campaignId, revenueRatio, productId);
   }
 
   function update(
@@ -98,9 +98,9 @@ contract CampaignDB is AbstractDB, Proxied {
   function get(uint256 campaignId)
     public
     onlyExistentItem(campaignId)
-    view returns (uint256 supplierId, uint256 productId, uint256 createdAt, uint256 finishAt, uint256 totalSupply, uint256 currentSupply)
+    view returns (uint256 ratio, uint256 productId, uint256 createdAt, uint256 finishAt, uint256 totalSupply, uint256 currentSupply)
   {
-    supplierId = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "supplierId")));
+    ratio = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "ratio")));
     productId = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "productId")));
     createdAt = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "createdAt")));
     finishAt = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "finishAt")));

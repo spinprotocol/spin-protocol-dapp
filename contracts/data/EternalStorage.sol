@@ -13,5 +13,6 @@ contract EternalStorage {
   mapping(bytes32 => bytes) internal bytesStorage;
   mapping(bytes32 => bool) internal boolStorage;
   mapping(bytes32 => int256) internal intStorage;
+
   mapping(bytes32 => LinkedListLib.LinkedList) internal linkedListStorage;
 }

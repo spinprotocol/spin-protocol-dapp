@@ -9,5 +9,4 @@ import "./ISpinProtocol.sol";
  * @title SpinProtocol
  * @dev Implements business logic of SPIN Protocol
  */
-contract SpinProtocol is Proxied, ISpinProtocol, Registry {
-}
+contract SpinProtocol is Proxied, ISpinProtocol, Registry {}

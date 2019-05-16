@@ -7,7 +7,6 @@ import "../system/Proxied.sol";
 /**
  * @title Registry
  * @dev Manages user, product and campaign registrations
- * @author Mustafa Morca - psychoplasma@gmail.com
  */
 contract Registry is DBConnector, Proxied {
 
@@ -16,32 +15,55 @@ contract Registry is DBConnector, Proxied {
   string constant private ERROR_PRODUCT_DOES_NOT_EXIST = "No such product on DB";
   string constant private ERROR_CAMPAIGN_ENDED = "Campaign ended already";
 
-  /**
-   * @dev Registers a new campaign item. Supplier, influencer and product should be registered
-   * in the system before the campaign registration. Also finish time for the campaign
-   * should be in the future. In order to register a campaign, the supplier should have
-   * enough token balance to pay registration fee.
-   * @param campaignId uint256 Id of the campaign, should be generated off-chain
-   * @param supplierId uint256 Id of the supplier who creates this campaign
-   * @param productId uint256 Id of the product to be sold in this campaign
-   * @param totalSupply uint256 Total supply of the product to be sold in this campaign
-   * @param finishAt uint256 Finish time of the campaign in unix epoch time (in seconds)
-   */
-  function registerCampaign(
+  function createCampaign(
     uint256 campaignId,
-    uint256 supplierId,
     uint256 productId,
-    uint256 totalSupply,
-    uint256 finishAt
-  )
-    external onlyProxy
+    uint256 revenueRatio,
+    uint256 totalSupply
+  ) 
+    external onlyProxy 
   {
     // (address supplierAddress, string memory supplierRole) = actorDB.get(supplierId);
     // require(checkRole(supplierRole, ROLE_SUPPLIER), ERROR_ONLY_SUPPLIER);
     // require(productDB.doesItemExist(productId), ERROR_PRODUCT_DOES_NOT_EXIST);
-    campaignDB.create(campaignId, supplierId, productId, totalSupply, finishAt);
-    // escrow.chargeCampaignRegistrationFee(supplierAddress);
+    campaignDB.create(campaignId, productId, revenueRatio, totalSupply);
   }
+
+  function updateCampaign(
+    uint256 campaignId,
+    uint256 productId,
+    uint256 revenueRatio,
+    uint256 totalSupply
+  ) 
+    external onlyProxy
+  {
+
+  }
+
+  function updateSaleStart(
+    uint256 campaignId,
+    uint256[] appliedInfluencers,
+    uint256 startAt,
+    uint256 endAt
+  )
+    external onlyProxy
+  {
+
+  }
+
+  function updateSaleEnd() external {}
+  
+  function createRevenueLedger(
+    uint256 revenueLedgerId,
+    uint256[] influencerIds,
+    uint256[] totalSalesPrices,
+    uint256[] calculatedRevenues
+  )
+    external onlyProxy
+  {
+
+  }
+
 
   // /**
   //  * @dev Registers a new deal under the given campaign. Therefore the campaign and 

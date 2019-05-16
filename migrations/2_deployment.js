@@ -2,15 +2,12 @@
 const fs = require('fs');
 const { go, log } = require('ffp-js');
 
-const UniversalDB = artifacts.require('UniversalDB');
-const ActorDB = artifacts.require('ActorDB');
-const CampaignDB = artifacts.require('CampaignDB');
-const DealDB = artifacts.require('DealDB');
-const ProductDB = artifacts.require('ProductDB');
-const PurchaseDB = artifacts.require('PurchaseDB');
 const Proxy = artifacts.require('Proxy');
+const UniversalDB = artifacts.require('UniversalDB');
+const CampaignDB = artifacts.require('CampaignDB');
+const RevenueLedgerDB = artifacts.require('RevenueLedgerDB');
 const SpinProtocol = artifacts.require('SpinProtocol');
-const EscrowAndFees = artifacts.require('EscrowAndFees');
+
 
 const contractInfo = (contract) => ({ name: contract._json.contractName });
 const errorHandler = (err) => { if (err) throw err; }
@@ -30,19 +27,11 @@ const Deployer = (deployer) => {
     .then(_ => fileWriter(UniversalDB))
     .then(_ => deployer.deploy(CampaignDB, UniversalDB.address))
     .then(_ => fileWriter(CampaignDB))
-    // .then(_ => deployer.deploy(ActorDB, UniversalDB.address))
-    // .then(_ => fileWriter(ActorDB))
-    // .then(_ => deployer.deploy(DealDB, UniversalDB.address))
-    // .then(_ => fileWriter(DealDB))
-    // .then(_ => deployer.deploy(ProductDB, UniversalDB.address))
-    // .then(_ => fileWriter(ProductDB))
-    // .then(_ => deployer.deploy(PurchaseDB, UniversalDB.address))
-    // .then(_ => fileWriter(PurchaseDB))
+    .then(_ => deployer.deploy(RevenueLedgerDB, UniversalDB.address))
+    .then(_ => fileWriter(RevenueLedgerDB))
     /* Logic contracts */
     .then(_ => deployer.deploy(SpinProtocol))
     .then(_ => fileWriter(SpinProtocol))
-    // .then(_ => deployer.deploy(EscrowAndFees))
-    // .then(_ => fileWriter(EscrowAndFees))
     .catch(e => Promise.reject(new Error('Deployer failed. Error:', e)));
 };
 

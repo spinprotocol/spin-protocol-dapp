@@ -3,7 +3,6 @@ pragma solidity ^0.4.24;
 import "./ProxyBase.sol";
 import "../model/ISpinProtocol.sol";
 
-
 /**
  * @title SpinProtocolProxy
  * @dev Creates proxy gateway for SpinProtocol module so that
@@ -11,39 +10,71 @@ import "../model/ISpinProtocol.sol";
  */
 contract SpinProtocolProxy is ProxyBase {
 
-  // function recordPurchase(
-  //   uint256 purchaseId,
-  //   uint256 customerId,
-  //   uint256 campaignId,
-  //   uint256 dealId,
-  //   uint256 purchaseAmount
-  // )
-  //   external onlyAdmin
-  // {
-  //   ISpinProtocol(addressOfSpinProtocol()).recordPurchase(
-  //     purchaseId,
-  //     customerId,
-  //     campaignId,
-  //     dealId,
-  //     purchaseAmount
-  //   );
-  // }
-
-  function registerCampaign(
+  function createCampaign(
     uint256 campaignId,
-    uint256 supplierId,
     uint256 productId,
-    uint256 totalSupply,
-    uint256 finishAt
+    uint256 revenueRatio,
+    uint256 totalSupply
   )
     external onlyAdmin
   {
-    ISpinProtocol(addressOfSpinProtocol()).registerCampaign(
+    ISpinProtocol(addressOfSpinProtocol()).createCampaign(
       campaignId,
-      supplierId,
       productId,
-      totalSupply,
-      finishAt
+      revenueRatio,
+      totalSupply
+    );
+  }
+
+  function updateCampaign(
+    uint256 campaignId,
+    uint256 productId,
+    uint256 revenueRatio,
+    uint256 totalSupply
+  ) 
+    external onlyAdmin
+  {
+    ISpinProtocol(addressOfSpinProtocol()).updateCampaign(
+      campaignId,
+      productId,
+      revenueRatio,
+      totalSupply
+    );
+  }
+
+  function updateSaleStart(
+    uint256 campaignId,
+    uint256[] appliedInfluencers,
+    uint256 startAt,
+    uint256 endAt
+  ) 
+    external onlyAdmin
+  {
+    ISpinProtocol(addressOfSpinProtocol()).updateSaleStart(
+      campaignId,
+      appliedInfluencers,
+      startAt,
+      endAt
+    );
+  }
+
+  function updateSaleEnd() external onlyAdmin {
+    ISpinProtocol(addressOfSpinProtocol()).updateSaleEnd();
+  }
+  
+  function createRevenueLedger(
+    uint256 revenueLedgerId,
+    uint256[] influencerIds,
+    uint256[] totalSalesPrices,
+    uint256[] calculatedRevenues
+  ) 
+    external onlyAdmin
+  {
+    ISpinProtocol(addressOfSpinProtocol()).createRevenueLedger(
+      revenueLedgerId,
+      influencerIds,
+      totalSalesPrices,
+      calculatedRevenues
     );
   }
 }
