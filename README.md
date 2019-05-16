@@ -14,12 +14,4 @@ npm install
 ```bash
 # Deploy whole contracts
 truffle migrate --network <network_name>
-
-```
-
-### Initialize system after successful deployment
-```bash
-# Initialize the system
-NETWORK=<network_name> npm run sys-init
-
 ```
