@@ -19,7 +19,7 @@ contract RevenueLedgerDB is AbstractDB, Proxied {
     setUniversalDB(_universalDB);
   }
 
-  function create(
+  function createRevenueLedger(
     uint256 revenueLedgerId,
     uint256[] influencerIds,
     uint256[] totalSalesPrices,
@@ -38,7 +38,7 @@ contract RevenueLedgerDB is AbstractDB, Proxied {
     emit RevenueLedgerCreated(revenueLedgerId);
   }
 
-  function get(
+  function getRevenueLedger(
     uint256 revenueLedgerId
   )
     public
@@ -54,6 +54,13 @@ contract RevenueLedgerDB is AbstractDB, Proxied {
     totalSalesPrices = universalDB.getUintArrayStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "totalSalesPrices")));
     calculatedRevenues = universalDB.getUintArrayStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "calculatedRevenues")));
     createdAt = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(revenueLedgerId, "createdAt")));
+  }
+
+  function getRevenueLedgerList()
+    public
+    view returns (uint256[] memory)
+  {
+    return universalDB.getNodes(CONTRACT_NAME_REVENUE_LEDGER_DB, TABLE_KEY_REVENUE_LEDGER);
   }
 
   function doesItemExist(uint256 revenueLedgerId) public view returns (bool) {

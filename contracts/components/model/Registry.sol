@@ -23,7 +23,7 @@ contract Registry is DBConnector, Proxied {
   ) 
     external onlyProxy 
   {
-    campaignDB.create(campaignId, productId, revenueRatio, totalSupply);
+    campaignDB.createCampaign(campaignId, productId, revenueRatio, totalSupply);
   }
 
   function updateCampaign(
@@ -34,7 +34,7 @@ contract Registry is DBConnector, Proxied {
   ) 
     external onlyProxy
   {
-    campaignDB.update(campaignId, productId, revenueRatio, totalSupply);
+    campaignDB.updateCampaign(campaignId, productId, revenueRatio, totalSupply);
   }
 
   function updateSaleStart(
@@ -55,6 +55,14 @@ contract Registry is DBConnector, Proxied {
   {
     campaignDB.updateSaleEnd(campaignId);
   }
+
+  function deleteCampaign(
+    uint256 campaignId
+  ) 
+    external onlyProxy
+  {
+    campaignDB.deleteCampaign(campaignId);
+  }
   
   function createRevenueLedger(
     uint256 revenueLedgerId,
@@ -64,6 +72,6 @@ contract Registry is DBConnector, Proxied {
   )
     external onlyProxy
   {
-    revenueLedgerDB.create(revenueLedgerId, influencerIds, totalSalesPrices, calculatedRevenues);
+    revenueLedgerDB.createRevenueLedger(revenueLedgerId, influencerIds, totalSalesPrices, calculatedRevenues);
   }
 }

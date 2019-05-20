@@ -67,6 +67,16 @@ contract SpinProtocolProxy is ProxyBase {
       campaignId
     );
   }
+
+  function deleteCampaign(
+    uint256 campaignId
+  ) 
+    external onlyAdmin 
+  {
+    ISpinProtocol(addressOfSpinProtocol()).deleteCampaign(
+      campaignId
+    );
+  }
   
   function createRevenueLedger(
     uint256 revenueLedgerId,
