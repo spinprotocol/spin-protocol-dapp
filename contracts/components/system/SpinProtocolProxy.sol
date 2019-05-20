@@ -58,8 +58,14 @@ contract SpinProtocolProxy is ProxyBase {
     );
   }
 
-  function updateSaleEnd() external onlyAdmin {
-    ISpinProtocol(addressOfSpinProtocol()).updateSaleEnd();
+  function updateSaleEnd(
+    uint256 campaignId
+  ) 
+    external onlyAdmin 
+  {
+    ISpinProtocol(addressOfSpinProtocol()).updateSaleEnd(
+      campaignId
+    );
   }
   
   function createRevenueLedger(
