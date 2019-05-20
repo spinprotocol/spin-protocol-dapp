@@ -8,6 +8,7 @@ import "../libs/LinkedListLib.sol";
  */
 contract EternalStorage {
   mapping(bytes32 => uint256) internal uintStorage;
+  mapping(bytes32 => uint256[]) internal uintArrayStorage;
   mapping(bytes32 => string) internal stringStorage;
   mapping(bytes32 => address) internal addressStorage;
   mapping(bytes32 => bytes) internal bytesStorage;

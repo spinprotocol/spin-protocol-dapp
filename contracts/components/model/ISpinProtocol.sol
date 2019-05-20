@@ -26,7 +26,9 @@ interface ISpinProtocol {
     uint256 endAt
   ) external;
 
-  function updateSaleEnd() external;
+  function updateSaleEnd(
+    uint256 campaignId
+  ) external;
   
   function createRevenueLedger(
     uint256 revenueLedgerId,

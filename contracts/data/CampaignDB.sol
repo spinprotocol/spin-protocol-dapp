@@ -11,14 +11,10 @@ import "../components/system/Proxied.sol";
 contract CampaignDB is AbstractDB, Proxied {
 
   bytes32 private constant TABLE_KEY_CAMPAIGN = keccak256(abi.encodePacked("CampaignTable"));
-  // bytes32 private constant LINKED_LIST_KEY_DEAL = keccak256(abi.encodePacked("DealList"));
-
-  string private constant ERROR_DEAL_ALREADY_EXIST = "Deal already exists in this campaign";
-  string private constant ERROR_SUPPLY_DEPLETED = "Campaign supply depleted";
-
-  // string private constant CAMPAIGN_STATE_REGISTERED = "Registered";
-  // string private constant CAMPAIGN_STATE_START = "Start";
-  // string private constant CAMPAIGN_STATE_END = "End";
+  
+  string private constant CAMPAIGN_STATE_REGISTERED = "Registered";
+  string private constant CAMPAIGN_STATE_START = "Start";
+  string private constant CAMPAIGN_STATE_END = "End";
 
   event CampaignCreated(uint256 indexed campaignId, uint256 indexed revenueRatio, uint256 indexed productId);
   event CampaignUpdated(uint256 indexed campaignId, uint256 updatedAt);
@@ -41,105 +37,93 @@ contract CampaignDB is AbstractDB, Proxied {
     require(revenueRatio > 0);
     require(totalSupply > 0);
     require(universalDB.pushNodeToLinkedList(CONTRACT_NAME_CAMPAIGN_DB, TABLE_KEY_CAMPAIGN, campaignId), ERROR_ALREADY_EXIST);
-
+    
     universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "productId")), productId);
     universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "revenueRatio")), revenueRatio);
-    
     universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "totalSupply")), totalSupply);
-    universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "currentSupply")), totalSupply);
-
     universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "createdAt")), block.timestamp);
-    universalDB.setStringStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "state")), "registered");
+    universalDB.setStringStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "state")), CAMPAIGN_STATE_REGISTERED);
     emit CampaignCreated(campaignId, revenueRatio, productId);
   }
 
   function update(
     uint256 campaignId,
-    uint256 totalSupply,
-    uint256 finishAt
+    uint256 productId,
+    uint256 revenueRatio,
+    uint256 totalSupply
   )
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
     onlyExistentItem(campaignId)
   {
     // Does not allow to set finish time in past
-    require(finishAt > block.timestamp);
-    uint256 currentSupply = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "currentSupply")));
+    // require(finishAt > block.timestamp);
+    // uint256 currentSupply = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "currentSupply")));
     // Does not allow to set total supply something less than or equal to current supply
-    require(totalSupply > currentSupply);
-    universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "finishAt")), finishAt);
+    // require(totalSupply > currentSupply);
+    universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "productId")), productId);
+    universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "revenueRatio")), revenueRatio);
     universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "totalSupply")), totalSupply);
+    universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "updatedAt")), block.timestamp);
     emit CampaignUpdated(campaignId, block.timestamp);
   }
 
-  function addDeal(uint256 campaignId, uint256 dealId)
+  function updateSaleStart(
+    uint256 campaignId,
+    uint256[] appliedInfluencers,
+    uint256 startAt,
+    uint256 endAt
+  ) 
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
     onlyExistentItem(campaignId)
   {
-    require(dealId > 0);
-    // Add the deal id to deal linked list under this campaign item.
-    // This is only for cross-reference to DealDB with registered deals for this campaign.
-    require(universalDB.pushNodeToLinkedList(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, LINKED_LIST_KEY_DEAL)), dealId), ERROR_DEAL_ALREADY_EXIST);
+    universalDB.setUintArrayStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "appliedInfluencers")), appliedInfluencers);
+    universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "startAt")), startAt);
+    universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "endAt")), endAt);
+    universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "updatedAt")), block.timestamp);
+    universalDB.setStringStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "state")), CAMPAIGN_STATE_START);
+    emit CampaignUpdated(campaignId, block.timestamp);
   }
 
-  function decrementSupply(uint256 campaignId, uint256 amount)
+  function updateSaleEnd(
+    uint256 campaignId
+  ) 
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
     onlyExistentItem(campaignId)
   {
-    uint256 currentSupply = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "currentSupply")));
-    // If the current supply drops to zero, revert the transaction, because the product supply is already depleted
-    require(currentSupply >= amount, ERROR_SUPPLY_DEPLETED);
-    universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "currentSupply")), currentSupply - amount);
+    universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "updatedAt")), block.timestamp);
+    universalDB.setStringStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "state")), CAMPAIGN_STATE_END);
     emit CampaignUpdated(campaignId, block.timestamp);
   }
-
-  function get(uint256 campaignId)
+  
+  function get(
+    uint256 campaignId
+  )
     public
     onlyExistentItem(campaignId)
-    view returns (uint256 ratio, uint256 productId, uint256 createdAt, uint256 finishAt, uint256 totalSupply, uint256 currentSupply)
+    view returns (
+      uint256 productId, 
+      uint256 revenueRatio, 
+      uint256 totalSupply, 
+      uint256[] appliedInfluencers, 
+      uint256 startAt, 
+      uint256 endAt, 
+      string memory state, 
+      uint256 createdAt, 
+      uint256 updatedAt
+    )
   {
-    ratio = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "ratio")));
     productId = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "productId")));
-    createdAt = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "createdAt")));
-    finishAt = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "finishAt")));
+    revenueRatio = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "revenueRatio")));
     totalSupply = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "totalSupply")));
-    currentSupply = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "currentSupply")));
-  }
-
-  function getCurrentSupply(uint256 campaignId)
-    public
-    onlyExistentItem(campaignId)
-    view returns (uint256)
-  {
-    return universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "currentSupply")));
-  }
-
-  function getTotalSupply(uint256 campaignId)
-    public
-    onlyExistentItem(campaignId)
-    view returns (uint256)
-  {
-    return universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "totalSupply")));
-  }
-
-  function getDeals(uint256 campaignId)
-    public
-    onlyExistentItem(campaignId)
-    view returns (uint256[] memory)
-  {
-    return universalDB.getNodes(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, LINKED_LIST_KEY_DEAL)));
-  }
-
-  function didCampaignEnd(uint256 campaignId)
-    public
-    onlyExistentItem(campaignId)
-    view returns (bool)
-  {
-    return
-      universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "finishAt"))) < block.timestamp ||
-      universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "currentSupply"))) == 0;
+    appliedInfluencers = universalDB.getUintArrayStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "appliedInfluencers")));
+    startAt = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "startAt")));
+    endAt = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "endAt")));
+    state = universalDB.getStringStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "state")));
+    createdAt = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "createdAt")));
+    updatedAt = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "updatedAt")));
   }
 
   function doesItemExist(uint256 campaignId) public view returns (bool) {
