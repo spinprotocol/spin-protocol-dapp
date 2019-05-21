@@ -53,7 +53,7 @@ contract RevenueLedgerDB is AbstractDB, Proxied {
     influencerIds = universalDB.getUintArrayStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "influencerIds")));
     totalSalesPrices = universalDB.getUintArrayStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "totalSalesPrices")));
     calculatedRevenues = universalDB.getUintArrayStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "calculatedRevenues")));
-    createdAt = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(revenueLedgerId, "createdAt")));
+    createdAt = universalDB.getUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "createdAt")));
   }
 
   function getRevenueLedgerList()
@@ -64,6 +64,6 @@ contract RevenueLedgerDB is AbstractDB, Proxied {
   }
 
   function doesItemExist(uint256 revenueLedgerId) public view returns (bool) {
-    return universalDB.doesNodeExist(CONTRACT_NAME_CAMPAIGN_DB, TABLE_KEY_REVENUE_LEDGER, revenueLedgerId);
+    return universalDB.doesNodeExist(CONTRACT_NAME_REVENUE_LEDGER_DB, TABLE_KEY_REVENUE_LEDGER, revenueLedgerId);
   }
 }
