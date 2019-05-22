@@ -21,7 +21,6 @@ interface ISpinProtocol {
 
   function updateSaleStart(
     uint256 campaignId,
-    uint256[] appliedInfluencers,
     uint256 startAt,
     uint256 endAt
   ) external;
@@ -30,15 +29,27 @@ interface ISpinProtocol {
     uint256 campaignId
   ) external;
 
+  function attendCampaign(
+    uint256 campaignId,
+    uint256 influencerId
+  ) external;
+
   function deleteCampaign(
     uint256 campaignId
   ) external;
   
   function createRevenueLedger(
     uint256 revenueLedgerId,
-    uint256[] influencerIds,
-    uint256[] totalSalesPrices,
-    uint256[] calculatedRevenues
+    uint256 campaignId,
+    uint256 influencerId,
+    uint256 salesAmount,
+    uint256 salesPrice,
+    uint256 rsSpinRatio,
+    uint256 rsFiatRaito
+  ) external;
+
+  function updateIsAccount(
+    uint256 revenueLedgerId
   ) external;
 
   /**

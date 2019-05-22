@@ -11,6 +11,8 @@ import "../components/system/Proxied.sol";
 contract CampaignDB is AbstractDB, Proxied {
 
   bytes32 private constant TABLE_KEY_CAMPAIGN = keccak256(abi.encodePacked("CampaignTable"));
+  bytes32 private constant LINKED_LIST_KEY_APPLIED_INFLUENCER = keccak256(abi.encodePacked("AppliedInfluencerList"));
+
   string private constant CAMPAIGN_STATE_REGISTERED = "Registered";
   string private constant CAMPAIGN_STATE_START = "Start";
   string private constant CAMPAIGN_STATE_END = "End";
@@ -32,16 +34,15 @@ contract CampaignDB is AbstractDB, Proxied {
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
   {
-    require(campaignId > 0, "Input Data Error - campaignId");
-    require(productId > 0, "Input Data Error - productId");
-    require(revenueRatio > 0, "Input Data Error - revenueRatio");
-    require(totalSupply > 0, "Input Data Error - totalSupply");
+    require(campaignId > 0);
+    require(productId > 0);
+    require(revenueRatio > 0);
+    require(totalSupply > 0);
     require(universalDB.pushNodeToLinkedList(CONTRACT_NAME_CAMPAIGN_DB, TABLE_KEY_CAMPAIGN, campaignId), ERROR_ALREADY_EXIST);
     
     universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "productId")), productId);
     universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "revenueRatio")), revenueRatio);
     universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "totalSupply")), totalSupply);
-    universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "createdAt")), block.timestamp);
     universalDB.setStringStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "state")), CAMPAIGN_STATE_REGISTERED);
     emit CampaignCreated(campaignId, revenueRatio, productId);
   }
@@ -56,7 +57,7 @@ contract CampaignDB is AbstractDB, Proxied {
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
     onlyExistentItem(campaignId)
   {
-    require(keccak256(abi.encodePacked(this.getState(campaignId))) == keccak256(abi.encodePacked(CAMPAIGN_STATE_REGISTERED)), "Can't update this campaign, Please check the campaign's state.");
+    require(keccak256(abi.encodePacked(this.getState(campaignId))) == keccak256(abi.encodePacked(CAMPAIGN_STATE_REGISTERED)));
 
     universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "productId")), productId);
     universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "revenueRatio")), revenueRatio);
@@ -64,9 +65,22 @@ contract CampaignDB is AbstractDB, Proxied {
     emit CampaignUpdated(campaignId, block.timestamp);
   }
 
+  function attendCampaign(
+    uint256 campaignId,
+    uint256 influencerId
+  ) 
+    external
+    onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
+    onlyExistentItem(campaignId)
+  {
+    require(keccak256(abi.encodePacked(this.getState(campaignId))) == keccak256(abi.encodePacked(CAMPAIGN_STATE_REGISTERED)));
+    require(universalDB.pushNodeToLinkedList(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, LINKED_LIST_KEY_APPLIED_INFLUENCER)), influencerId), ERROR_ALREADY_EXIST);
+
+    emit CampaignUpdated(campaignId, block.timestamp);
+  }
+
   function updateSaleStart(
     uint256 campaignId,
-    uint256[] appliedInfluencers,
     uint256 startAt,
     uint256 endAt
   ) 
@@ -74,9 +88,8 @@ contract CampaignDB is AbstractDB, Proxied {
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
     onlyExistentItem(campaignId)
   {
-    require(keccak256(abi.encodePacked(this.getState(campaignId))) == keccak256(abi.encodePacked(CAMPAIGN_STATE_REGISTERED)), "Can't update this campaign, Please check the campaign's state.");
+    require(keccak256(abi.encodePacked(this.getState(campaignId))) == keccak256(abi.encodePacked(CAMPAIGN_STATE_REGISTERED)));
 
-    universalDB.setUintArrayStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "appliedInfluencers")), appliedInfluencers);
     universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "startAt")), startAt);
     universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "endAt")), endAt);
     universalDB.setStringStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "state")), CAMPAIGN_STATE_START);
@@ -90,7 +103,7 @@ contract CampaignDB is AbstractDB, Proxied {
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
     onlyExistentItem(campaignId)
   {
-    require(keccak256(abi.encodePacked(this.getState(campaignId))) == keccak256(abi.encodePacked(CAMPAIGN_STATE_START)), "Can't update this campaign, Please check the campaign's state.");
+    require(keccak256(abi.encodePacked(this.getState(campaignId))) == keccak256(abi.encodePacked(CAMPAIGN_STATE_START)));
 
     universalDB.setStringStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "state")), CAMPAIGN_STATE_END);
     emit CampaignUpdated(campaignId, block.timestamp);
@@ -103,7 +116,7 @@ contract CampaignDB is AbstractDB, Proxied {
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
     onlyExistentItem(campaignId)
   {
-    require(keccak256(abi.encodePacked(this.getState(campaignId))) == keccak256(abi.encodePacked(CAMPAIGN_STATE_REGISTERED)), "Can't update this campaign, Please check the campaign's state.");
+    require(keccak256(abi.encodePacked(this.getState(campaignId))) == keccak256(abi.encodePacked(CAMPAIGN_STATE_REGISTERED)));
     require(universalDB.removeNodeFromLinkedList(CONTRACT_NAME_CAMPAIGN_DB, TABLE_KEY_CAMPAIGN, campaignId), ERROR_DOES_NOT_EXIST);
 
     emit CampaignDeleted(campaignId, block.timestamp);
@@ -118,7 +131,7 @@ contract CampaignDB is AbstractDB, Proxied {
       uint256 productId, 
       uint256 revenueRatio, 
       uint256 totalSupply, 
-      uint256[] appliedInfluencers, 
+      uint256[] memory appliedInfluencerList, 
       uint256 startAt, 
       uint256 endAt, 
       string memory state, 
@@ -128,7 +141,7 @@ contract CampaignDB is AbstractDB, Proxied {
     productId = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "productId")));
     revenueRatio = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "revenueRatio")));
     totalSupply = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "totalSupply")));
-    appliedInfluencers = universalDB.getUintArrayStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "appliedInfluencers")));
+    appliedInfluencerList = universalDB.getNodes(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, LINKED_LIST_KEY_APPLIED_INFLUENCER)));
     startAt = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "startAt")));
     endAt = universalDB.getUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "endAt")));
     state = universalDB.getStringStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "state")));

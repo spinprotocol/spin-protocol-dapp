@@ -21,9 +21,12 @@ contract RevenueLedgerDB is AbstractDB, Proxied {
 
   function createRevenueLedger(
     uint256 revenueLedgerId,
-    uint256[] influencerIds,
-    uint256[] totalSalesPrices,
-    uint256[] calculatedRevenues
+    uint256 campaignId,
+    uint256 influencerId,
+    uint256 salesAmount,
+    uint256 salesPrice,
+    uint256 rsSpinRatio,
+    uint256 rsFiatRaito
   )
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
@@ -31,11 +34,26 @@ contract RevenueLedgerDB is AbstractDB, Proxied {
     require(revenueLedgerId > 0);
     require(universalDB.pushNodeToLinkedList(CONTRACT_NAME_REVENUE_LEDGER_DB, TABLE_KEY_REVENUE_LEDGER, revenueLedgerId), ERROR_ALREADY_EXIST);
     
-    universalDB.setUintArrayStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "influencerIds")), influencerIds);
-    universalDB.setUintArrayStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "totalSalesPrices")), totalSalesPrices);
-    universalDB.setUintArrayStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "calculatedRevenues")), calculatedRevenues);
-    universalDB.setUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "createdAt")), block.timestamp);
+    universalDB.setUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "influencerId")), influencerId);
+    universalDB.setUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "campaignId")), campaignId);
+    universalDB.setUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "salesAmount")), salesAmount);
+    universalDB.setUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "salesPrice")), salesPrice);
+    universalDB.setUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "rsSpinRatio")), rsSpinRatio);
+    universalDB.setUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "rsFiatRaito")), rsFiatRaito);
+    universalDB.setBoolStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "isAccount")), false);
+    
     emit RevenueLedgerCreated(revenueLedgerId);
+  }
+
+  function updateIsAccount(
+    uint256 revenueLedgerId
+  )
+    external
+    onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
+    onlyExistentItem(revenueLedgerId)
+  {  
+    universalDB.setBoolStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "isAccount")), true);
+    emit RevenueLedgerUpdated(revenueLedgerId, block.timestamp);
   }
 
   function getRevenueLedger(
@@ -44,16 +62,22 @@ contract RevenueLedgerDB is AbstractDB, Proxied {
     public
     onlyExistentItem(revenueLedgerId)
     view returns (
-      uint256[] influencerIds,
-      uint256[] totalSalesPrices,
-      uint256[] calculatedRevenues,
-      uint256 createdAt
+      uint256 campaignId,
+      uint256 influencerId,
+      uint256 salesAmount,
+      uint256 salesPrice,
+      uint256 rsSpinRatio,
+      uint256 rsFiatRaito,
+      bool isAccount
     )
   {
-    influencerIds = universalDB.getUintArrayStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "influencerIds")));
-    totalSalesPrices = universalDB.getUintArrayStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "totalSalesPrices")));
-    calculatedRevenues = universalDB.getUintArrayStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "calculatedRevenues")));
-    createdAt = universalDB.getUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "createdAt")));
+    campaignId = universalDB.getUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "campaignId")));
+    influencerId = universalDB.getUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "influencerId")));
+    salesAmount = universalDB.getUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "salesAmount")));
+    salesPrice = universalDB.getUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "salesPrice")));
+    rsSpinRatio = universalDB.getUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "rsSpinRatio")));
+    rsFiatRaito = universalDB.getUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "rsFiatRaito")));
+    isAccount = universalDB.getBoolStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "isAccount")));
   }
 
   function getRevenueLedgerList()

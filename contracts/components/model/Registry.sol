@@ -23,7 +23,12 @@ contract Registry is DBConnector, Proxied {
   ) 
     external onlyProxy 
   {
-    campaignDB.createCampaign(campaignId, productId, revenueRatio, totalSupply);
+    campaignDB.createCampaign(
+      campaignId, 
+      productId, 
+      revenueRatio, 
+      totalSupply
+    );
   }
 
   function updateCampaign(
@@ -34,18 +39,38 @@ contract Registry is DBConnector, Proxied {
   ) 
     external onlyProxy
   {
-    campaignDB.updateCampaign(campaignId, productId, revenueRatio, totalSupply);
+    campaignDB.updateCampaign(
+      campaignId, 
+      productId, 
+      revenueRatio, 
+      totalSupply
+    );
+  }
+
+  function attendCampaign(
+    uint256 campaignId,
+    uint256 influencerId
+  ) 
+    external onlyProxy
+  {
+    campaignDB.attendCampaign(
+      campaignId, 
+      influencerId
+    );
   }
 
   function updateSaleStart(
     uint256 campaignId,
-    uint256[] appliedInfluencers,
     uint256 startAt,
     uint256 endAt
   )
     external onlyProxy
   {
-    campaignDB.updateSaleStart(campaignId, appliedInfluencers, startAt, endAt);
+    campaignDB.updateSaleStart(
+      campaignId,
+      startAt, 
+      endAt
+    );
   }
 
   function updateSaleEnd(
@@ -66,12 +91,31 @@ contract Registry is DBConnector, Proxied {
   
   function createRevenueLedger(
     uint256 revenueLedgerId,
-    uint256[] influencerIds,
-    uint256[] totalSalesPrices,
-    uint256[] calculatedRevenues
+    uint256 campaignId,
+    uint256 influencerId,
+    uint256 salesAmount,
+    uint256 salesPrice,
+    uint256 rsSpinRatio,
+    uint256 rsFiatRaito
   )
     external onlyProxy
   {
-    revenueLedgerDB.createRevenueLedger(revenueLedgerId, influencerIds, totalSalesPrices, calculatedRevenues);
+    revenueLedgerDB.createRevenueLedger(
+      revenueLedgerId, 
+      campaignId, 
+      influencerId, 
+      salesAmount,
+      salesPrice,
+      rsSpinRatio,
+      rsFiatRaito
+    );
+  }
+
+  function updateIsAccount(
+    uint256 revenueLedgerId
+  )
+    external onlyProxy
+  {
+    revenueLedgerDB.updateIsAccount(revenueLedgerId);
   }
 }

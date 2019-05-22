@@ -42,9 +42,20 @@ contract SpinProtocolProxy is ProxyBase {
     );
   }
 
+  function attendCampaign(
+    uint256 campaignId,
+    uint256 influencerId
+  ) 
+    external onlyAdmin
+  {
+    ISpinProtocol(addressOfSpinProtocol()).attendCampaign(
+      campaignId,
+      influencerId
+    );
+  }
+
   function updateSaleStart(
     uint256 campaignId,
-    uint256[] appliedInfluencers,
     uint256 startAt,
     uint256 endAt
   ) 
@@ -52,7 +63,6 @@ contract SpinProtocolProxy is ProxyBase {
   {
     ISpinProtocol(addressOfSpinProtocol()).updateSaleStart(
       campaignId,
-      appliedInfluencers,
       startAt,
       endAt
     );
@@ -80,17 +90,33 @@ contract SpinProtocolProxy is ProxyBase {
   
   function createRevenueLedger(
     uint256 revenueLedgerId,
-    uint256[] influencerIds,
-    uint256[] totalSalesPrices,
-    uint256[] calculatedRevenues
+    uint256 campaignId,
+    uint256 influencerId,
+    uint256 salesAmount,
+    uint256 salesPrice,
+    uint256 rsSpinRatio,
+    uint256 rsFiatRaito
   ) 
     external onlyAdmin
   {
     ISpinProtocol(addressOfSpinProtocol()).createRevenueLedger(
       revenueLedgerId,
-      influencerIds,
-      totalSalesPrices,
-      calculatedRevenues
+      campaignId,
+      influencerId,
+      salesAmount,
+      salesPrice,
+      rsSpinRatio,
+      rsFiatRaito
+    );
+  }
+
+  function updateIsAccount(
+    uint256 revenueLedgerId
+  ) 
+    external onlyAdmin
+  {
+    ISpinProtocol(addressOfSpinProtocol()).updateIsAccount(
+      revenueLedgerId
     );
   }
 }
