@@ -53,26 +53,6 @@ contract UniversalDB is Proxied, EternalStorage {
     return uintStorage[keccak256(abi.encodePacked(contractName, key))];
   }
 
-  function setUintArrayStorage(
-    string  contractName,
-    bytes32 key,
-    uint256[] values
-  )
-    external
-    onlyAuthorizedContract(contractName)
-  {
-    uintArrayStorage[keccak256(abi.encodePacked(contractName, key))] = values;
-  }
-
-  function getUintArrayStorage(
-    string memory contractName,
-    bytes32 key
-  )
-    public view returns (uint256[])
-  {
-    return uintArrayStorage[keccak256(abi.encodePacked(contractName, key))];
-  }
-
   function setStringStorage(
     string  contractName,
     bytes32 key,
