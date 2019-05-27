@@ -94,8 +94,10 @@ contract SpinProtocolProxy is ProxyBase {
     uint256 influencerId,
     uint256 salesAmount,
     uint256 salesPrice,
-    uint256 rsSpinRatio,
-    uint256 rsFiatRaito
+    uint256 profit,
+    uint256 revenueRatio,
+    uint256 spinRatio,
+    uint256 fiatRaito
   ) 
     external onlyAdmin
   {
@@ -105,8 +107,10 @@ contract SpinProtocolProxy is ProxyBase {
       influencerId,
       salesAmount,
       salesPrice,
-      rsSpinRatio,
-      rsFiatRaito
+      profit,
+      revenueRatio,
+      spinRatio,
+      fiatRaito
     );
   }
 

@@ -25,8 +25,10 @@ contract RevenueLedgerDB is AbstractDB, Proxied {
     uint256 influencerId,
     uint256 salesAmount,
     uint256 salesPrice,
-    uint256 rsSpinRatio,
-    uint256 rsFiatRaito
+    uint256 profit,
+    uint256 revenueRatio,
+    uint256 spinRatio,
+    uint256 fiatRaito
   )
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
@@ -34,12 +36,14 @@ contract RevenueLedgerDB is AbstractDB, Proxied {
     require(revenueLedgerId > 0);
     require(universalDB.pushNodeToLinkedList(CONTRACT_NAME_REVENUE_LEDGER_DB, TABLE_KEY_REVENUE_LEDGER, revenueLedgerId), ERROR_ALREADY_EXIST);
     
-    universalDB.setUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "influencerId")), influencerId);
     universalDB.setUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "campaignId")), campaignId);
+    universalDB.setUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "influencerId")), influencerId);
     universalDB.setUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "salesAmount")), salesAmount);
     universalDB.setUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "salesPrice")), salesPrice);
-    universalDB.setUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "rsSpinRatio")), rsSpinRatio);
-    universalDB.setUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "rsFiatRaito")), rsFiatRaito);
+    universalDB.setUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "profit")), profit);
+    universalDB.setUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "revenueRatio")), revenueRatio);
+    universalDB.setUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "spinRatio")), spinRatio);
+    universalDB.setUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "fiatRaito")), fiatRaito);
     universalDB.setBoolStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "isAccount")), false);
     
     emit RevenueLedgerCreated(revenueLedgerId);
@@ -66,8 +70,10 @@ contract RevenueLedgerDB is AbstractDB, Proxied {
       uint256 influencerId,
       uint256 salesAmount,
       uint256 salesPrice,
-      uint256 rsSpinRatio,
-      uint256 rsFiatRaito,
+      uint256 profit,
+      uint256 revenueRatio,
+      uint256 spinRatio,
+      uint256 fiatRaito,
       bool isAccount
     )
   {
@@ -75,8 +81,10 @@ contract RevenueLedgerDB is AbstractDB, Proxied {
     influencerId = universalDB.getUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "influencerId")));
     salesAmount = universalDB.getUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "salesAmount")));
     salesPrice = universalDB.getUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "salesPrice")));
-    rsSpinRatio = universalDB.getUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "rsSpinRatio")));
-    rsFiatRaito = universalDB.getUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "rsFiatRaito")));
+    profit = universalDB.getUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "profit")));
+    revenueRatio = universalDB.getUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "revenueRatio")));
+    spinRatio = universalDB.getUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "spinRatio")));
+    fiatRaito = universalDB.getUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "fiatRaito")));
     isAccount = universalDB.getBoolStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "isAccount")));
   }
 

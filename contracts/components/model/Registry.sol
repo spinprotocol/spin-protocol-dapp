@@ -95,19 +95,23 @@ contract Registry is DBConnector, Proxied {
     uint256 influencerId,
     uint256 salesAmount,
     uint256 salesPrice,
-    uint256 rsSpinRatio,
-    uint256 rsFiatRaito
+    uint256 profit,
+    uint256 revenueRatio,
+    uint256 spinRatio,
+    uint256 fiatRaito
   )
     external onlyProxy
   {
     revenueLedgerDB.createRevenueLedger(
-      revenueLedgerId, 
-      campaignId, 
-      influencerId, 
+      revenueLedgerId,
+      campaignId,
+      influencerId,
       salesAmount,
       salesPrice,
-      rsSpinRatio,
-      rsFiatRaito
+      profit,
+      revenueRatio,
+      spinRatio,
+      fiatRaito
     );
   }
 
