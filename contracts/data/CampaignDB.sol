@@ -81,8 +81,7 @@ contract CampaignDB is AbstractDB, Proxied {
 
   function updateSaleStart(
     uint256 campaignId,
-    uint256 startAt,
-    uint256 endAt
+    uint256 startAt
   ) 
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
@@ -91,13 +90,13 @@ contract CampaignDB is AbstractDB, Proxied {
     require(keccak256(abi.encodePacked(this.getState(campaignId))) == keccak256(abi.encodePacked(CAMPAIGN_STATE_WAITING)));
 
     universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "startAt")), startAt);
-    universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "endAt")), endAt);
     universalDB.setStringStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "state")), CAMPAIGN_STATE_PROGRESS);
     emit CampaignUpdated(campaignId, block.timestamp);
   }
 
   function updateSaleEnd(
-    uint256 campaignId
+    uint256 campaignId,
+    uint256 endAt
   ) 
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
@@ -105,6 +104,7 @@ contract CampaignDB is AbstractDB, Proxied {
   {
     require(keccak256(abi.encodePacked(this.getState(campaignId))) == keccak256(abi.encodePacked(CAMPAIGN_STATE_PROGRESS)));
 
+    universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "endAt")), endAt);
     universalDB.setStringStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "state")), CAMPAIGN_STATE_COMPLETE);
     emit CampaignUpdated(campaignId, block.timestamp);
   }

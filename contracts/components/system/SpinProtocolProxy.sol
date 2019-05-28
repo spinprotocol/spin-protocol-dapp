@@ -56,25 +56,26 @@ contract SpinProtocolProxy is ProxyBase {
 
   function updateSaleStart(
     uint256 campaignId,
-    uint256 startAt,
-    uint256 endAt
+    uint256 startAt
+    
   ) 
     external onlyAdmin
   {
     ISpinProtocol(addressOfSpinProtocol()).updateSaleStart(
       campaignId,
-      startAt,
-      endAt
+      startAt
     );
   }
 
   function updateSaleEnd(
-    uint256 campaignId
+    uint256 campaignId,
+    uint256 endAt
   ) 
     external onlyAdmin 
   {
     ISpinProtocol(addressOfSpinProtocol()).updateSaleEnd(
-      campaignId
+      campaignId,
+      endAt
     );
   }
 
@@ -97,7 +98,7 @@ contract SpinProtocolProxy is ProxyBase {
     uint256 profit,
     uint256 revenueRatio,
     uint256 spinRatio,
-    uint256 fiatRaito
+    uint256 fiatRatio
   ) 
     external onlyAdmin
   {
@@ -110,7 +111,7 @@ contract SpinProtocolProxy is ProxyBase {
       profit,
       revenueRatio,
       spinRatio,
-      fiatRaito
+      fiatRatio
     );
   }
 

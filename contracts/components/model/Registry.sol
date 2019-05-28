@@ -61,24 +61,26 @@ contract Registry is DBConnector, Proxied {
 
   function updateSaleStart(
     uint256 campaignId,
-    uint256 startAt,
-    uint256 endAt
+    uint256 startAt
   )
     external onlyProxy
   {
     campaignDB.updateSaleStart(
       campaignId,
-      startAt, 
-      endAt
+      startAt
     );
   }
 
   function updateSaleEnd(
-    uint256 campaignId
+    uint256 campaignId,
+    uint256 endAt
   ) 
     external onlyProxy
   {
-    campaignDB.updateSaleEnd(campaignId);
+    campaignDB.updateSaleEnd(
+      campaignId,
+      endAt
+    );
   }
 
   function deleteCampaign(
@@ -98,7 +100,7 @@ contract Registry is DBConnector, Proxied {
     uint256 profit,
     uint256 revenueRatio,
     uint256 spinRatio,
-    uint256 fiatRaito
+    uint256 fiatRatio
   )
     external onlyProxy
   {
@@ -111,7 +113,7 @@ contract Registry is DBConnector, Proxied {
       profit,
       revenueRatio,
       spinRatio,
-      fiatRaito
+      fiatRatio
     );
   }
 

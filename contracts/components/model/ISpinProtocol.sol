@@ -21,12 +21,12 @@ interface ISpinProtocol {
 
   function updateSaleStart(
     uint256 campaignId,
-    uint256 startAt,
-    uint256 endAt
+    uint256 startAt
   ) external;
 
   function updateSaleEnd(
-    uint256 campaignId
+    uint256 campaignId,
+    uint256 endAt
   ) external;
 
   function attendCampaign(
@@ -47,7 +47,7 @@ interface ISpinProtocol {
     uint256 profit,
     uint256 revenueRatio,
     uint256 spinRatio,
-    uint256 fiatRaito
+    uint256 fiatRatio
   ) external;
 
   function updateIsAccount(

@@ -28,7 +28,7 @@ contract RevenueLedgerDB is AbstractDB, Proxied {
     uint256 profit,
     uint256 revenueRatio,
     uint256 spinRatio,
-    uint256 fiatRaito
+    uint256 fiatRatio
   )
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
@@ -43,7 +43,7 @@ contract RevenueLedgerDB is AbstractDB, Proxied {
     universalDB.setUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "profit")), profit);
     universalDB.setUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "revenueRatio")), revenueRatio);
     universalDB.setUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "spinRatio")), spinRatio);
-    universalDB.setUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "fiatRaito")), fiatRaito);
+    universalDB.setUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "fiatRatio")), fiatRatio);
     universalDB.setBoolStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "isAccount")), false);
     
     emit RevenueLedgerCreated(revenueLedgerId);
@@ -73,7 +73,7 @@ contract RevenueLedgerDB is AbstractDB, Proxied {
       uint256 profit,
       uint256 revenueRatio,
       uint256 spinRatio,
-      uint256 fiatRaito,
+      uint256 fiatRatio,
       bool isAccount
     )
   {
@@ -84,7 +84,7 @@ contract RevenueLedgerDB is AbstractDB, Proxied {
     profit = universalDB.getUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "profit")));
     revenueRatio = universalDB.getUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "revenueRatio")));
     spinRatio = universalDB.getUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "spinRatio")));
-    fiatRaito = universalDB.getUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "fiatRaito")));
+    fiatRatio = universalDB.getUintStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "fiatRatio")));
     isAccount = universalDB.getBoolStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "isAccount")));
   }
 
