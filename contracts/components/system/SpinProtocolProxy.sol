@@ -124,4 +124,19 @@ contract SpinProtocolProxy is ProxyBase {
       revenueLedgerId
     );
   }
+
+  function revenueShare(
+    address _to,
+    uint256 _revenue,
+    uint256 _spinRatio,
+    uint256 _marketPrice
+  ) external onlyAdmin
+  {
+    ISpinProtocol(addressOfSpinProtocol()).revenueShare(
+      _to,
+      _revenue,
+      _spinRatio,
+      _marketPrice
+    );
+  }
 }
