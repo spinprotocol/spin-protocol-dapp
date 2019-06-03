@@ -7,7 +7,7 @@ import "../../token/IERC20.sol";
  * @title Calculate
  * @dev Spin revenue transfer of inpluencer.
  */
-contract Calculate {
+contract RevenueShare {
     using SafeMath for uint256;
 
     /**
@@ -30,7 +30,7 @@ contract Calculate {
     /**
     * @dev Token transfer after calculates.
     */
-    function _calculateSpin(address _tokenAddr, address _to, uint256 _revenue, uint256 _spinRatio, uint256 _marketPrice) internal {
+    function _revenueShare(address _tokenAddr, address _to, uint256 _revenue, uint256 _spinRatio, uint256 _marketPrice) internal {
         uint256 spin = revenueSpin(_revenue,_spinRatio,_marketPrice);
         IERC20 token = IERC20(_tokenAddr);
         require(token.transfer(_to,spin), "Token Transfer Fail");

@@ -94,14 +94,14 @@ contract SpinProtocolProxy is ProxyBase {
     );
   }
 
-  function calculateSpin(
+  function revenueShare(
     address _to,
     uint256 _revenue,
     uint256 _spinRatio,
     uint256 _marketPrice
   ) external onlyAdmin
   {
-    ISpinProtocol(addressOfSpinProtocol()).calculateSpin(
+    ISpinProtocol(addressOfSpinProtocol()).revenueShare(
       _to,
       _revenue,
       _spinRatio,
