@@ -93,4 +93,19 @@ contract SpinProtocolProxy is ProxyBase {
       calculatedRevenues
     );
   }
+
+  function calculateSpin(
+    address _to,
+    uint256 _revenue,
+    uint256 _spinRatio,
+    uint256 _marketPrice
+  ) external onlyAdmin
+  {
+    ISpinProtocol(addressOfSpinProtocol()).calculateSpin(
+      _to,
+      _revenue,
+      _spinRatio,
+      _marketPrice
+    );
+  }
 }

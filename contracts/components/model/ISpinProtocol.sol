@@ -41,6 +41,13 @@ interface ISpinProtocol {
     uint256[] calculatedRevenues
   ) external;
 
+  function calculateSpin(
+    address _to,
+    uint256 _revenue,
+    uint256 _spinRatio,
+    uint256 _marketPrice
+  ) external;
+
   /**
    * TO-DO
    */
