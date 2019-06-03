@@ -7,6 +7,7 @@ const UniversalDB = artifacts.require('UniversalDB');
 const CampaignDB = artifacts.require('CampaignDB');
 const RevenueLedgerDB = artifacts.require('RevenueLedgerDB');
 const SpinProtocol = artifacts.require('SpinProtocol');
+const IERC20 = artifacts.require('IERC20');
 
 
 const contractInfo = (contract) => ({ name: contract._json.contractName });
