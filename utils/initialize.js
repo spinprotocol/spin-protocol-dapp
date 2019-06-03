@@ -9,6 +9,7 @@ const SpinProtocol = CONTRACT.get(METADATA.ABI.SPIN_PROTOCOL, METADATA.ADDRESS.S
 const UniversalDB = CONTRACT.get(METADATA.ABI.UNIVERSAL_DB, METADATA.ADDRESS.UNIVERSAL_DB);
 const CampaignDB = CONTRACT.get(METADATA.ABI.CAMPAIGN_DB, METADATA.ADDRESS.CAMPAIGN_DB);
 const RevenueLedgerDB = CONTRACT.get(METADATA.ABI.REVENUE_LEDGER_DB, METADATA.ADDRESS.REVENUE_LEDGER_DB);
+const IERC20 = CONTRACT.get(METADATA.ABI.IERC20, METADATA.ADDRESS.IERC20);
 
 const registerContractToProxy = async (signer, proxy, contractAddr, contractName) => {
   await go(
@@ -33,6 +34,7 @@ const setDataStore = async (signer, spinProtocol) => {
     txReceipt => log('\n\r> Tx receipt:', txReceipt)
   )
 }
+
 const createSigner = privateKey => go(
   ACCOUNTS.access(privateKey),
   WALLET.connect
@@ -63,6 +65,27 @@ const initialize = async _ => {
 
   
   log('\n\r\n\r*** Initialization has been completed successfully. ***\n\r\n\r');
+
+  /************** Revenue share Test **************/
+  const revenueData = { 
+    _revenue : 10000,
+    _spinRatio : 10,  
+    _marketPrice : 1550 //15.5 * 100
+  }
+
+  let amt = await CONTRACT.read(SpinProtocol, 'revenueSpin(uint256,uint256,uint256)', revenueData);
+
+  let tokenTransferData = { 
+    to : METADATA.ADDRESS.SPIN_PROTOCOL,
+    value : amt
+  }
+
+  log(`\n\n**** send Test Token to SpinProtocol Contract ${amt}`)
+  await go(
+     CONTRACT.write(Signer, IERC20, 'transfer(address,uint256)', tokenTransferData),
+     txReceipt => log('\n\r> Tx receipt:', txReceipt)
+  )
+
 
 
   // await CONTRACT.write(Signer, Proxy, 'removeContract(string)', { name: 'SpinProtocol' })
