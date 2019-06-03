@@ -32,6 +32,7 @@ const Deployer = (deployer) => {
     /* Logic contracts */
     .then(_ => deployer.deploy(SpinProtocol))
     .then(_ => fileWriter(SpinProtocol))
+    .then(_ => abiWriter(IERC20))
     .catch(e => Promise.reject(new Error('Deployer failed. Error:', e)));
 };
 
