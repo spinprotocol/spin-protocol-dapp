@@ -1,6 +1,6 @@
 // Metadata reading utils
-const addressReader = (contractName) => require(`./deployed/${process.env.STAGE}/address/${contractName}.json`).address;
-const abiReader = (contractName) => require(`./deployed/${process.env.STAGE}/abi/${contractName}.json`).abi;
+const addressReader = (contractName) => require(`../deployed/address/${contractName}.json`).address;
+const abiReader = (contractName) => require(`../deployed/abi/${contractName}.json`).abi;
 
 const METADATA = {};
 
