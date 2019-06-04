@@ -25,6 +25,13 @@ const setProxyFor = async (signer, contract, contractName, proxyAddr) => {
   )
 }
 
+const addAdmin = async (signer, contract, adminAddr) => {
+  await go(
+    CONTRACT.write(signer, contract, 'addAdmin(address)', {account : adminAddr}),
+    txReceipt => log('\n\r> Tx receipt:', txReceipt)
+  )
+}
+
 const setDataStore = async (signer, spinProtocol) => {
   await go(
     CONTRACT.write(signer, spinProtocol, 'setDataStore(address,address)', { 
@@ -62,15 +69,18 @@ const initialize = async _ => {
   /************** Initialize system logic contracts **************/
   log('\n\r>> Initializing system logic contracts...\n\r');
   await setDataStore(Signer, SpinProtocol)
-
   
+  log('\n\r>> Set Admin...\n\r');
+  await addAdmin(Signer, Proxy, '0x86018477b6e3f749f5ecd1e99b385af31d874160');
+  await addAdmin(Signer, Proxy, '0x132ee829879755ba9ac9213fc0fa6a10f999c58f');
+
   log('\n\r\n\r*** Initialization has been completed successfully. ***\n\r\n\r');
 
   /************** Revenue share Test **************/
   const revenueData = { 
     _revenue : 10000,
     _spinRatio : 10,  
-    _marketPrice : 1550 //15.5 * 100
+    _marketPrice : 2000 // (market price * 100)
   }
 
   let amt = await CONTRACT.read(SpinProtocol, 'revenueSpin(uint256,uint256,uint256)', revenueData);

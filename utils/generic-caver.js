@@ -62,7 +62,7 @@ const parseCallResult = (result, outputTypes) => {
     });
   }
 
-  return isBigNumber(outputTypes[0]) && caver.utils.BigNumber(result)
+  return isBigNumber(outputTypes[0]) && caver.utils.isBigNumber(result)
     ? result.toString(10)
     : result;
 };
