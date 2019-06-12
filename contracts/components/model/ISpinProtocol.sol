@@ -25,8 +25,7 @@ interface ISpinProtocol {
   ) external;
 
   function updateSaleEnd(
-    uint256 campaignId,
-    uint256 endAt
+    uint256 campaignId
   ) external;
 
   function attendCampaign(
