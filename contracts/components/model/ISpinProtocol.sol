@@ -9,24 +9,22 @@ interface ISpinProtocol {
     uint256 campaignId,
     uint256 productId,
     uint256 revenueRatio,
-    uint256 totalSupply
+    uint256 totalSupply,
+    uint256 startAt,
+    uint256 endAt
   ) external;
 
   function updateCampaign(
     uint256 campaignId,
     uint256 productId,
     uint256 revenueRatio,
-    uint256 totalSupply
-  ) external;
-
-  function updateSaleStart(
-    uint256 campaignId,
-    uint256 startAt
+    uint256 totalSupply,
+    uint256 startAt,
+    uint256 endAt
   ) external;
 
   function updateSaleEnd(
-    uint256 campaignId,
-    uint256 endAt
+    uint256 campaignId
   ) external;
 
   function attendCampaign(

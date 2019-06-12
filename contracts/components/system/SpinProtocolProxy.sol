@@ -14,7 +14,9 @@ contract SpinProtocolProxy is ProxyBase {
     uint256 campaignId,
     uint256 productId,
     uint256 revenueRatio,
-    uint256 totalSupply
+    uint256 totalSupply,
+    uint256 startAt,
+    uint256 endAt
   )
     external onlyAdmin
   {
@@ -22,7 +24,9 @@ contract SpinProtocolProxy is ProxyBase {
       campaignId,
       productId,
       revenueRatio,
-      totalSupply
+      totalSupply,
+      startAt,
+      endAt
     );
   }
 
@@ -30,7 +34,9 @@ contract SpinProtocolProxy is ProxyBase {
     uint256 campaignId,
     uint256 productId,
     uint256 revenueRatio,
-    uint256 totalSupply
+    uint256 totalSupply,
+    uint256 startAt,
+    uint256 endAt
   ) 
     external onlyAdmin
   {
@@ -38,7 +44,9 @@ contract SpinProtocolProxy is ProxyBase {
       campaignId,
       productId,
       revenueRatio,
-      totalSupply
+      totalSupply,
+      startAt,
+      endAt
     );
   }
 
@@ -54,28 +62,13 @@ contract SpinProtocolProxy is ProxyBase {
     );
   }
 
-  function updateSaleStart(
-    uint256 campaignId,
-    uint256 startAt
-    
-  ) 
-    external onlyAdmin
-  {
-    ISpinProtocol(addressOfSpinProtocol()).updateSaleStart(
-      campaignId,
-      startAt
-    );
-  }
-
   function updateSaleEnd(
-    uint256 campaignId,
-    uint256 endAt
+    uint256 campaignId
   ) 
     external onlyAdmin 
   {
     ISpinProtocol(addressOfSpinProtocol()).updateSaleEnd(
-      campaignId,
-      endAt
+      campaignId
     );
   }
 
