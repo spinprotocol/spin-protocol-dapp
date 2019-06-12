@@ -68,12 +68,14 @@ contract Registry is DBConnector, Proxied {
   }
 
   function updateSaleEnd(
-    uint256 campaignId
+    uint256 campaignId,
+    uint256 endAt
   ) 
     external onlyProxy
   {
     campaignDB.updateSaleEnd(
-      campaignId
+      campaignId,
+      endAt
     );
   }
 

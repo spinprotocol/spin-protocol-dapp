@@ -63,12 +63,14 @@ contract SpinProtocolProxy is ProxyBase {
   }
 
   function updateSaleEnd(
-    uint256 campaignId
+    uint256 campaignId,
+    uint256 endAt
   ) 
     external onlyAdmin 
   {
     ISpinProtocol(addressOfSpinProtocol()).updateSaleEnd(
-      campaignId
+      campaignId,
+      endAt
     );
   }
 
