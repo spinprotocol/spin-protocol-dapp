@@ -86,6 +86,20 @@ contract CampaignDB is AbstractDB, Proxied {
     emit CampaignUpdated(campaignId, block.timestamp);
   }
 
+  function cancelCampaign(
+    uint256 campaignId,
+    uint256 influencerId
+  ) 
+    external
+    onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
+    onlyExistentItem(campaignId)
+  {
+    require(this.getStartAt(campaignId) > now);
+    require(universalDB.removeNodeFromLinkedList(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, LINKED_LIST_KEY_APPLIED_INFLUENCER)), influencerId), ERROR_ALREADY_EXIST);
+
+    emit CampaignUpdated(campaignId, block.timestamp);
+  }
+
   function updateSaleEnd(
     uint256 campaignId,
     uint256 endAt
