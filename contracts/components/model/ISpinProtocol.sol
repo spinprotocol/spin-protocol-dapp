@@ -33,6 +33,11 @@ interface ISpinProtocol {
     uint256 influencerId
   ) external;
 
+  function cancelCampaign(
+    uint256 campaignId,
+    uint256 influencerId
+  ) external;
+
   function deleteCampaign(
     uint256 campaignId
   ) external;

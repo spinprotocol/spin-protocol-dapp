@@ -62,6 +62,18 @@ contract SpinProtocolProxy is ProxyBase {
     );
   }
 
+  function cancelCampaign(
+    uint256 campaignId,
+    uint256 influencerId
+  ) 
+    external onlyAdmin
+  {
+    ISpinProtocol(addressOfSpinProtocol()).cancelCampaign(
+      campaignId,
+      influencerId
+    );
+  }
+
   function updateSaleEnd(
     uint256 campaignId,
     uint256 endAt

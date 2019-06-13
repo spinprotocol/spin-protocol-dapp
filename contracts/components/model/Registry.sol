@@ -67,6 +67,18 @@ contract Registry is DBConnector, Proxied {
     );
   }
 
+  function cancelCampaign(
+    uint256 campaignId,
+    uint256 influencerId
+  ) 
+    external onlyProxy
+  {
+    campaignDB.cancelCampaign(
+      campaignId,
+      influencerId
+    );
+  }
+
   function updateSaleEnd(
     uint256 campaignId,
     uint256 endAt
