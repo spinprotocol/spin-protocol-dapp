@@ -69,7 +69,7 @@ contract('RevenueLedgerDB', () => {
   });
 
   it("Update isAccount", async () => {
-    await proxyInstance.updateIsAccount(1);
+    await proxyInstance.updateIsAccount(1,true);
     let data = await getRevenueLedger(1);
     assert.equal(data[8],true,"isAccount not change");
   })

@@ -50,13 +50,14 @@ contract RevenueLedgerDB is AbstractDB, Proxied {
   }
 
   function updateIsAccount(
-    uint256 revenueLedgerId
+    uint256 revenueLedgerId,
+    bool state
   )
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
     onlyExistentItem(revenueLedgerId)
   {  
-    universalDB.setBoolStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "isAccount")), true);
+    universalDB.setBoolStorage(CONTRACT_NAME_REVENUE_LEDGER_DB, keccak256(abi.encodePacked(revenueLedgerId, "isAccount")), state);
     emit RevenueLedgerUpdated(revenueLedgerId, block.timestamp);
   }
 
