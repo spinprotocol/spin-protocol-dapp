@@ -37,7 +37,7 @@ contract SpinProtocolProxy is ProxyBase {
     uint256 totalSupply,
     uint256 startAt,
     uint256 endAt
-  ) 
+  )
     external onlyAdmin
   {
     ISpinProtocol(addressOfSpinProtocol()).updateCampaign(
@@ -53,7 +53,7 @@ contract SpinProtocolProxy is ProxyBase {
   function attendCampaign(
     uint256 campaignId,
     uint256 influencerId
-  ) 
+  )
     external onlyAdmin
   {
     ISpinProtocol(addressOfSpinProtocol()).attendCampaign(
@@ -65,7 +65,7 @@ contract SpinProtocolProxy is ProxyBase {
   function cancelCampaign(
     uint256 campaignId,
     uint256 influencerId
-  ) 
+  )
     external onlyAdmin
   {
     ISpinProtocol(addressOfSpinProtocol()).cancelCampaign(
@@ -77,8 +77,8 @@ contract SpinProtocolProxy is ProxyBase {
   function updateSaleEnd(
     uint256 campaignId,
     uint256 endAt
-  ) 
-    external onlyAdmin 
+  )
+    external onlyAdmin
   {
     ISpinProtocol(addressOfSpinProtocol()).updateSaleEnd(
       campaignId,
@@ -88,8 +88,8 @@ contract SpinProtocolProxy is ProxyBase {
 
   function deleteCampaign(
     uint256 campaignId
-  ) 
-    external onlyAdmin 
+  )
+    external onlyAdmin
   {
     ISpinProtocol(addressOfSpinProtocol()).deleteCampaign(
       campaignId
@@ -106,7 +106,7 @@ contract SpinProtocolProxy is ProxyBase {
     uint256 revenueRatio,
     uint256 spinRatio,
     uint256 fiatRatio
-  ) 
+  )
     external onlyAdmin
   {
     ISpinProtocol(addressOfSpinProtocol()).createRevenueLedger(
@@ -123,27 +123,34 @@ contract SpinProtocolProxy is ProxyBase {
   }
 
   function updateIsAccount(
-    uint256 revenueLedgerId
-  ) 
+    uint256 revenueLedgerId,
+    bool state
+  )
     external onlyAdmin
   {
     ISpinProtocol(addressOfSpinProtocol()).updateIsAccount(
-      revenueLedgerId
+      revenueLedgerId,
+      state
     );
   }
 
   function revenueShare(
+    uint256 _revenueLedgerId,
     address _to,
     uint256 _revenue,
     uint256 _spinRatio,
-    uint256 _marketPrice
-  ) external onlyAdmin
+    uint256 _marketPrice,
+    uint256 _rounding
+  ) 
+    external onlyAdmin
   {
     ISpinProtocol(addressOfSpinProtocol()).revenueShare(
+      _revenueLedgerId,
       _to,
       _revenue,
       _spinRatio,
-      _marketPrice
+      _marketPrice,
+      _rounding
     );
   }
 }

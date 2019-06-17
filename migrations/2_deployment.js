@@ -8,7 +8,7 @@ const CampaignDB = artifacts.require('CampaignDB');
 const RevenueLedgerDB = artifacts.require('RevenueLedgerDB');
 const SpinProtocol = artifacts.require('SpinProtocol');
 const IERC20 = artifacts.require('IERC20');
-
+IERC20.address = '0x4a39a3e9b5793abe14157615e979e00758ec902a';
 
 const contractInfo = (contract) => ({ name: contract._json.contractName });
 const errorHandler = (err) => { if (err) throw err; }
@@ -31,9 +31,9 @@ const Deployer = (deployer) => {
     .then(_ => deployer.deploy(RevenueLedgerDB, UniversalDB.address))
     .then(_ => fileWriter(RevenueLedgerDB))
     /* Logic contracts */
-    .then(_ => deployer.deploy(SpinProtocol))
+    .then(_ => deployer.deploy(SpinProtocol, IERC20.address))
     .then(_ => fileWriter(SpinProtocol))
-    .then(_ => abiWriter(IERC20))
+    .then(_ => fileWriter(IERC20))
     .catch(e => Promise.reject(new Error('Deployer failed. Error:', e)));
 };
 

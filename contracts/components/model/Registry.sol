@@ -2,15 +2,14 @@ pragma solidity ^0.4.24;
 
 import "../connectors/DBConnector.sol";
 import "../system/Proxied.sol";
-
+import "./ISpinProtocol.sol";
 
 /**
  * @title Registry
  * @dev Manages user, product and campaign registrations
  */
 contract Registry is DBConnector, Proxied {
-
-  string constant private ERROR_ONLY_INFLUENCER = "Only influencer";
+  string private ERROR_ONLY_INFLUENCER = "Only influencer";
   string constant private ERROR_ONLY_SUPPLIER = "Only supplier";
   string constant private ERROR_PRODUCT_DOES_NOT_EXIST = "No such product on DB";
   string constant private ERROR_CAMPAIGN_ENDED = "Campaign ended already";
@@ -22,13 +21,13 @@ contract Registry is DBConnector, Proxied {
     uint256 totalSupply,
     uint256 startAt,
     uint256 endAt
-  ) 
-    external onlyProxy 
+  )
+    external onlyProxy
   {
     campaignDB.createCampaign(
-      campaignId, 
-      productId, 
-      revenueRatio, 
+      campaignId,
+      productId,
+      revenueRatio,
       totalSupply,
       startAt,
       endAt
@@ -42,13 +41,13 @@ contract Registry is DBConnector, Proxied {
     uint256 totalSupply,
     uint256 startAt,
     uint256 endAt
-  ) 
+  )
     external onlyProxy
   {
     campaignDB.updateCampaign(
-      campaignId, 
-      productId, 
-      revenueRatio, 
+      campaignId,
+      productId,
+      revenueRatio,
       totalSupply,
       startAt,
       endAt
@@ -58,11 +57,11 @@ contract Registry is DBConnector, Proxied {
   function attendCampaign(
     uint256 campaignId,
     uint256 influencerId
-  ) 
+  )
     external onlyProxy
   {
     campaignDB.attendCampaign(
-      campaignId, 
+      campaignId,
       influencerId
     );
   }
@@ -70,7 +69,7 @@ contract Registry is DBConnector, Proxied {
   function cancelCampaign(
     uint256 campaignId,
     uint256 influencerId
-  ) 
+  )
     external onlyProxy
   {
     campaignDB.cancelCampaign(
@@ -82,7 +81,7 @@ contract Registry is DBConnector, Proxied {
   function updateSaleEnd(
     uint256 campaignId,
     uint256 endAt
-  ) 
+  )
     external onlyProxy
   {
     campaignDB.updateSaleEnd(
@@ -93,12 +92,12 @@ contract Registry is DBConnector, Proxied {
 
   function deleteCampaign(
     uint256 campaignId
-  ) 
+  )
     external onlyProxy
   {
     campaignDB.deleteCampaign(campaignId);
   }
-  
+
   function createRevenueLedger(
     uint256 revenueLedgerId,
     uint256 campaignId,
@@ -126,10 +125,11 @@ contract Registry is DBConnector, Proxied {
   }
 
   function updateIsAccount(
-    uint256 revenueLedgerId
+    uint256 revenueLedgerId,
+    bool state
   )
     external onlyProxy
   {
-    revenueLedgerDB.updateIsAccount(revenueLedgerId);
+    revenueLedgerDB.updateIsAccount(revenueLedgerId, state);
   }
 }

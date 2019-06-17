@@ -70,9 +70,9 @@ const initialize = async _ => {
   log('\n\r>> Initializing system logic contracts...\n\r');
   await setDataStore(Signer, SpinProtocol)
   
-  log('\n\r>> Set Admin...\n\r');
-  await addAdmin(Signer, Proxy, '0x86018477b6e3f749f5ecd1e99b385af31d874160');
-  await addAdmin(Signer, Proxy, '0x132ee829879755ba9ac9213fc0fa6a10f999c58f');
+  // log('\n\r>> Set Admin...\n\r');
+  // await addAdmin(Signer, Proxy, '0x86018477b6e3f749f5ecd1e99b385af31d874160');
+  // await addAdmin(Signer, Proxy, '0x132ee829879755ba9ac9213fc0fa6a10f999c58f');
 
   log('\n\r\n\r*** Initialization has been completed successfully. ***\n\r\n\r');
 
@@ -80,10 +80,11 @@ const initialize = async _ => {
   const revenueData = { 
     _revenue : 10000,
     _spinRatio : 10,  
-    _marketPrice : 2000 // (market price * 100)
+    _marketPrice : 2050, // (market price * 100)
+    _rounding : 2
   }
 
-  let amt = await CONTRACT.read(SpinProtocol, 'revenueSpin(uint256,uint256,uint256)', revenueData);
+  let amt = await CONTRACT.read(SpinProtocol, 'revenueSpin(uint256,uint256,uint256,uint256)', revenueData);
 
   let tokenTransferData = { 
     to : METADATA.ADDRESS.SPIN_PROTOCOL,
@@ -95,7 +96,6 @@ const initialize = async _ => {
      CONTRACT.write(Signer, IERC20, 'transfer(address,uint256)', tokenTransferData),
      txReceipt => log('\n\r> Tx receipt:', txReceipt)
   )
-
 
 
   // await CONTRACT.write(Signer, Proxy, 'removeContract(string)', { name: 'SpinProtocol' })
