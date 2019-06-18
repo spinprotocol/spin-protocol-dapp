@@ -3,6 +3,7 @@ pragma solidity ^0.4.24;
 import "../../libs/SafeMath.sol";
 import "../../token/IERC20.sol";
 import "../system/Proxied.sol";
+import "./ISpinProtocol.sol";
 
 /**
  * @title Calculate
@@ -50,9 +51,15 @@ contract RevenueShare is Proxied {
     /**
     * @dev Token transfer after calculates.
     */
-    function _revenueShare(address _to, uint256 _revenue, uint256 _spinRatio, uint256 _marketPrice, uint256 _rounding) internal {
+    function revenueShare(uint256 _revenueLedgerId, address _to, uint256 _revenue, uint256 _spinRatio, uint256 _marketPrice, uint256 _rounding) external onlyProxy {
+        uint256 campaignId;
+        bool isAccount;
+        (campaignId,,,,,,,,isAccount) = ISpinProtocol(proxy.getContract(CONTRACT_NAME_REVENUE_LEDGER_DB)).getRevenueLedger(_revenueLedgerId);
+        require(campaignId > 0 && !isAccount, "Empty data or already share");
+
         uint256 spin = revenueSpin(_revenue, _spinRatio, _marketPrice, _rounding);
         _sendToken(_to, spin);
+        ISpinProtocol(proxy.getContract(CONTRACT_NAME_REVENUE_LEDGER_DB)).updateIsAccount(_revenueLedgerId,true);
     }
 
     function getBalance() public view returns(uint256){
