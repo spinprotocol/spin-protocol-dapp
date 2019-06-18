@@ -17,7 +17,7 @@ contract CampaignDB is AbstractDB, Proxied {
   event CampaignUpdated(uint256 indexed campaignId, uint256 updatedAt);
   event CampaignDeleted(uint256 indexed campaignId, uint256 deletedAt);
   
-  constructor(UniversalDB _universalDB) public {
+  constructor(Proxy _proxy, UniversalDB _universalDB) public Proxied(_proxy) {
     setUniversalDB(_universalDB);
   }
 

@@ -15,7 +15,7 @@ contract RevenueLedgerDB is AbstractDB, Proxied {
   event RevenueLedgerCreated(uint256 indexed revenueLedgerId);
   event RevenueLedgerUpdated(uint256 indexed revenueLedgerId, uint256 updatedAt);
   
-  constructor(UniversalDB _universalDB) public {
+  constructor(Proxy _proxy, UniversalDB _universalDB) public Proxied(_proxy) {
     setUniversalDB(_universalDB);
   }
 

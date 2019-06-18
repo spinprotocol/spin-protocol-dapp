@@ -11,6 +11,10 @@ import "../auth/Admin.sol";
 contract Proxied is Admin, SystemContracts {
   Proxy public proxy;
 
+  constructor (Proxy _proxy) public {
+    setProxy(_proxy);
+  }
+
   /**
    * @notice Set/update address of Proxy contract
    */

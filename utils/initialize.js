@@ -6,9 +6,9 @@ const { METADATA } = require('./metadata');
 
 const Proxy = CONTRACT.get(METADATA.ABI.PROXY, METADATA.ADDRESS.PROXY);
 const SpinProtocol = CONTRACT.get(METADATA.ABI.SPIN_PROTOCOL, METADATA.ADDRESS.SPIN_PROTOCOL);
-const UniversalDB = CONTRACT.get(METADATA.ABI.UNIVERSAL_DB, METADATA.ADDRESS.UNIVERSAL_DB);
-const CampaignDB = CONTRACT.get(METADATA.ABI.CAMPAIGN_DB, METADATA.ADDRESS.CAMPAIGN_DB);
-const RevenueLedgerDB = CONTRACT.get(METADATA.ABI.REVENUE_LEDGER_DB, METADATA.ADDRESS.REVENUE_LEDGER_DB);
+// const UniversalDB = CONTRACT.get(METADATA.ABI.UNIVERSAL_DB, METADATA.ADDRESS.UNIVERSAL_DB);
+// const CampaignDB = CONTRACT.get(METADATA.ABI.CAMPAIGN_DB, METADATA.ADDRESS.CAMPAIGN_DB);
+// const RevenueLedgerDB = CONTRACT.get(METADATA.ABI.REVENUE_LEDGER_DB, METADATA.ADDRESS.REVENUE_LEDGER_DB);
 const IERC20 = CONTRACT.get(METADATA.ABI.IERC20, METADATA.ADDRESS.IERC20);
 
 const registerContractToProxy = async (signer, proxy, contractAddr, contractName) => {
@@ -18,29 +18,29 @@ const registerContractToProxy = async (signer, proxy, contractAddr, contractName
   )
 }
 
-const setProxyFor = async (signer, contract, contractName, proxyAddr) => {
-  await go(
-    CONTRACT.write(signer, contract, 'setProxy(address)', { _proxy: proxyAddr }),
-    txReceipt => log('\n\r> Tx receipt:', txReceipt)
-  )
-}
+// const setProxyFor = async (signer, contract, contractName, proxyAddr) => {
+//   await go(
+//     CONTRACT.write(signer, contract, 'setProxy(address)', { _proxy: proxyAddr }),
+//     txReceipt => log('\n\r> Tx receipt:', txReceipt)
+//   )
+// }
 
-const addAdmin = async (signer, contract, adminAddr) => {
-  await go(
-    CONTRACT.write(signer, contract, 'addAdmin(address)', {account : adminAddr}),
-    txReceipt => log('\n\r> Tx receipt:', txReceipt)
-  )
-}
+// const addAdmin = async (signer, contract, adminAddr) => {
+//   await go(
+//     CONTRACT.write(signer, contract, 'addAdmin(address)', {account : adminAddr}),
+//     txReceipt => log('\n\r> Tx receipt:', txReceipt)
+//   )
+// }
 
-const setDataStore = async (signer, spinProtocol) => {
-  await go(
-    CONTRACT.write(signer, spinProtocol, 'setDataStore(address,address)', { 
-      _campaignDB: METADATA.ADDRESS.CAMPAIGN_DB,
-      _revenueLedgerDB: METADATA.ADDRESS.REVENUE_LEDGER_DB
-    }),
-    txReceipt => log('\n\r> Tx receipt:', txReceipt)
-  )
-}
+// const setDataStore = async (signer, spinProtocol) => {
+//   await go(
+//     CONTRACT.write(signer, spinProtocol, 'setDataStore(address,address)', { 
+//       _campaignDB: METADATA.ADDRESS.CAMPAIGN_DB,
+//       _revenueLedgerDB: METADATA.ADDRESS.REVENUE_LEDGER_DB
+//     }),
+//     txReceipt => log('\n\r> Tx receipt:', txReceipt)
+//   )
+// }
 
 const createSigner = privateKey => go(
   ACCOUNTS.access(privateKey),
@@ -58,17 +58,18 @@ const initialize = async _ => {
   await registerContractToProxy(Signer, Proxy, METADATA.ADDRESS.UNIVERSAL_DB, METADATA.NAME.UNIVERSAL_DB)
   await registerContractToProxy(Signer, Proxy, METADATA.ADDRESS.CAMPAIGN_DB, METADATA.NAME.CAMPAIGN_DB)
   await registerContractToProxy(Signer, Proxy, METADATA.ADDRESS.REVENUE_LEDGER_DB, METADATA.NAME.REVENUE_LEDGER_DB)
+  await registerContractToProxy(Signer, Proxy, METADATA.ADDRESS.IERC20, "Token")
 
   // /************** Set Proxy contract address for system contracts **************/
-  log('\n\r>> Setting Proxy for system contracts...\n\r');
-  await setProxyFor(Signer, SpinProtocol, METADATA.NAME.SPIN_PROTOCOL, METADATA.ADDRESS.PROXY)
-  await setProxyFor(Signer, UniversalDB, METADATA.NAME.UNIVERSAL_DB, METADATA.ADDRESS.PROXY)
-  await setProxyFor(Signer, CampaignDB, METADATA.NAME.CAMPAIGN_DB, METADATA.ADDRESS.PROXY)
-  await setProxyFor(Signer, RevenueLedgerDB, METADATA.NAME.REVENUE_LEDGER_DB, METADATA.ADDRESS.PROXY)
+  // log('\n\r>> Setting Proxy for system contracts...\n\r');
+  // await setProxyFor(Signer, SpinProtocol, METADATA.NAME.SPIN_PROTOCOL, METADATA.ADDRESS.PROXY)
+  // await setProxyFor(Signer, UniversalDB, METADATA.NAME.UNIVERSAL_DB, METADATA.ADDRESS.PROXY)
+  // await setProxyFor(Signer, CampaignDB, METADATA.NAME.CAMPAIGN_DB, METADATA.ADDRESS.PROXY)
+  // await setProxyFor(Signer, RevenueLedgerDB, METADATA.NAME.REVENUE_LEDGER_DB, METADATA.ADDRESS.PROXY)
 
   /************** Initialize system logic contracts **************/
-  log('\n\r>> Initializing system logic contracts...\n\r');
-  await setDataStore(Signer, SpinProtocol)
+  // log('\n\r>> Initializing system logic contracts...\n\r');
+  // await setDataStore(Signer, SpinProtocol)
   
   // log('\n\r>> Set Admin...\n\r');
   // await addAdmin(Signer, Proxy, '0x86018477b6e3f749f5ecd1e99b385af31d874160');

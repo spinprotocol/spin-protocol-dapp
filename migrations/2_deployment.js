@@ -24,14 +24,14 @@ const Deployer = (deployer) => {
   return deployer.deploy(Proxy)
     .then(_ => fileWriter(Proxy))
     /* DB contracts */
-    .then(_ => deployer.deploy(UniversalDB))
+    .then(_ => deployer.deploy(UniversalDB,Proxy.address))
     .then(_ => fileWriter(UniversalDB))
-    .then(_ => deployer.deploy(CampaignDB, UniversalDB.address))
+    .then(_ => deployer.deploy(CampaignDB, Proxy.address, UniversalDB.address))
     .then(_ => fileWriter(CampaignDB))
-    .then(_ => deployer.deploy(RevenueLedgerDB, UniversalDB.address))
+    .then(_ => deployer.deploy(RevenueLedgerDB, Proxy.address, UniversalDB.address))
     .then(_ => fileWriter(RevenueLedgerDB))
     /* Logic contracts */
-    .then(_ => deployer.deploy(SpinProtocol, IERC20.address))
+    .then(_ => deployer.deploy(SpinProtocol, Proxy.address, CampaignDB.address, RevenueLedgerDB.address))
     .then(_ => fileWriter(SpinProtocol))
     .then(_ => fileWriter(IERC20))
     .catch(e => Promise.reject(new Error('Deployer failed. Error:', e)));

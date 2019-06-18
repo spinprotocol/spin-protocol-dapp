@@ -31,6 +31,7 @@ contract ProxyBase is Admin, SystemContracts {
     return contracts[name];
   }
 
+  function addressOfToken() public view returns(address) {return getContract("Token");}
   function addressOfCampaignDB() public view returns(address) {return getContract(CONTRACT_NAME_CAMPAIGN_DB);}
   function addressOfRevenueLedgerDB() public view returns(address) {return getContract(CONTRACT_NAME_REVENUE_LEDGER_DB);}
   function addressOfSpinProtocol() public view returns(address) {return getContract(CONTRACT_NAME_SPIN_PROTOCOL);}

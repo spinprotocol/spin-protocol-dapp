@@ -13,6 +13,9 @@ import "../components/system/Proxied.sol";
 contract UniversalDB is Proxied, EternalStorage {
   using LinkedListLib for LinkedListLib.LinkedList;
 
+  constructor (Proxy _proxy) public Proxied(_proxy) {
+  }
+
   function setIntStorage(
     string  contractName,
     bytes32 key,
