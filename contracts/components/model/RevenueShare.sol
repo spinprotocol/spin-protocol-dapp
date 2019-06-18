@@ -12,22 +12,12 @@ import "./ISpinProtocol.sol";
 contract RevenueShare is Proxied {
     using SafeMath for uint256;
 
-    IERC20 token;
-
-    constructor (address _tokenAddr) public {
-        require(_tokenAddr != address(0), "TokenAddr abnomal");
-        token = IERC20(_tokenAddr);
-    }
-
-    function setTokenAddr(address _tokenAddr) external onlyAdmin {
-        token = IERC20(_tokenAddr);
-    }
-
     function sendToken(address _to, uint256 _amt) external onlyAdmin {
         _sendToken(_to, _amt);
     }
 
     function _sendToken(address _to, uint256 _amt) internal {
+        IERC20 token = IERC20(proxy.addressOfToken());
         require(token.transfer(_to,_amt), "Token Transfer Fail");
     }
 
@@ -42,7 +32,12 @@ contract RevenueShare is Proxied {
     * @dev Calculates revenue.
     * @param _marketPrice : The value of this parameter must be (_marketPrice * 100) to resolve the decimal point issue.
     */
-    function revenueSpin(uint256 _revenue, uint256 _spinRatio, uint256 _marketPrice, uint256 _rounding) public pure returns(uint256 spin){
+    function revenueSpin(
+        uint256 _revenue,
+        uint256 _spinRatio,
+        uint256 _marketPrice,
+        uint256 _rounding
+    ) public pure returns(uint256 spin){
         spin = _revenue.mul(1 ether);
         spin = spin.mul(_spinRatio).div(_marketPrice);
         spin = rounding(spin, uint256(18).sub(_rounding));
@@ -51,7 +46,14 @@ contract RevenueShare is Proxied {
     /**
     * @dev Token transfer after calculates.
     */
-    function revenueShare(uint256 _revenueLedgerId, address _to, uint256 _revenue, uint256 _spinRatio, uint256 _marketPrice, uint256 _rounding) external onlyProxy {
+    function revenueShare(
+        uint256 _revenueLedgerId,
+        address _to,
+        uint256 _revenue,
+        uint256 _spinRatio,
+        uint256 _marketPrice,
+        uint256 _rounding
+    ) external onlyProxy {
         uint256 campaignId;
         bool isAccount;
         (campaignId,,,,,,,,isAccount) = ISpinProtocol(proxy.getContract(CONTRACT_NAME_REVENUE_LEDGER_DB)).getRevenueLedger(_revenueLedgerId);
@@ -63,6 +65,7 @@ contract RevenueShare is Proxied {
     }
 
     function getBalance() public view returns(uint256){
+        IERC20 token = IERC20(proxy.addressOfToken());
         return token.balanceOf(this);
     }
 }
