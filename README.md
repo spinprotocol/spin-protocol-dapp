@@ -11,7 +11,13 @@ npm install
 ```
 
 ### Deploying whole system at once
+! Check the migrate history '/deployed/migrate/'
 ```bash
 # Deploy whole contracts
 truffle migrate --network <network_name>
+```
+
+### Contract initialize
+```bash
+NETWORK=<network_name> npm run initialize-contract
 ```
