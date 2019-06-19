@@ -1,8 +1,11 @@
-const { go, log, map, find, tap } = require('ffp-js');
+Object.assign(global, require('ffp-js'));
+
+const setEN = (network) => (network == 'mainnet') 
+  ? 'https://api.baobab.klaytn.net:8651'
+  : 'https://api.baobab.klaytn.net:8651';
 
 const Caver = require('caver-js');
-const caver = new Caver('https://api.baobab.klaytn.net:8651');
-// const caver = new Caver(process.env.KLAYTN_HOST);
+const caver = new Caver(setEN(process.env.NETWORK));
 
 
 

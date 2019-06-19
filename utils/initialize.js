@@ -1,4 +1,4 @@
-const { go, log } = require('ffp-js');
+Object.assign(global, require('ffp-js'));
 
 const credentials = require('../credentials.json');
 const { CONTRACT, ACCOUNTS, WALLET } = require('./generic-caver');

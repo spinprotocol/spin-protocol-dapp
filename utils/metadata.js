@@ -1,6 +1,8 @@
+Object.assign(global, require('ffp-js'));
+
 // Metadata reading utils
-const addressReader = (contractName) => require(`../deployed/address/${contractName}.json`).address;
-const abiReader = (contractName) => require(`../deployed/abi/${contractName}.json`).abi;
+const deployedFileReader = (contractName) => 
+  require(`../deployed/${process.env.NETWORK}/${contractName}.json`);
 
 const METADATA = {};
 
@@ -15,6 +17,7 @@ METADATA.NAME.SPIN_PROTOCOL = 'SpinProtocol';
 METADATA.NAME.UNIVERSAL_DB = 'UniversalDB';
 METADATA.NAME.CAMPAIGN_DB = 'CampaignDB';
 METADATA.NAME.REVENUE_LEDGER_DB = 'RevenueLedgerDB';
+METADATA.NAME.IERC20 = 'IERC20';
 
 /**
  * Contract's addresses
@@ -22,12 +25,12 @@ METADATA.NAME.REVENUE_LEDGER_DB = 'RevenueLedgerDB';
  */
 METADATA.ADDRESS = {};
 
-METADATA.ADDRESS.PROXY = addressReader(METADATA.NAME.PROXY);
-METADATA.ADDRESS.SPIN_PROTOCOL = addressReader(METADATA.NAME.SPIN_PROTOCOL);
-METADATA.ADDRESS.UNIVERSAL_DB = addressReader(METADATA.NAME.UNIVERSAL_DB);
-METADATA.ADDRESS.CAMPAIGN_DB = addressReader(METADATA.NAME.CAMPAIGN_DB);
-METADATA.ADDRESS.REVENUE_LEDGER_DB = addressReader(METADATA.NAME.REVENUE_LEDGER_DB);
-METADATA.ADDRESS.IERC20 = '0x4a39a3e9b5793abe14157615e979e00758ec902a'; //Spin Token Address
+METADATA.ADDRESS.PROXY = go(METADATA.NAME.PROXY, deployedFileReader, a => a.address);
+METADATA.ADDRESS.SPIN_PROTOCOL = go(METADATA.NAME.SPIN_PROTOCOL, deployedFileReader, a => a.address);
+METADATA.ADDRESS.UNIVERSAL_DB = go(METADATA.NAME.UNIVERSAL_DB, deployedFileReader, a => a.address);
+METADATA.ADDRESS.CAMPAIGN_DB = go(METADATA.NAME.CAMPAIGN_DB, deployedFileReader, a => a.address);
+METADATA.ADDRESS.REVENUE_LEDGER_DB = go(METADATA.NAME.REVENUE_LEDGER_DB, deployedFileReader, a => a.address);
+METADATA.ADDRESS.IERC20 = go(METADATA.NAME.IERC20, deployedFileReader, a => a.address);
 
 
 /**
@@ -36,12 +39,12 @@ METADATA.ADDRESS.IERC20 = '0x4a39a3e9b5793abe14157615e979e00758ec902a'; //Spin T
  */
 METADATA.ABI = {};
 
-METADATA.ABI.PROXY = abiReader(METADATA.NAME.PROXY);
-METADATA.ABI.SPIN_PROTOCOL = abiReader(METADATA.NAME.SPIN_PROTOCOL);
-METADATA.ABI.UNIVERSAL_DB = abiReader(METADATA.NAME.UNIVERSAL_DB);
-METADATA.ABI.CAMPAIGN_DB = abiReader(METADATA.NAME.CAMPAIGN_DB);
-METADATA.ABI.REVENUE_LEDGER_DB = abiReader(METADATA.NAME.REVENUE_LEDGER_DB);
-METADATA.ABI.IERC20 = abiReader('IERC20');
+METADATA.ABI.PROXY = go(METADATA.NAME.PROXY, deployedFileReader, a => a.abi);
+METADATA.ABI.SPIN_PROTOCOL = go(METADATA.NAME.SPIN_PROTOCOL, deployedFileReader, a => a.abi);
+METADATA.ABI.UNIVERSAL_DB = go(METADATA.NAME.UNIVERSAL_DB, deployedFileReader, a => a.abi);
+METADATA.ABI.CAMPAIGN_DB = go(METADATA.NAME.CAMPAIGN_DB, deployedFileReader, a => a.abi);
+METADATA.ABI.REVENUE_LEDGER_DB = go(METADATA.NAME.REVENUE_LEDGER_DB, deployedFileReader, a => a.abi);
+METADATA.ABI.IERC20 = go(METADATA.NAME.IERC20, deployedFileReader, a => a.abi);
 
 module.exports = {
   METADATA
