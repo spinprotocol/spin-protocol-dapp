@@ -27,7 +27,7 @@ module.exports = {
     baobab: {
       provider: providerFactory('baobab'),
       network_id: 1001,
-      gas: 20000000,
+      gas: 10000000,
       gasPrice: null
     },
     mainnet: {

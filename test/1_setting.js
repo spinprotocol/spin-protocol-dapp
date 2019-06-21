@@ -49,21 +49,6 @@ contract('Setting',() => {
         });
     });
 
-    it("setProxy", async () => {
-        await spinProtocolInstance.setProxy(METADATA.ADDRESS.PROXY,{from : admin});
-        let proxy = await spinProtocolInstance.proxy.call();
-        assert.equal(proxy,METADATA.ADDRESS.PROXY, "Abnormal Proxy Address");
-    })
-
-    it("setDataStore", async () => {
-        await spinProtocolInstance.setDataStore(METADATA.ADDRESS.CAMPAIGN_DB,METADATA.ADDRESS.REVENUE_LEDGER_DB)
-        let campaignDB = await spinProtocolInstance.campaignDB.call();
-        let revenueLedgerDB = await spinProtocolInstance.revenueLedgerDB.call();
-
-        assert.equal(campaignDB,METADATA.ADDRESS.CAMPAIGN_DB, "Abnormal Campaign Address");
-        assert.equal(revenueLedgerDB,METADATA.ADDRESS.REVENUE_LEDGER_DB, "Abnormal RevenueLedger Address");
-    })
-
     //UniversalDB
     it("Admin check", () => {
         console.log("     => UniversalDB")
@@ -74,12 +59,6 @@ contract('Setting',() => {
             assert.equal(adminBool, true, "Abnormal Admin ")
         });
     });
-
-    it("setProxy", async () => {
-        await universalInstance.setProxy(METADATA.ADDRESS.PROXY,{from : admin});
-        let proxy = await universalInstance.proxy.call();
-        assert.equal(proxy,METADATA.ADDRESS.PROXY, "Abnormal Proxy Address");
-    })
 
     //RevenueLedgerDB
     it("Admin check", () => {
@@ -92,12 +71,6 @@ contract('Setting',() => {
         });
     });
 
-    it("setProxy", async () => {
-        await revenueLedgerInstance.setProxy(METADATA.ADDRESS.PROXY,{from : admin});
-        let proxy = await revenueLedgerInstance.proxy.call();
-        assert.equal(proxy,METADATA.ADDRESS.PROXY, "Abnormal Proxy Address");
-    })
-
     //CampaignDB
     it("Admin check", () => {
         console.log("     => CampaignDB")
@@ -108,10 +81,4 @@ contract('Setting',() => {
             assert.equal(adminBool, true, "Abnormal Admin ")
         });
     });
-
-    it("setProxy", async () => {
-        await campaignInstance.setProxy(METADATA.ADDRESS.PROXY,{from : admin});
-        let proxy = await campaignInstance.proxy.call();
-        assert.equal(proxy,METADATA.ADDRESS.PROXY, "Abnormal Proxy Address");
-    })
 })

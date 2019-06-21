@@ -16,6 +16,7 @@ const caver = new Caver(setEN(process.env.NETWORK));
 const ACCOUNTS = {};
 const WALLET = {};
 const CONTRACT = {};
+const UTILS = {};
 
 
 
@@ -160,6 +161,12 @@ CONTRACT.read = (contract, fnSignature, params) => go(
   res => parseCallResult(res, outputGenerator(contract, fnSignature))
 );
 
+
+UTILS.toKLAY = val => caver.utils.toPeb(val, "KLAY");
+UTILS.fromKLAY = val => caver.utils.fromPeb(val, "KLAY");
+
+UTILS.toChecksumAddress = address => caver.utils.toChecksumAddress(address);
+
 module.exports = {
-  CONTRACT, ACCOUNTS, WALLET
+  CONTRACT, ACCOUNTS, WALLET, UTILS
 }

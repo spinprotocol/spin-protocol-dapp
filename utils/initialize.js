@@ -1,43 +1,84 @@
 Object.assign(global, require('ffp-js'));
 
 const credentials = require('../credentials.json');
-const { CONTRACT, ACCOUNTS, WALLET } = require('./generic-caver');
+const { CONTRACT, ACCOUNTS, WALLET, UTILS } = require('./generic-caver');
 const { METADATA } = require('./metadata');
 
 const Proxy = CONTRACT.get(METADATA.ABI.PROXY, METADATA.ADDRESS.PROXY);
 const SpinProtocol = CONTRACT.get(METADATA.ABI.SPIN_PROTOCOL, METADATA.ADDRESS.SPIN_PROTOCOL);
-// const UniversalDB = CONTRACT.get(METADATA.ABI.UNIVERSAL_DB, METADATA.ADDRESS.UNIVERSAL_DB);
-// const CampaignDB = CONTRACT.get(METADATA.ABI.CAMPAIGN_DB, METADATA.ADDRESS.CAMPAIGN_DB);
-// const RevenueLedgerDB = CONTRACT.get(METADATA.ABI.REVENUE_LEDGER_DB, METADATA.ADDRESS.REVENUE_LEDGER_DB);
+const UniversalDB = CONTRACT.get(METADATA.ABI.UNIVERSAL_DB, METADATA.ADDRESS.UNIVERSAL_DB);
+const CampaignDB = CONTRACT.get(METADATA.ABI.CAMPAIGN_DB, METADATA.ADDRESS.CAMPAIGN_DB);
+const RevenueLedgerDB = CONTRACT.get(METADATA.ABI.REVENUE_LEDGER_DB, METADATA.ADDRESS.REVENUE_LEDGER_DB);
 const IERC20 = CONTRACT.get(METADATA.ABI.IERC20, METADATA.ADDRESS.IERC20);
 
-const registerContractToProxy = async (signer, proxy, contractAddr, contractName) => {
+const revenueTestData = { 
+  _revenue : 10000,
+  _spinRatio : 10,  
+  _marketPrice : 2050, // (market price * 100)
+  _rounding : 2
+}
+
+const registerContractToProxy = async (signer, contractName, contractAddr) => {
   await go(
-    CONTRACT.write(signer, proxy, 'addContract(string,address)', { name: contractName, addr: contractAddr }),
-    txReceipt => log('\n\r> Tx receipt:', txReceipt)
+    CONTRACT.write(signer, Proxy, 'addContract(string,address)', { name: contractName, addr: contractAddr }),
+    txReceipt => log('\r  -> Tx Hash:', txReceipt.transactionHash)
   )
 }
 
-// const setProxyFor = async (signer, contract, contractName, proxyAddr) => {
-//   await go(
-//     CONTRACT.write(signer, contract, 'setProxy(address)', { _proxy: proxyAddr }),
-//     txReceipt => log('\n\r> Tx receipt:', txReceipt)
-//   )
-// }
+const updateContractToProxy = async (signer, contractName, contractAddr) => {
+  await go(
+    CONTRACT.write(signer, Proxy, 'updateContract(string,address)', { name: contractName, addr: contractAddr }),
+    txReceipt => log('\r  -> Tx Hash:', txReceipt.transactionHash)
+  )
+}
+
+const getContract = async (name) =>
+  await CONTRACT.read(Proxy, 'getContract(string)', { name })
+    .then(addr => UTILS.toChecksumAddress(addr))
+    .catch(e => undefined)
+
+const setProxyFor = async (signer, contract) => {
+  await go(
+    CONTRACT.write(signer, contract, 'setProxy(address)', { _proxy: METADATA.PROXY.ADDRESS }),
+    txReceipt => log('\r  -> Tx Hash:', txReceipt.transactionHash)
+  )
+}
+
+const getProxy = async (contract) => await contract.methods.proxy().call().then(addr => UTILS.toChecksumAddress(addr)).catch(e => undefined)
+
+const setDataStore = async (signer,a) => {
+  await go(
+    CONTRACT.write(signer, SpinProtocol, 'setDataStore(address,address)', { 
+      _campaignDB: METADATA.ADDRESS.CAMPAIGN_DB,
+      _revenueLedgerDB: METADATA.ADDRESS.REVENUE_LEDGER_DB
+    }),
+    txReceipt => log('\r  -> Tx Hash:', txReceipt.transactionHash)
+    )
+  }
+
+  const getDataStore = async () => {
+    let addr = {};
+    addr.campaignDB = await SpinProtocol.methods.campaignDB().call().then(addr => UTILS.toChecksumAddress(addr)).catch(e => log(e.message));
+    addr.revenueLedgerDB = await SpinProtocol.methods.revenueLedgerDB().call().then(addr => UTILS.toChecksumAddress(addr)).catch(e => undefined);
+    return addr;
+  }
+
+  const deposit = async (signer, value) => await go(
+      CONTRACT.write(signer, IERC20, 'transfer(address,uint256)', {to : METADATA.ADDRESS.SPIN_PROTOCOL, value}),
+      txReceipt => log('\r  -> Tx Hash:', txReceipt.transactionHash)
+    )
+  
+
+  const testDeposit = async (signer, revenueData) => {
+    log(revenueData);
+    let amt = await CONTRACT.read(SpinProtocol, 'revenueSpin(uint256,uint256,uint256,uint256)', revenueData);
+    log(`\r* amount : ${UTILS.fromKLAY(amt)} SPIN`)
+    await deposit(signer, amt);
+  }
 
 // const addAdmin = async (signer, contract, adminAddr) => {
 //   await go(
 //     CONTRACT.write(signer, contract, 'addAdmin(address)', {account : adminAddr}),
-//     txReceipt => log('\n\r> Tx receipt:', txReceipt)
-//   )
-// }
-
-// const setDataStore = async (signer, spinProtocol) => {
-//   await go(
-//     CONTRACT.write(signer, spinProtocol, 'setDataStore(address,address)', { 
-//       _campaignDB: METADATA.ADDRESS.CAMPAIGN_DB,
-//       _revenueLedgerDB: METADATA.ADDRESS.REVENUE_LEDGER_DB
-//     }),
 //     txReceipt => log('\n\r> Tx receipt:', txReceipt)
 //   )
 // }
@@ -47,61 +88,94 @@ const createSigner = privateKey => go(
   WALLET.connect
 )
 
+// ==============================================================================================================
+
 const initialize = async _ => {
   /************** Create signer **************/
-  // process.env.KLAYTN_ADMIN_PRIVATE_KEY
-  const Signer = await createSigner(credentials.klaytn.privateKey.testnet);
+  const Signer = await createSigner(credentials.klaytn.privateKey.testnet); // process.env.KLAYTN_ADMIN_PRIVATE_KEY
   
   /************** Add system contracts to `Proxy` contract **************/
-  log('\n\r>> Registering system contracts to Proxy...\n\r');
-  await registerContractToProxy(Signer, Proxy, METADATA.ADDRESS.SPIN_PROTOCOL, METADATA.NAME.SPIN_PROTOCOL)
-  await registerContractToProxy(Signer, Proxy, METADATA.ADDRESS.UNIVERSAL_DB, METADATA.NAME.UNIVERSAL_DB)
-  await registerContractToProxy(Signer, Proxy, METADATA.ADDRESS.CAMPAIGN_DB, METADATA.NAME.CAMPAIGN_DB)
-  await registerContractToProxy(Signer, Proxy, METADATA.ADDRESS.REVENUE_LEDGER_DB, METADATA.NAME.REVENUE_LEDGER_DB)
-  await registerContractToProxy(Signer, Proxy, METADATA.ADDRESS.IERC20, "Token")
+  log('\n\r>> Scan for system contracts that are not registered with the proxy...');
 
-  // /************** Set Proxy contract address for system contracts **************/
-  // log('\n\r>> Setting Proxy for system contracts...\n\r');
-  // await setProxyFor(Signer, SpinProtocol, METADATA.NAME.SPIN_PROTOCOL, METADATA.ADDRESS.PROXY)
-  // await setProxyFor(Signer, UniversalDB, METADATA.NAME.UNIVERSAL_DB, METADATA.ADDRESS.PROXY)
-  // await setProxyFor(Signer, CampaignDB, METADATA.NAME.CAMPAIGN_DB, METADATA.ADDRESS.PROXY)
-  // await setProxyFor(Signer, RevenueLedgerDB, METADATA.NAME.REVENUE_LEDGER_DB, METADATA.ADDRESS.PROXY)
+  let scanContract = ['SPIN_PROTOCOL', 'UNIVERSAL_DB', 'CAMPAIGN_DB', 'REVENUE_LEDGER_DB', 'IERC20'];
 
-  /************** Initialize system logic contracts **************/
-  // log('\n\r>> Initializing system logic contracts...\n\r');
-  // await setDataStore(Signer, SpinProtocol)
-  
-  // log('\n\r>> Set Admin...\n\r');
-  // await addAdmin(Signer, Proxy, '0x86018477b6e3f749f5ecd1e99b385af31d874160');
-  // await addAdmin(Signer, Proxy, '0x132ee829879755ba9ac9213fc0fa6a10f999c58f');
+  let addresses = go(
+      METADATA.ADDRESS,
+      pick(scanContract),
+      valuesL,
+      takeAll
+    );
 
-  log('\n\r\n\r*** Initialization has been completed successfully. ***\n\r\n\r');
+  let names = go(
+    METADATA.NAME,
+    pick(scanContract),
+    valuesL,
+    takeAll
+  );
+ 
+  let getContractcheck = await go(addresses, addr => merge(names, addr))
 
-  /************** Revenue share Test **************/
-  const revenueData = { 
-    _revenue : 10000,
-    _spinRatio : 10,  
-    _marketPrice : 2050, // (market price * 100)
-    _rounding : 2
-  }
-
-  let amt = await CONTRACT.read(SpinProtocol, 'revenueSpin(uint256,uint256,uint256,uint256)', revenueData);
-
-  let tokenTransferData = { 
-    to : METADATA.ADDRESS.SPIN_PROTOCOL,
-    value : amt
-  }
-
-  log(`\n\n**** send Test Token to SpinProtocol Contract ${amt}`)
   await go(
-     CONTRACT.write(Signer, IERC20, 'transfer(address,uint256)', tokenTransferData),
-     txReceipt => log('\n\r> Tx receipt:', txReceipt)
+    getContractcheck,
+    map(async contract => {
+      contract[0] = contract[0] === 'IERC20' ? 'Token' : contract[0];
+      let setupAddr = await getContract(contract[0]);
+      let realAddr = UTILS.toChecksumAddress(contract[1]);
+
+      await match(setupAddr)
+        .case(setup => setup === undefined)(async _ =>{
+          log(`\n\r [${contract[0]}] add`)
+          await registerContractToProxy(Signer, contract[0], contract[1])
+        })
+        .case(setup => setup !== realAddr)(async _ => {
+          log(`\n\r [${contract[0]}] update`)
+          await updateContractToProxy(Signer, contract[0], contract[1])
+        })
+        .else(_ => false)
+    })
   )
 
 
-  // await CONTRACT.write(Signer, Proxy, 'removeContract(string)', { name: 'SpinProtocol' })
-  // await go(CONTRACT.read(Proxy, 'getContract(string)', { name: 'SpinProtocol' }), log);
+  // /************** Set Proxy contract address for system contracts **************/
+  log('\n\r>> Scan for system contracts and Setting Proxy...');
+
+  let getProxycheck = [SpinProtocol, UniversalDB, CampaignDB, RevenueLedgerDB];
+  await go(
+    getProxycheck,
+    map(async contract => {
+      let setupAddr = await getProxy(contract);
+      let realAddr = UTILS.toChecksumAddress(METADATA.ADDRESS.PROXY);
+
+      if(setupAddr !== realAddr){
+        log(`\n\r [${contract.NAME}]`)
+        await setProxyFor(Signer, contract)
+      }
+    })
+  )
+
+
+  /************** Initialize system logic contracts **************/
+  log('\n\r>> Initializing system logic contracts...');
+
+  let dataStore = await getDataStore();
+  await match(dataStore)
+    .case(a => a.campaignDB !== UTILS.toChecksumAddress(METADATA.ADDRESS.CAMPAIGN_DB))(_ => setDataStore(Signer))
+    .case(a => a.revenueLedgerDB !== UTILS.toChecksumAddress(METADATA.ADDRESS.REVENUE_LEDGER_DB))(_ => setDataStore(Signer))
+    .else(_ => false)
+  
+
+  log('\n\r\n\r***** Initialization has been completed successfully. *****\n\r\n\r');
+  
+  /************** Revenue share **************/
+  let argv = process.argv;
+  log(`\n\r>> Token Deposit...  type : ${argv[2]}`);
+
+  await match(argv[2])
+    .case(a => a !== undefined && a === 'test' )(a => testDeposit(Signer,revenueTestData))
+    .case(a => a !== undefined)(a => deposit(Signer, UTILS.toKLAY(a)))
+    .else(_ => false)
 }
+
 
 (async function() {
   try {
