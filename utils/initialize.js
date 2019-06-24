@@ -39,7 +39,7 @@ const getContract = async (name) =>
 
 const setProxyFor = async (signer, contract) => {
   await go(
-    CONTRACT.write(signer, contract, 'setProxy(address)', { _proxy: METADATA.PROXY.ADDRESS }),
+    CONTRACT.write(signer, contract, 'setProxy(address)', { _proxy: METADATA.ADDRESS.PROXY }),
     txReceipt => log('\r  -> Tx Hash:', txReceipt.transactionHash)
   )
 }
@@ -147,7 +147,7 @@ const initialize = async _ => {
       let realAddr = UTILS.toChecksumAddress(METADATA.ADDRESS.PROXY);
 
       if(setupAddr !== realAddr){
-        log(`\n\r [${contract.NAME}]`)
+        log(`\n\r [${contract._address}]`)
         await setProxyFor(Signer, contract)
       }
     })
