@@ -54,34 +54,33 @@ const setDataStore = async (signer,a) => {
     }),
     txReceipt => log('\r  -> Tx Hash:', txReceipt.transactionHash)
     )
-  }
+}
 
-  const getDataStore = async () => {
-    let addr = {};
-    addr.campaignDB = await SpinProtocol.methods.campaignDB().call().then(addr => UTILS.toChecksumAddress(addr)).catch(e => log(e.message));
-    addr.revenueLedgerDB = await SpinProtocol.methods.revenueLedgerDB().call().then(addr => UTILS.toChecksumAddress(addr)).catch(e => undefined);
-    return addr;
-  }
+const getDataStore = async () => {
+  let addr = {};
+  addr.campaignDB = await SpinProtocol.methods.campaignDB().call().then(addr => UTILS.toChecksumAddress(addr)).catch(e => log(e.message));
+  addr.revenueLedgerDB = await SpinProtocol.methods.revenueLedgerDB().call().then(addr => UTILS.toChecksumAddress(addr)).catch(e => undefined);
+  return addr;
+}
 
-  const deposit = async (signer, value) => await go(
-      CONTRACT.write(signer, IERC20, 'transfer(address,uint256)', {to : METADATA.ADDRESS.SPIN_PROTOCOL, value}),
-      txReceipt => log('\r  -> Tx Hash:', txReceipt.transactionHash)
-    )
-  
+const deposit = async (signer, value) => await go(
+  CONTRACT.write(signer, IERC20, 'transfer(address,uint256)', {to : METADATA.ADDRESS.SPIN_PROTOCOL, value}),
+  txReceipt => log('\r  -> Tx Hash:', txReceipt.transactionHash)
+);
 
-  const testDeposit = async (signer, revenueData) => {
-    log(revenueData);
-    let amt = await CONTRACT.read(SpinProtocol, 'revenueSpin(uint256,uint256,uint256,uint256)', revenueData);
-    log(`\r* amount : ${UTILS.fromKLAY(amt)} SPIN`)
-    await deposit(signer, amt);
-  }
+const testDeposit = async (signer, revenueData) => {
+  log(revenueData);
+  let amt = await CONTRACT.read(SpinProtocol, 'revenueSpin(uint256,uint256,uint256,uint256)', revenueData);
+  log(`\r* amount : ${UTILS.fromKLAY(amt)} SPIN`)
+  await deposit(signer, amt);
+}
 
-// const addAdmin = async (signer, contract, adminAddr) => {
-//   await go(
-//     CONTRACT.write(signer, contract, 'addAdmin(address)', {account : adminAddr}),
-//     txReceipt => log('\n\r> Tx receipt:', txReceipt)
-//   )
-// }
+const addAdmin = async (signer, contract, adminAddr) => {
+  await go(
+    CONTRACT.write(signer, contract, 'addAdmin(address)', {account : adminAddr}),
+    txReceipt => log('\n\r> Tx receipt:', txReceipt)
+  )
+}
 
 const createSigner = privateKey => go(
   ACCOUNTS.access(privateKey),
@@ -92,7 +91,15 @@ const createSigner = privateKey => go(
 
 const initialize = async _ => {
   /************** Create signer **************/
-  const Signer = await createSigner(credentials.klaytn.privateKey.testnet); // process.env.KLAYTN_ADMIN_PRIVATE_KEY
+  // const Signer = await createSigner(credentials.klaytn.privateKey.baobab); // process.env.KLAYTN_ADMIN_PRIVATE_KEY
+  const Signer = await match(process.env.NETWORK)
+    .case(network => network == 'mainnet')(
+      _=> createSigner(credentials.klaytn.privateKey.mainnet)
+    )
+    .case(network => network == 'baobab')(
+      _=> createSigner(credentials.klaytn.privateKey.baobab)
+    )
+    .else(_=>_);
   
   /************** Add system contracts to `Proxy` contract **************/
   log('\n\r>> Scan for system contracts that are not registered with the proxy...');
@@ -167,13 +174,13 @@ const initialize = async _ => {
   log('\n\r\n\r***** Initialization has been completed successfully. *****\n\r\n\r');
   
   /************** Revenue share **************/
-  let argv = process.argv;
-  log(`\n\r>> Token Deposit...  type : ${argv[2]}`);
+  // let argv = process.argv;
+  // log(`\n\r>> Token Deposit...  type : ${argv[2]}`);
 
-  await match(argv[2])
-    .case(a => a !== undefined && a === 'test' )(a => testDeposit(Signer,revenueTestData))
-    .case(a => a !== undefined)(a => deposit(Signer, UTILS.toKLAY(a)))
-    .else(_ => false)
+  // await match(argv[2])
+  //   .case(a => a !== undefined && a === 'test' )(a => testDeposit(Signer,revenueTestData))
+  //   .case(a => a !== undefined)(a => deposit(Signer, UTILS.toKLAY(a)))
+  //   .else(_ => false)
 }
 
 

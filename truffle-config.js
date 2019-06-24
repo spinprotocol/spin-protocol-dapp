@@ -5,7 +5,7 @@ const { match } = require('ffp-js');
 const providerFactory = 
   match
     .case(network => network === 'baobab')(
-      network => new PrivateKeyConnector(credentials.klaytn.privateKey.testnet, `https://api.${network}.klaytn.net:8651`))
+      network => new PrivateKeyConnector(credentials.klaytn.privateKey.baobab, `https://api.${network}.klaytn.net:8651`))
     .case(network => network === 'klaytn')(
       network => new PrivateKeyConnector(credentials.klaytn.privateKey.mainnet, `https://api.${network}.klaytn.net:8651`))
     .else(_ => '')

@@ -34,4 +34,4 @@ const addressReader = (contractName, network) => {
 
 const errorHandler = (err) => { if (err) throw err; }
 
-  module.exports = { contractName, deployedFileWriter, addressReader }
+module.exports = { contractName, deployedFileWriter, addressReader }
