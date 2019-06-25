@@ -17,6 +17,7 @@ const ACCOUNTS = {};
 const WALLET = {};
 const CONTRACT = {};
 const UTILS = {};
+const KLAY = {};
 
 
 
@@ -108,7 +109,7 @@ const isBigNumber = type => {
  */
 ACCOUNTS.access = privateKey => caver.klay.accounts.privateKeyToAccount(privateKey);
 
-
+ACCOUNTS.signTx = (option, privateKey) => caver.klay.accounts.signTransaction(option, privateKey);
 
 /*******************************************************
  *                   Wallet section                    *
@@ -120,6 +121,15 @@ ACCOUNTS.access = privateKey => caver.klay.accounts.privateKeyToAccount(privateK
  * @return { Object } Signed account object
  */
 WALLET.connect = account => caver.klay.accounts.wallet.add(account);
+
+
+
+/*******************************************************
+ *                  KALY section                   *
+ *******************************************************/
+
+KLAY.sendRawTxFeeDelegated = (rawTx, signer) => 
+  caver.klay.sendTransaction({ senderRawTransaction : rawTx, feePayer: signer.address });
 
 
 
@@ -165,8 +175,12 @@ CONTRACT.read = (contract, fnSignature, params) => go(
 UTILS.toKLAY = val => caver.utils.toPeb(val, "KLAY");
 UTILS.fromKLAY = val => caver.utils.fromPeb(val, "KLAY");
 
+UTILS.encodeParameters = (typeArr, params) => caver.klay.abi.encodeParameters(typeArr, params)
+
+UTILS.fnSignature = (fnName) => caver.utils.sha3(fnName).substring(0,10);
+
 UTILS.toChecksumAddress = address => caver.utils.toChecksumAddress(address);
 
 module.exports = {
-  CONTRACT, ACCOUNTS, WALLET, UTILS
+  CONTRACT, ACCOUNTS, WALLET, UTILS, KLAY
 }

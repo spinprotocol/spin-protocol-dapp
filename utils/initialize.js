@@ -1,7 +1,7 @@
 Object.assign(global, require('ffp-js'));
 
 const credentials = require('../credentials.json');
-const { CONTRACT, ACCOUNTS, WALLET, UTILS } = require('./generic-caver');
+const { CONTRACT, ACCOUNTS, WALLET, UTILS, KLAY } = require('./generic-caver');
 const { METADATA } = require('./metadata');
 
 const Proxy = CONTRACT.get(METADATA.ABI.PROXY, METADATA.ADDRESS.PROXY);
@@ -82,6 +82,25 @@ const addAdmin = async (signer, contract, adminAddr) => {
   )
 }
 
+const spinProtocol_sendToken = async (signer, contractAddr, toAddr, amt) => 
+  await go(
+    UTILS.fnSignature('sendToken(address,uint256)'),
+    val => val + UTILS.encodeParameters(['address','uint256'],[toAddr,amt]).substring(2),
+    data => ACCOUNTS.signTx(
+      {from : signer.address, to : contractAddr, data : data, type : "FEE_DELEGATED_SMART_CONTRACT_EXECUTION", gas: 200000, value : 0}, 
+      signer.privateKey
+    ),
+    signData => KLAY.sendRawTxFeeDelegated(signData.rawTransaction, signer),
+    txReceipt => log('\n\r> TokenBalance send - Tx receipt:', txReceipt.transactionHash)
+  )
+
+
+const getBalance = async (address) => 
+  await go(
+    CONTRACT.get(METADATA.ABI.SPIN_PROTOCOL, address),
+    contract => contract.methods.getBalance().call()
+  )
+
 const createSigner = privateKey => go(
   ACCOUNTS.access(privateKey),
   WALLET.connect
@@ -134,8 +153,14 @@ const initialize = async _ => {
           log(`\n\r [${contract[0]}] add`)
           await registerContractToProxy(Signer, contract[0], contract[1])
         })
-        .case(setup => setup !== realAddr)(async _ => {
+        .case(setup => setup !== realAddr)(async addr => {
           log(`\n\r [${contract[0]}] update`)
+          if(contract[0] === "SpinProtocol") {
+            await go(
+              getBalance(addr),
+              amt => spinProtocol_sendToken(Signer, addr, contract[1], amt)
+            )
+          }
           await updateContractToProxy(Signer, contract[0], contract[1])
         })
         .else(_ => false)
