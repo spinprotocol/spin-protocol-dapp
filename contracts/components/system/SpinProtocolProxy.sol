@@ -153,4 +153,14 @@ contract SpinProtocolProxy is ProxyBase {
       _rounding
     );
   }
+
+  function deleteRevenueLedger(
+    uint256 revenueLedgerId
+  )
+    external onlyAdmin
+  {
+    ISpinProtocol(addressOfSpinProtocol()).deleteRevenueLedger(
+      revenueLedgerId
+    );
+  }
 }
