@@ -68,6 +68,10 @@ interface ISpinProtocol {
     uint256 _rounding
   ) external;
 
+  function deleteRevenueLedger(
+    uint256 revenueLedgerId
+  ) external;
+
   function getRevenueLedger(
     uint256 revenueLedgerId
   ) external returns(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,bool);

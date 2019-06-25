@@ -132,4 +132,12 @@ contract Registry is DBConnector, Proxied {
   {
     revenueLedgerDB.updateIsAccount(revenueLedgerId, state);
   }
+
+  function deleteRevenueLedger(
+    uint256 revenueLedgerId
+  )
+    external onlyProxy
+  {
+    revenueLedgerDB.deleteRevenueLedger(revenueLedgerId);
+  }
 }

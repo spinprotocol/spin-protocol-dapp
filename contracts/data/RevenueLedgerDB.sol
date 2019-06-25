@@ -96,6 +96,18 @@ contract RevenueLedgerDB is AbstractDB, Proxied {
     return universalDB.getNodes(CONTRACT_NAME_REVENUE_LEDGER_DB, TABLE_KEY_REVENUE_LEDGER);
   }
 
+  function deleteRevenueLedger(
+    uint256 revenueLedgerId
+  )
+    external
+    onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
+    onlyExistentItem(revenueLedgerId)
+  {
+    require(universalDB.removeNodeFromLinkedList(CONTRACT_NAME_REVENUE_LEDGER_DB, TABLE_KEY_REVENUE_LEDGER, revenueLedgerId), ERROR_DOES_NOT_EXIST);
+
+    emit RevenueLedgerUpdated(revenueLedgerId, block.timestamp);
+  }
+
   function doesItemExist(uint256 revenueLedgerId) public view returns (bool) {
     return universalDB.doesNodeExist(CONTRACT_NAME_REVENUE_LEDGER_DB, TABLE_KEY_REVENUE_LEDGER, revenueLedgerId);
   }
