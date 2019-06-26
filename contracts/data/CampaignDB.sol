@@ -109,7 +109,8 @@ contract CampaignDB is AbstractDB, Proxied {
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
     onlyExistentItem(campaignId)
   {
-    require(this.getStartAt(campaignId) < now);
+    uint256 startAt = this.getStartAt(campaignId);
+    require(startAt < now && startAt < endAt);
 
     universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "endAt")), endAt);
     emit CampaignUpdated(campaignId, block.timestamp);
