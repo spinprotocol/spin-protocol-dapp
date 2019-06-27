@@ -7,7 +7,7 @@ const {
 
 const credentials = require('../credentials.json');
 const getSpinTokenAddress = match
-  .case(network => network == 'mainnet')(_=> credentials.klaytn.spin_token_address.mainnet)
+  .case(network => network == 'cypress')(_=> credentials.klaytn.spin_token_address.cypress)
   .case(network => network == 'baobab')(_=> credentials.klaytn.spin_token_address.baobab)
   .else(_=>_);
 

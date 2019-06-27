@@ -1,7 +1,7 @@
 Object.assign(global, require('ffp-js'));
 
-const setEN = (network) => (network == 'mainnet') 
-  ? 'https://api.baobab.klaytn.net:8651'
+const setEN = (network) => (network == 'cypress') 
+  ? 'https://api.cypress.klaytn.net:8651'
   : 'https://api.baobab.klaytn.net:8651';
 
 const Caver = require('caver-js');

@@ -6,8 +6,8 @@ const providerFactory =
   match
     .case(network => network === 'baobab')(
       network => new PrivateKeyConnector(credentials.klaytn.privateKey.baobab, `https://api.${network}.klaytn.net:8651`))
-    .case(network => network === 'klaytn')(
-      network => new PrivateKeyConnector(credentials.klaytn.privateKey.mainnet, `https://api.${network}.klaytn.net:8651`))
+    .case(network => network === 'cypress')(
+      network => new PrivateKeyConnector(credentials.klaytn.privateKey.cypress, `https://api.${network}.klaytn.net:8651`))
     .else(_ => '')
     
 
@@ -30,9 +30,9 @@ module.exports = {
       gas: 10000000,
       gasPrice: null
     },
-    mainnet: {
-      provider: providerFactory('mainnet'),
-      network_id: 1,
+    cypress: {
+      provider: providerFactory('cypress'),
+      network_id: 8217,
       gas: 20000000,
       gasPrice: null
     },

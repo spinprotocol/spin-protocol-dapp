@@ -112,8 +112,8 @@ const initialize = async _ => {
   /************** Create signer **************/
   // const Signer = await createSigner(credentials.klaytn.privateKey.baobab); // process.env.KLAYTN_ADMIN_PRIVATE_KEY
   const Signer = await match(process.env.NETWORK)
-    .case(network => network == 'mainnet')(
-      _=> createSigner(credentials.klaytn.privateKey.mainnet)
+    .case(network => network == 'cypress')(
+      _=> createSigner(credentials.klaytn.privateKey.cypress)
     )
     .case(network => network == 'baobab')(
       _=> createSigner(credentials.klaytn.privateKey.baobab)
