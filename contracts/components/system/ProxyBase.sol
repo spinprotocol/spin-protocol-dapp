@@ -1,13 +1,11 @@
-pragma solidity 0.5.7;
+pragma solidity ^0.4.24;
 
 import "./SystemContracts.sol";
 import "../auth/Admin.sol";
 
-
 /**
  * @title Proxy
  * @dev Manages & keeps addresses of every contract in SpinProtocol system
- * @author Mustafa Morca - psychoplasma@gmail.com
  */
 contract ProxyBase is Admin, SystemContracts {
 
@@ -33,10 +31,8 @@ contract ProxyBase is Admin, SystemContracts {
     return contracts[name];
   }
 
-  function addressOfActorDB() public view returns(address) {return getContract(CONTRACT_NAME_ACTOR_DB);}
+  function addressOfToken() public view returns(address) {return getContract("Token");}
   function addressOfCampaignDB() public view returns(address) {return getContract(CONTRACT_NAME_CAMPAIGN_DB);}
-  function addressOfProductDB() public view returns(address) {return getContract(CONTRACT_NAME_PRODUCT_DB);}
-  function addressOfPurchaseDB() public view returns(address) {return getContract(CONTRACT_NAME_PURCHASE_DB);}
-  function addressOfEscrowAndFees() public view returns(address) {return getContract(CONTRACT_NAME_ESCROW_AND_FEES);}
+  function addressOfRevenueLedgerDB() public view returns(address) {return getContract(CONTRACT_NAME_REVENUE_LEDGER_DB);}
   function addressOfSpinProtocol() public view returns(address) {return getContract(CONTRACT_NAME_SPIN_PROTOCOL);}
 }

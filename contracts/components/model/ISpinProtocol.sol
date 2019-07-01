@@ -1,55 +1,86 @@
-pragma solidity 0.5.7;
-
+pragma solidity ^0.4.24;
 
 /**
  * @title ISpinProtocol
- * @author Mustafa Morca - psychoplasma@gmail.com
  */
 interface ISpinProtocol {
+  
+  function createCampaign(
+    uint256 campaignId,
+    uint256 productId,
+    uint256 revenueRatio,
+    uint256 totalSupply,
+    uint256 startAt,
+    uint256 endAt
+  ) external;
+
+  function updateCampaign(
+    uint256 campaignId,
+    uint256 productId,
+    uint256 revenueRatio,
+    uint256 totalSupply,
+    uint256 startAt,
+    uint256 endAt
+  ) external;
+
+  function updateSaleEnd(
+    uint256 campaignId,
+    uint256 endAt
+  ) external;
 
   function attendCampaign(
-    uint256 dealId,
+    uint256 campaignId,
+    uint256 influencerId
+  ) external;
+
+  function cancelCampaign(
+    uint256 campaignId,
+    uint256 influencerId
+  ) external;
+
+  function deleteCampaign(
+    uint256 campaignId
+  ) external;
+  
+  function createRevenueLedger(
+    uint256 revenueLedgerId,
     uint256 campaignId,
     uint256 influencerId,
-    uint256 ratio
+    uint256 salesAmount,
+    uint256 salesPrice,
+    uint256 profit,
+    uint256 revenueRatio,
+    uint256 spinRatio,
+    uint256 fiatRatio
   ) external;
 
-  function recordPurchase(
-    uint256 purchaseId,
-    uint256 customerId,
-    uint256 campaignId,
-    uint256 dealId,
-    uint256 purchaseAmount
+  function updateIsAccount(
+    uint256 revenueLedgerId,
+    bool state
   ) external;
 
-  function recordPurchaseBatch(
-    uint256[] calldata purchaseIds,
-    uint256[] calldata customerIds,
-    uint256[] calldata campaignIds,
-    uint256[] calldata dealIds,
-    uint256[] calldata purchaseAmounts
+  function revenueShare(
+    uint256 _revenueLedgerId,
+    address _to,
+    uint256 _revenue,
+    uint256 _spinRatio,
+    uint256 _marketPrice,
+    uint256 _rounding
   ) external;
 
-  function releaseRevenueShares(uint256 campaignId) external;
-
-  function registerActor(
-    uint256 actorId,
-    address actorAddress,
-    string calldata role
+  function deleteRevenueLedger(
+    uint256 revenueLedgerId
   ) external;
 
-  function registerCampaign(
-    uint256 campaignId,
-    uint256 supplierId,
-    uint256 productId,
-    uint256 totalSupply,
-    uint256 finishAt
-  ) external;
+  function getRevenueLedger(
+    uint256 revenueLedgerId
+  ) external returns(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,bool);
 
-  function registerProduct(
-    uint256 productId,
-    uint256 supplierId,
-    uint256 price,
-    string calldata metadata
-  ) external;
+  /**
+   * TO-DO
+   */
+  // function updateCurrentSupply(
+  //   uint256 campaignId,
+  //   uint256 purchaseAmount
+  // ) external;
 }

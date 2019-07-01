@@ -7,19 +7,22 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "initialize-contract": "node ./utils/initialize.js"
   },
-  "author": "Mustafa Morca",
+  "author": "Harace Moon",
   "license": "ISC",
   "devDependencies": {
+    "caver-js": "^1.0.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chai-bignumber": "^3.0.0",
     "chai-shallow-deep-equal": "^1.4.6",
+    "connect-privkey-to-provider": "0.0.3",
     "eslint": "^5.16.0",
     "eth-gas-reporter": "^0.1.12",
-    "solhint": "^2.0.0",
-    "truffle-hdwallet-provider": "^1.0.6",
-    "web3": "^1.0.0-beta.52"
-  }
+    "ffp-js": "^0.0.19",
+    "solhint": "^2.0.0"
+  },
+  "dependencies": {}
 }

@@ -1,52 +1,53 @@
-const HDWalletProvider = require('truffle-hdwallet-provider');
+const PrivateKeyConnector = require('connect-privkey-to-provider');
 const credentials = require('./credentials.json');
+const { go } = require('ffp-js');
+
+const providerFactory = network => go(
+  `https://api.${network}.klaytn.net:8651`,
+  host => new PrivateKeyConnector(credentials.klaytn.privateKey[network], host)
+);
 
 module.exports = {
   networks: {
+    /**
+     * Klaytn Network
+     */
     development: {
-     host: "127.0.0.1",     // Localhost (default: none)
-     port: 8545,            // Standard Ethereum port (default: none)
-     network_id: "*",       // Any network (default: none)
+      host: "127.0.0.1",
+      port: 8551,
+      from: '0x3dec1e5bd5220b13fc52e27e2332aa3fa756a06e',
+      network_id: 1001,
+      gas: 20000000, // transaction gas limit
+      gasPrice: 25000000000 // gasPrice of Baobab is 25 Gpeb
     },
-    rinkeby: {
-      provider: () => new HDWalletProvider(credentials.mnemonics.testnet, `https://rinkeby.infura.io/v3/${credentials.infuraKey}`),
-      network_id: 4,       // Rinkeby's id
-      gas: 5500000,        // Rinkeby has a lower block limit than mainnet
-      confirmations: 5,    // # of confs to wait between deployments. (default: 0)
-      timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
-      skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
+    cypress: {
+      provider: providerFactory('cypress'),
+      network_id: 8217,
+      gas: 20000000,
+      gasPrice: null
     },
-    ropsten: {
-      provider: () => new HDWalletProvider(credentials.mnemonics.testnet, `https://ropsten.infura.io/v3/${credentials.infuraKey}`),
-      network_id: 3,       // Ropsten's id
-      gas: 5500000,        // Ropsten has a lower block limit than mainnet
-      confirmations: 5,    // # of confs to wait between deployments. (default: 0)
-      timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
-      skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
+    baobab: {
+      provider: providerFactory('baobab'),
+      network_id: 1001,
+      gas: 10000000,
+      gasPrice: null
     },
-    mainnet: {
-      provider: () => new HDWalletProvider(credentials.mnemonics.mainnet, `https://mainnet.infura.io/v3/${credentials.infuraKey}`),
-      network_id: 1,          // Rinkeby's id
-      gas: 8000000,           // Rinkeby has a lower block limit than mainnet
-      gasPrice: 21000000000,  // Gas price on deployment
-      confirmations: 5,       // # of confs to wait between deployments. (default: 0)
-      timeoutBlocks: 50,      // # of blocks before a deployment times out  (minimum/default: 50)
-    }
   },
   mocha: {
     useColors: true,
     reporter: 'eth-gas-reporter',
     reporterOptions : {
       currency: 'USD',
-      gasPrice: 21
+      gasPrice: 21,
+      showTimeSpent: true
     }
   },
   compilers: {
     solc: {
-      version: "0.5.7",    // Fetch exact version from solc-bin (default: truffle's version)
+      version: "0.4.24",    // Fetch exact version from solc-bin (default: truffle's version)
       settings: {          // See the solidity docs for advice about optimization and evmVersion
        optimizer: {
-          enabled: false,
+          enabled: true,
           runs: 200
         }
       }

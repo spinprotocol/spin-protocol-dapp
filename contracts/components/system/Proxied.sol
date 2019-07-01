@@ -1,4 +1,4 @@
-pragma solidity 0.5.7;
+pragma solidity ^0.4.24;
 
 import "./Proxy.sol";
 import "../auth/Admin.sol";
@@ -7,10 +7,13 @@ import "../auth/Admin.sol";
 /**
  * @title Proxied
  * @dev Provides modifiers to limit direct access to SpinProtocol contracts
- * @author Mustafa Morca - psychoplasma@gmail.com
  */
 contract Proxied is Admin, SystemContracts {
   Proxy public proxy;
+
+  constructor (Proxy _proxy) public {
+    setProxy(_proxy);
+  }
 
   /**
    * @notice Set/update address of Proxy contract

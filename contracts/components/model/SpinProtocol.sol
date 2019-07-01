@@ -1,15 +1,18 @@
-pragma solidity 0.5.7;
+pragma solidity ^0.4.24;
 
 import "./Registry.sol";
-import "./RevenueShareAndRewards.sol";
 import "../system/Proxied.sol";
-import "./ISpinProtocol.sol";
+import "./RevenueShare.sol";
 
 
 /**
  * @title SpinProtocol
  * @dev Implements business logic of SPIN Protocol
- * @author Mustafa Morca - psychoplasma@gmail.com
  */
-contract SpinProtocol is Proxied, ISpinProtocol, Registry, RevenueShareAndRewards {
+contract SpinProtocol is Registry, RevenueShare {
+
+    constructor (Proxy _proxy, CampaignDB _campaignDB, RevenueLedgerDB _revenueLedgerDB) public Proxied(_proxy) {
+        setDataStore(_campaignDB, _revenueLedgerDB);
+    }
+
 }

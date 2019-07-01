@@ -1,4 +1,4 @@
-pragma solidity 0.5.7;
+pragma solidity ^0.4.24;
 
 import "./EternalStorage.sol";
 import "../libs/LinkedListLib.sol";
@@ -9,13 +9,15 @@ import "../components/system/Proxied.sol";
  * @title Generic Eternal Storage Unit which can only be accessed through the proxied contracts
  * @dev This contract holds all the necessary state variables to carry out the storage of any contract.
  * This contract is not supposed to re-deployed after it's deployed very first time. It should be persistent on the chain.
- * @author Mustafa Morca - psychoplasma@gmail.com
  */
 contract UniversalDB is Proxied, EternalStorage {
   using LinkedListLib for LinkedListLib.LinkedList;
 
+  constructor (Proxy _proxy) public Proxied(_proxy) {
+  }
+
   function setIntStorage(
-    string calldata contractName,
+    string  contractName,
     bytes32 key,
     int256 value
   )
@@ -35,7 +37,7 @@ contract UniversalDB is Proxied, EternalStorage {
   }
 
   function setUintStorage(
-    string calldata contractName,
+    string  contractName,
     bytes32 key,
     uint256 value
   )
@@ -55,9 +57,9 @@ contract UniversalDB is Proxied, EternalStorage {
   }
 
   function setStringStorage(
-    string calldata contractName,
+    string  contractName,
     bytes32 key,
-    string calldata value
+    string  value
   )
     external
     onlyAuthorizedContract(contractName)
@@ -75,7 +77,7 @@ contract UniversalDB is Proxied, EternalStorage {
   }
 
   function setAddressStorage(
-    string calldata contractName,
+    string  contractName,
     bytes32 key,
     address value
   )
@@ -95,9 +97,9 @@ contract UniversalDB is Proxied, EternalStorage {
   }
 
   function setBytesStorage(
-    string calldata contractName,
+    string  contractName,
     bytes32 key,
-    bytes calldata value
+    bytes  value
   )
     external
     onlyAuthorizedContract(contractName)
@@ -115,7 +117,7 @@ contract UniversalDB is Proxied, EternalStorage {
   }
 
   function setBoolStorage(
-    string calldata contractName,
+    string  contractName,
     bytes32 key,
     bool value
   )
@@ -135,7 +137,7 @@ contract UniversalDB is Proxied, EternalStorage {
   }
 
   function pushNodeToLinkedList(
-    string calldata contractName,
+    string  contractName,
     bytes32 key,
     uint256 nodeId
   )
@@ -151,7 +153,7 @@ contract UniversalDB is Proxied, EternalStorage {
   }
 
   function removeNodeFromLinkedList(
-    string calldata contractName,
+    string  contractName,
     bytes32 key,
     uint256 nodeId
   )
