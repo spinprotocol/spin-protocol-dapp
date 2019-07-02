@@ -14,6 +14,7 @@ contract Registry is DBConnector, Proxied {
   string constant private ERROR_PRODUCT_DOES_NOT_EXIST = "No such product on DB";
   string constant private ERROR_CAMPAIGN_ENDED = "Campaign ended already";
 
+  //campaignDB
   function createCampaign(
     uint256 campaignId,
     uint256 productId,
@@ -98,6 +99,7 @@ contract Registry is DBConnector, Proxied {
     campaignDB.deleteCampaign(campaignId);
   }
 
+  //revenueLedgerDB
   function createRevenueLedger(
     uint256 revenueLedgerId,
     uint256 campaignId,
@@ -139,5 +141,30 @@ contract Registry is DBConnector, Proxied {
     external onlyProxy
   {
     revenueLedgerDB.deleteRevenueLedger(revenueLedgerId);
+  }
+
+  //PurchaseDB
+  function addPurchaseCount(
+    uint256 campaignId
+  )
+    external onlyProxy
+  {
+    purchaseDB.addPurchaseCount(campaignId);
+  }
+
+  function subPurchaseCount(
+    uint256 campaignId
+  )
+    external onlyProxy
+  {
+    purchaseDB.subPurchaseCount(campaignId);
+  }
+
+  function resetPurchaseCount(
+    uint256 campaignId
+  )
+    external onlyProxy
+  {
+    purchaseDB.resetPurchaseCount(campaignId);
   }
 }

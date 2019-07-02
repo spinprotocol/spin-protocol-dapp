@@ -5,7 +5,8 @@ const contractName = {
   PROXY : "Proxy",
   UNIVERSAL_DB : "UniversalDB",
   CAMPAIGN_DB : "CampaignDB",
-  REVENUELEDGER_DB : "RevenueLedgerDB"
+  REVENUELEDGER_DB : "RevenueLedgerDB",
+  PURCHASE_DB : "PurchaseDB"
 }
 
 const deployedFileWriter = (contract, network) => {

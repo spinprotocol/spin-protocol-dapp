@@ -76,6 +76,17 @@ interface ISpinProtocol {
     uint256 revenueLedgerId
   ) external returns(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,bool);
 
+  function addPurchaseCount(
+    uint256 campaignId
+  ) external;
+
+  function subPurchaseCount(
+    uint256 campaignId
+  ) external;
+
+  function resetPurchaseCount(
+    uint256 campaignId
+  ) external;
   /**
    * TO-DO
    */

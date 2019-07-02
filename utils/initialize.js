@@ -9,14 +9,16 @@ const SpinProtocol = CONTRACT.get(METADATA.ABI.SPIN_PROTOCOL, METADATA.ADDRESS.S
 const UniversalDB = CONTRACT.get(METADATA.ABI.UNIVERSAL_DB, METADATA.ADDRESS.UNIVERSAL_DB);
 const CampaignDB = CONTRACT.get(METADATA.ABI.CAMPAIGN_DB, METADATA.ADDRESS.CAMPAIGN_DB);
 const RevenueLedgerDB = CONTRACT.get(METADATA.ABI.REVENUE_LEDGER_DB, METADATA.ADDRESS.REVENUE_LEDGER_DB);
+const PurchaseDB = CONTRACT.get(METADATA.ABI.PURCHASE_DB, METADATA.ADDRESS.PURCHASE_DB);
 const IERC20 = CONTRACT.get(METADATA.ABI.IERC20, METADATA.ADDRESS.IERC20);
 
-const revenueTestData = { 
-  _revenue : 10000,
-  _spinRatio : 10,  
-  _marketPrice : 2050, // (market price * 100)
-  _rounding : 2
-}
+METADATA.ADDRESS.PROXY = UTILS.toChecksumAddress(METADATA.ADDRESS.PROXY);
+METADATA.ADDRESS.SPIN_PROTOCOL = UTILS.toChecksumAddress(METADATA.ADDRESS.SPIN_PROTOCOL);
+METADATA.ADDRESS.UNIVERSAL_DB = UTILS.toChecksumAddress(METADATA.ADDRESS.UNIVERSAL_DB);
+METADATA.ADDRESS.CAMPAIGN_DB = UTILS.toChecksumAddress(METADATA.ADDRESS.CAMPAIGN_DB);
+METADATA.ADDRESS.REVENUE_LEDGER_DB = UTILS.toChecksumAddress(METADATA.ADDRESS.REVENUE_LEDGER_DB);
+METADATA.ADDRESS.PURCHASE_DB = UTILS.toChecksumAddress(METADATA.ADDRESS.PURCHASE_DB);
+METADATA.ADDRESS.IERC20 = UTILS.toChecksumAddress(METADATA.ADDRESS.IERC20);
 
 const registerContractToProxy = async (signer, contractName, contractAddr) => {
   await go(
@@ -48,9 +50,10 @@ const getProxy = async (contract) => await contract.methods.proxy().call().then(
 
 const setDataStore = async (signer,a) => {
   await go(
-    CONTRACT.write(signer, SpinProtocol, 'setDataStore(address,address)', { 
+    CONTRACT.write(signer, SpinProtocol, 'setDataStore(address,address,address)', { 
       _campaignDB: METADATA.ADDRESS.CAMPAIGN_DB,
-      _revenueLedgerDB: METADATA.ADDRESS.REVENUE_LEDGER_DB
+      _revenueLedgerDB: METADATA.ADDRESS.REVENUE_LEDGER_DB,
+      _purchaseDB: METADATA.ADDRESS.PURCHASE_DB 
     }),
     txReceipt => log('\r  -> Tx Hash:', txReceipt.transactionHash)
     )
@@ -59,7 +62,8 @@ const setDataStore = async (signer,a) => {
 const getDataStore = async () => {
   let addr = {};
   addr.campaignDB = await SpinProtocol.methods.campaignDB().call().then(addr => UTILS.toChecksumAddress(addr)).catch(e => log(e.message));
-  addr.revenueLedgerDB = await SpinProtocol.methods.revenueLedgerDB().call().then(addr => UTILS.toChecksumAddress(addr)).catch(e => undefined);
+  addr.revenueLedgerDB = await SpinProtocol.methods.revenueLedgerDB().call().then(addr => UTILS.toChecksumAddress(addr)).catch(e => log(e.message));
+  addr.purchaseDB = await SpinProtocol.methods.purchaseDB().call().then(addr => UTILS.toChecksumAddress(addr)).catch(e => log(e.message));
   return addr;
 }
 
@@ -123,7 +127,7 @@ const initialize = async _ => {
   /************** Add system contracts to `Proxy` contract **************/
   log('\n\r>> Scan for system contracts that are not registered with the proxy...');
 
-  let scanContract = ['SPIN_PROTOCOL', 'UNIVERSAL_DB', 'CAMPAIGN_DB', 'REVENUE_LEDGER_DB', 'IERC20'];
+  let scanContract = ['SPIN_PROTOCOL', 'UNIVERSAL_DB', 'CAMPAIGN_DB', 'REVENUE_LEDGER_DB', 'PURCHASE_DB', 'IERC20'];
 
   let addresses = go(
       METADATA.ADDRESS,
@@ -146,7 +150,7 @@ const initialize = async _ => {
     map(async contract => {
       contract[0] = contract[0] === 'IERC20' ? 'Token' : contract[0];
       let setupAddr = await getContract(contract[0]);
-      let realAddr = UTILS.toChecksumAddress(contract[1]);
+      let realAddr = contract[1];
 
       await match(setupAddr)
         .case(setup => setup === undefined)(async _ =>{
@@ -171,12 +175,12 @@ const initialize = async _ => {
   // /************** Set Proxy contract address for system contracts **************/
   log('\n\r>> Scan for system contracts and Setting Proxy...');
 
-  let getProxycheck = [SpinProtocol, UniversalDB, CampaignDB, RevenueLedgerDB];
+  let getProxycheck = [SpinProtocol, UniversalDB, CampaignDB, RevenueLedgerDB, PurchaseDB];
   await go(
     getProxycheck,
     map(async contract => {
       let setupAddr = await getProxy(contract);
-      let realAddr = UTILS.toChecksumAddress(METADATA.ADDRESS.PROXY);
+      let realAddr = METADATA.ADDRESS.PROXY;
 
       if(setupAddr !== realAddr){
         log(`\n\r [${contract._address}]`)
@@ -190,10 +194,13 @@ const initialize = async _ => {
   log('\n\r>> Initializing system logic contracts...');
 
   let dataStore = await getDataStore();
-  await match(dataStore)
-    .case(a => a.campaignDB !== UTILS.toChecksumAddress(METADATA.ADDRESS.CAMPAIGN_DB))(_ => setDataStore(Signer))
-    .case(a => a.revenueLedgerDB !== UTILS.toChecksumAddress(METADATA.ADDRESS.REVENUE_LEDGER_DB))(_ => setDataStore(Signer))
-    .else(_ => false)
+  if(
+    dataStore.campaignDB !== METADATA.ADDRESS.CAMPAIGN_DB ||
+    dataStore.revenueLedgerDB !== METADATA.ADDRESS.REVENUE_LEDGER_DB ||
+    dataStore.purchaseDB !== METADATA.ADDRESS.PURCHASE_DB
+  ){
+    await setDataStore(Signer)
+  }
   
 
   log('\n\r\n\r***** Initialization has been completed successfully. *****\n\r\n\r');
