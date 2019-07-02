@@ -7,5 +7,6 @@ pragma solidity ^0.4.24;
 contract SystemContracts {
   string constant internal CONTRACT_NAME_CAMPAIGN_DB = "CampaignDB";
   string constant internal CONTRACT_NAME_REVENUE_LEDGER_DB = "RevenueLedgerDB";
+  string constant internal CONTRACT_NAME_PURCHASE_DB = "PurchaseDB";
   string constant internal CONTRACT_NAME_SPIN_PROTOCOL = "SpinProtocol";
 }

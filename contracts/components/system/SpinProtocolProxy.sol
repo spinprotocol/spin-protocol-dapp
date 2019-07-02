@@ -163,4 +163,34 @@ contract SpinProtocolProxy is ProxyBase {
       revenueLedgerId
     );
   }
+
+  function addPurchaseCount(
+    uint256 campaignId
+  )
+    external onlyAdmin
+  {
+    ISpinProtocol(addressOfSpinProtocol()).addPurchaseCount(
+      campaignId
+    );
+  }
+
+  function subPurchaseCount(
+    uint256 campaignId
+  )
+    external onlyAdmin
+  {
+    ISpinProtocol(addressOfSpinProtocol()).subPurchaseCount(
+      campaignId
+    );
+  }
+
+  function resetPurchaseCount(
+    uint256 campaignId
+  )
+    external onlyAdmin
+  {
+    ISpinProtocol(addressOfSpinProtocol()).resetPurchaseCount(
+      campaignId
+    );
+  }
 }

@@ -11,8 +11,8 @@ import "./RevenueShare.sol";
  */
 contract SpinProtocol is Registry, RevenueShare {
 
-    constructor (Proxy _proxy, CampaignDB _campaignDB, RevenueLedgerDB _revenueLedgerDB) public Proxied(_proxy) {
-        setDataStore(_campaignDB, _revenueLedgerDB);
+    constructor (Proxy _proxy, CampaignDB _campaignDB, RevenueLedgerDB _revenueLedgerDB, PurchaseDB _purchaseDB) public Proxied(_proxy) {
+        setDataStore(_campaignDB, _revenueLedgerDB, _purchaseDB);
     }
 
 }
