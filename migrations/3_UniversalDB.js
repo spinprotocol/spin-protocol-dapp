@@ -6,10 +6,7 @@ const {
 } = require('../utils/contractData_fileController.js');
 
 const credentials = require('../credentials.json');
-const getSpinTokenAddress = match
-  .case(network => network == 'cypress')(_=> credentials.klaytn.spin_token_address.cypress)
-  .case(network => network == 'baobab')(_=> credentials.klaytn.spin_token_address.baobab)
-  .else(_=>_);
+const getSpinTokenAddress = network => credentials.klaytn.spin_token_address[network];
 
 const UniversalDB = artifacts.require('UniversalDB');
 const IERC20 = artifacts.require('IERC20');
