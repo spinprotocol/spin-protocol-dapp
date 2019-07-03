@@ -30,6 +30,7 @@ contract PurchaseDB is AbstractDB, Proxied {
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
     onlyExistentItem(campaignId)
   {
+    require(count > 0);
     uint256 purchaseCount = universalDB.getUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(campaignId, "purchaseCount")));
     if(purchaseCount == 0){
         require(universalDB.pushNodeToLinkedList(CONTRACT_NAME_PURCHASE_DB, TABLE_KEY_PURCHASE, campaignId), ERROR_ALREADY_EXIST);
@@ -46,6 +47,7 @@ contract PurchaseDB is AbstractDB, Proxied {
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
     onlyExistentItem(campaignId)
   {
+    require(count > 0);
     uint256 purchaseCount = universalDB.getUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(campaignId, "purchaseCount")));
     universalDB.setUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(campaignId, "purchaseCount")), purchaseCount.sub(count));
     if(purchaseCount.sub(count) == 0){
@@ -70,6 +72,7 @@ contract PurchaseDB is AbstractDB, Proxied {
   )
     external
     view
+    onlyExistentItem(campaignId)
     returns(uint256)
   {
     return universalDB.getUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(campaignId, "purchaseCount")));
