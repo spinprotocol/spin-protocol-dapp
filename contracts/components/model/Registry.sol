@@ -146,20 +146,20 @@ contract Registry is DBConnector, Proxied {
   //PurchaseDB
   function addPurchaseCount(
     uint256 campaignId,
-    uint256 addNum
+    uint256 count
   )
     external onlyProxy
   {
-    purchaseDB.addPurchaseCount(campaignId, addNum);
+    purchaseDB.addPurchaseCount(campaignId, count);
   }
 
   function subPurchaseCount(
     uint256 campaignId,
-    uint256 subNum
+    uint256 count
   )
     external onlyProxy
   {
-    purchaseDB.subPurchaseCount(campaignId, subNum);
+    purchaseDB.subPurchaseCount(campaignId, count);
   }
 
   function resetPurchaseCount(

@@ -24,7 +24,7 @@ contract PurchaseDB is AbstractDB, Proxied {
 
   function addPurchaseCount(
     uint256 campaignId,
-    uint256 addNum
+    uint256 count
   )
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
@@ -34,21 +34,21 @@ contract PurchaseDB is AbstractDB, Proxied {
     if(purchaseCount == 0){
         require(universalDB.pushNodeToLinkedList(CONTRACT_NAME_PURCHASE_DB, TABLE_KEY_PURCHASE, campaignId), ERROR_ALREADY_EXIST);
     }
-    universalDB.setUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(campaignId, "purchaseCount")), purchaseCount.add(addNum));
+    universalDB.setUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(campaignId, "purchaseCount")), purchaseCount.add(count));
     emit PurchaseAdd(campaignId, block.timestamp);
   }
 
   function subPurchaseCount(
     uint256 campaignId,
-    uint256 subNum
+    uint256 count
   )
     external
     onlyAuthorizedContract(CONTRACT_NAME_SPIN_PROTOCOL)
     onlyExistentItem(campaignId)
   {
     uint256 purchaseCount = universalDB.getUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(campaignId, "purchaseCount")));
-    universalDB.setUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(campaignId, "purchaseCount")), purchaseCount.sub(subNum));
-    if(purchaseCount.sub(subNum) == 0){
+    universalDB.setUintStorage(CONTRACT_NAME_PURCHASE_DB, keccak256(abi.encodePacked(campaignId, "purchaseCount")), purchaseCount.sub(count));
+    if(purchaseCount.sub(count) == 0){
         require(universalDB.removeNodeFromLinkedList(CONTRACT_NAME_PURCHASE_DB, TABLE_KEY_PURCHASE, campaignId), ERROR_DOES_NOT_EXIST);
     }
     emit PurchaseSub(campaignId, block.timestamp);
@@ -65,7 +65,7 @@ contract PurchaseDB is AbstractDB, Proxied {
     emit PurchaseReset(campaignId, block.timestamp);
   }
 
-  function getPurchaseCount(
+  function t(
     uint256 campaignId
   )
     external

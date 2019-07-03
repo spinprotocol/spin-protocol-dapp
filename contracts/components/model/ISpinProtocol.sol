@@ -78,12 +78,12 @@ interface ISpinProtocol {
 
   function addPurchaseCount(
     uint256 campaignId,
-    uint256 addNum
+    uint256 count
   ) external;
 
   function subPurchaseCount(
     uint256 campaignId,
-    uint256 subNum
+    uint256 count
   ) external;
 
   function resetPurchaseCount(
