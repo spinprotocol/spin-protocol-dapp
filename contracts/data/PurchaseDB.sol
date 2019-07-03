@@ -65,7 +65,7 @@ contract PurchaseDB is AbstractDB, Proxied {
     emit PurchaseReset(campaignId, block.timestamp);
   }
 
-  function t(
+  function getPurchaseCount(
     uint256 campaignId
   )
     external
