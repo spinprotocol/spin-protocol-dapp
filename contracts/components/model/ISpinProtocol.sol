@@ -77,11 +77,13 @@ interface ISpinProtocol {
   ) external returns(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,bool);
 
   function addPurchaseCount(
-    uint256 campaignId
+    uint256 campaignId,
+    uint256 count
   ) external;
 
   function subPurchaseCount(
-    uint256 campaignId
+    uint256 campaignId,
+    uint256 count
   ) external;
 
   function resetPurchaseCount(

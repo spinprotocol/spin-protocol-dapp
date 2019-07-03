@@ -165,22 +165,26 @@ contract SpinProtocolProxy is ProxyBase {
   }
 
   function addPurchaseCount(
-    uint256 campaignId
+    uint256 campaignId,
+    uint256 count
   )
     external onlyAdmin
   {
     ISpinProtocol(addressOfSpinProtocol()).addPurchaseCount(
-      campaignId
+      campaignId,
+      count
     );
   }
 
   function subPurchaseCount(
-    uint256 campaignId
+    uint256 campaignId,
+    uint256 count
   )
     external onlyAdmin
   {
     ISpinProtocol(addressOfSpinProtocol()).subPurchaseCount(
-      campaignId
+      campaignId,
+      count
     );
   }
 
