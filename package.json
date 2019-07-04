@@ -8,10 +8,12 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "initialize-contract": "node ./utils/initialize.js",
     "prod": "STAGE=prod truffle migrate --reset --network cypress --f 1 --to 7 && STAGE=prod node ./utils/initialize.js",
     "dev": "STAGE=dev truffle migrate --reset --network baobab --f 1 --to 7 && STAGE=dev node ./utils/initialize.js",
-    "staging": "STAGE=staging truffle migrate --reset --network baobab --f 1 --to 7 && STAGE=staging node ./utils/initialize.js"
+    "staging": "STAGE=staging truffle migrate --reset --network baobab --f 1 --to 7 && STAGE=staging node ./utils/initialize.js",
+    "prod-initialize": "STAGE=prod node ./utils/initialize.js",
+    "dev-initialize": "STAGE=dev node ./utils/initialize.js",
+    "staging-initialize": "STAGE=staging node ./utils/initialize.js"
   },
   "author": "Harace Moon",
   "license": "ISC",
