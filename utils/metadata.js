@@ -2,7 +2,7 @@ Object.assign(global, require('ffp-js'));
 
 // Metadata reading utils
 const deployedFileReader = (contractName) => 
-  require(`../deployed/${process.env.NETWORK}/${contractName}.json`);
+  require(`../deployed/${process.env.STAGE}/${contractName}.json`);
 
 const METADATA = {};
 

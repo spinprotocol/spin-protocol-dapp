@@ -16,7 +16,6 @@ module.exports = function(deployer, network) {
     .then(_ => deployedFileWriter(UniversalDB))
     .then(_ => {
         IERC20.address = getSpinTokenAddress(network);
-        log(network)
         deployedFileWriter(IERC20);
     })
 };
