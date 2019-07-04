@@ -113,6 +113,12 @@ const createSigner = privateKey => go(
 // ==============================================================================================================
 
 const initialize = async _ => {
+  log("\n\n\n*********************************************************************************")
+  log("*\t\t\t\t\t\t\t\t\t\t*")
+  log("*\t\t\t\tSTART INITIALIZE\t\t\t\t*")
+  log("*\t\t\t\t\t\t\t\t\t\t*")
+  log("*********************************************************************************")
+
   /************** Create signer **************/
   // const Signer = await createSigner(credentials.klaytn.privateKey.baobab); // process.env.KLAYTN_ADMIN_PRIVATE_KEY
   const Signer = await match(process.env.NETWORK)
@@ -120,6 +126,9 @@ const initialize = async _ => {
       _=> createSigner(credentials.klaytn.privateKey.cypress)
     )
     .case(network => network == 'baobab')(
+      _=> createSigner(credentials.klaytn.privateKey.baobab)
+    )
+    .case(network => network == 'staging')(
       _=> createSigner(credentials.klaytn.privateKey.baobab)
     )
     .else(_=>_);
@@ -154,11 +163,11 @@ const initialize = async _ => {
 
       await match(setupAddr)
         .case(setup => setup === undefined)(async _ =>{
-          log(`\n\r [${contract[0]}] add`)
+          log(`\n\r [${contract[0]}]-add`)
           await registerContractToProxy(Signer, contract[0], contract[1])
         })
         .case(setup => setup !== realAddr)(async addr => {
-          log(`\n\r [${contract[0]}] update`)
+          log(`\n\r [${contract[0]}]-update`)
           if(contract[0] === "SpinProtocol") {
             await go(
               getBalance(addr),
@@ -203,7 +212,7 @@ const initialize = async _ => {
   }
   
 
-  log('\n\r\n\r***** Initialization has been completed successfully. *****\n\r\n\r');
+  log('\n\r\n\r\t>> ***** Initialization has been completed successfully. ***** <<\n\r\n\r');
   
   /************** Revenue share **************/
   // let argv = process.argv;
@@ -219,6 +228,7 @@ const initialize = async _ => {
 (async function() {
   try {
     await initialize();
+    process.exit(0)
   } catch (e) {
     log('System initialization has been stopped due to the following error:\n\r', e);
   }

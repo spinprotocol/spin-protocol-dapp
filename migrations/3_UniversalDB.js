@@ -12,10 +12,11 @@ const UniversalDB = artifacts.require('UniversalDB');
 const IERC20 = artifacts.require('IERC20');
 
 module.exports = function(deployer, network) {
-  deployer.deploy(UniversalDB, addressReader(contractName.PROXY, network))
-    .then(_ => deployedFileWriter(UniversalDB, network))
+  deployer.deploy(UniversalDB, addressReader(contractName.PROXY))
+    .then(_ => deployedFileWriter(UniversalDB))
     .then(_ => {
         IERC20.address = getSpinTokenAddress(network);
-        deployedFileWriter(IERC20, network);
+        log(network)
+        deployedFileWriter(IERC20);
     })
 };

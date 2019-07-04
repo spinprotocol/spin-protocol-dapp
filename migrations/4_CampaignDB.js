@@ -2,11 +2,11 @@ const { deployedFileWriter, addressReader, contractName } = require('../utils/co
 
 const CampaignDB = artifacts.require('CampaignDB');
 
-module.exports = function(deployer, network) {
+module.exports = function(deployer) {
   deployer.deploy(
       CampaignDB, 
-      addressReader(contractName.PROXY, network), 
-      addressReader(contractName.UNIVERSAL_DB, network)
+      addressReader(contractName.PROXY), 
+      addressReader(contractName.UNIVERSAL_DB)
     )
-    .then(_ => deployedFileWriter(CampaignDB, network));
+    .then(_ => deployedFileWriter(CampaignDB));
 };

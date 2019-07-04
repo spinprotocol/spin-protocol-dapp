@@ -2,13 +2,13 @@ const { deployedFileWriter, addressReader, contractName } = require('../utils/co
 
 const SpinProtocol = artifacts.require('SpinProtocol');
 
-module.exports = function(deployer, network) {
+module.exports = function(deployer) {
   deployer.deploy(
       SpinProtocol, 
-      addressReader(contractName.PROXY, network), 
-      addressReader(contractName.CAMPAIGN_DB, network), 
-      addressReader(contractName.REVENUELEDGER_DB, network),
-      addressReader(contractName.PURCHASE_DB, network)
+      addressReader(contractName.PROXY), 
+      addressReader(contractName.CAMPAIGN_DB), 
+      addressReader(contractName.REVENUELEDGER_DB),
+      addressReader(contractName.PURCHASE_DB)
     )
-    .then(_ => deployedFileWriter(SpinProtocol, network));
+    .then(_ => deployedFileWriter(SpinProtocol));
 };

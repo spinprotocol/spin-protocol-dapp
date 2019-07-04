@@ -8,7 +8,10 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "initialize-contract": "node ./utils/initialize.js"
+    "initialize-contract": "node ./utils/initialize.js",
+    "cypress": "NETWORK=cypress truffle migrate --reset --network cypress --f 1 --to 7 && NETWORK=cypress node ./utils/initialize.js",
+    "baobab": "NETWORK=baobab truffle migrate --reset --network baobab --f 1 --to 7 && NETWORK=baobab node ./utils/initialize.js",
+    "staging": "NETWORK=staging truffle migrate --reset --network baobab --f 1 --to 7 && NETWORK=staging node ./utils/initialize.js"
   },
   "author": "Harace Moon",
   "license": "ISC",
