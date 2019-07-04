@@ -121,17 +121,11 @@ const initialize = async _ => {
 
   /************** Create signer **************/
   // const Signer = await createSigner(credentials.klaytn.privateKey.baobab); // process.env.KLAYTN_ADMIN_PRIVATE_KEY
-  const Signer = await match(process.env.NETWORK)
-    .case(network => network == 'cypress')(
+  const Signer = await match(process.env.STAGE)
+    .case(network => network == 'prod')(
       _=> createSigner(credentials.klaytn.privateKey.cypress)
     )
-    .case(network => network == 'baobab')(
-      _=> createSigner(credentials.klaytn.privateKey.baobab)
-    )
-    .case(network => network == 'staging')(
-      _=> createSigner(credentials.klaytn.privateKey.baobab)
-    )
-    .else(_=>_);
+    .else(_=> createSigner(credentials.klaytn.privateKey.baobab));
   
   /************** Add system contracts to `Proxy` contract **************/
   log('\n\r>> Scan for system contracts that are not registered with the proxy...');

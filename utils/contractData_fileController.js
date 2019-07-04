@@ -12,7 +12,7 @@ const contractName = {
 
 const deployedFileWriter = (contract) => {
   try {
-    const dir = `./deployed/${process.env.NETWORK}`;
+    const dir = `./deployed/${process.env.STAGE}`;
     mkdirp(dir, err => !err ? false : log(err));
     fs.writeFileSync(
       dir+`/${contract._json.contractName}.json`, 
@@ -27,7 +27,7 @@ const deployedFileWriter = (contract) => {
 const addressReader = (contractName) => {
   try {
     return go(
-      fs.readFileSync(`./deployed/${process.env.NETWORK}/${contractName}.json`, 'utf8'),
+      fs.readFileSync(`./deployed/${process.env.STAGE}/${contractName}.json`, 'utf8'),
       JSON.parse,
       a => a.address
     );   
