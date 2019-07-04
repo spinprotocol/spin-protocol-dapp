@@ -2,7 +2,7 @@ const { deployedFileWriter } = require('../utils/contractData_fileController.js'
 
 const Proxy = artifacts.require('Proxy');
 
-module.exports = function(deployer, network) {
+module.exports = function(deployer) {
   deployer.deploy(Proxy)
-    .then(_ => deployedFileWriter(Proxy, network));
+    .then(_ => deployedFileWriter(Proxy));
 };
