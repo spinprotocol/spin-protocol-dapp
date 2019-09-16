@@ -1,28 +1,22 @@
 pragma solidity ^0.4.24;
 
-import "./EternalStorage.sol";
+import '../components/system/EternalStorage.sol';
 import "../libs/LinkedListLib.sol";
-import "../components/system/Proxied.sol";
+import "../components/auth/Admin.sol";
 
-
-/**
- * @title Generic Eternal Storage Unit which can only be accessed through the proxied contracts
- * @dev This contract holds all the necessary state variables to carry out the storage of any contract.
- * This contract is not supposed to re-deployed after it's deployed very first time. It should be persistent on the chain.
- */
-contract UniversalDB is Proxied, EternalStorage {
+contract DataControl is EternalStorage, Admin{
   using LinkedListLib for LinkedListLib.LinkedList;
 
-  constructor (Proxy _proxy) public Proxied(_proxy) {
-  }
+  string internal constant ERROR_ALREADY_EXIST = "Item already exists";
+  string internal constant ERROR_DOES_NOT_EXIST = "Item does not exist";
 
   function setIntStorage(
     string  contractName,
     bytes32 key,
     int256 value
   )
-    external
-    onlyAuthorizedContract(contractName)
+    internal
+    onlyAdmin
   {
     intStorage[keccak256(abi.encodePacked(contractName, key))] = value;
   }
@@ -41,8 +35,8 @@ contract UniversalDB is Proxied, EternalStorage {
     bytes32 key,
     uint256 value
   )
-    external
-    onlyAuthorizedContract(contractName)
+    internal
+    onlyAdmin
   {
     uintStorage[keccak256(abi.encodePacked(contractName, key))] = value;
   }
@@ -61,8 +55,8 @@ contract UniversalDB is Proxied, EternalStorage {
     bytes32 key,
     string  value
   )
-    external
-    onlyAuthorizedContract(contractName)
+    internal
+    onlyAdmin
   {
     stringStorage[keccak256(abi.encodePacked(contractName, key))] = value;
   }
@@ -81,8 +75,8 @@ contract UniversalDB is Proxied, EternalStorage {
     bytes32 key,
     address value
   )
-    external
-    onlyAuthorizedContract(contractName)
+    internal
+    onlyAdmin
   {
     addressStorage[keccak256(abi.encodePacked(contractName, key))] = value;
   }
@@ -101,8 +95,8 @@ contract UniversalDB is Proxied, EternalStorage {
     bytes32 key,
     bytes  value
   )
-    external
-    onlyAuthorizedContract(contractName)
+    internal
+    onlyAdmin
   {
     bytesStorage[keccak256(abi.encodePacked(contractName, key))] = value;
   }
@@ -121,8 +115,8 @@ contract UniversalDB is Proxied, EternalStorage {
     bytes32 key,
     bool value
   )
-    external
-    onlyAuthorizedContract(contractName)
+    internal
+    onlyAdmin
   {
     boolStorage[keccak256(abi.encodePacked(contractName, key))] = value;
   }
@@ -141,8 +135,9 @@ contract UniversalDB is Proxied, EternalStorage {
     bytes32 key,
     uint256 nodeId
   )
-    external
-    onlyAuthorizedContract(contractName) returns (bool)
+    internal
+    onlyAdmin
+    returns (bool)
   {
     if (linkedListStorage[keccak256(abi.encodePacked(contractName, key))].nodeExists(nodeId)) {
       return false;
@@ -157,13 +152,14 @@ contract UniversalDB is Proxied, EternalStorage {
     bytes32 key,
     uint256 nodeId
   )
-    external
-    onlyAuthorizedContract(contractName) returns (bool)
+    internal
+    onlyAdmin
+    returns (bool)
   {
     if (!linkedListStorage[keccak256(abi.encodePacked(contractName, key))].nodeExists(nodeId)) {
       return false;
     }
-    
+
     linkedListStorage[keccak256(abi.encodePacked(contractName, key))].remove(nodeId);
     return true;
   }
@@ -183,8 +179,7 @@ contract UniversalDB is Proxied, EternalStorage {
     string memory contractName,
     bytes32 key
   )
-    public
-    view returns (uint256[] memory nodes)
+    public view returns (uint256[] memory nodes)
   {
     uint256 nextNode;
     uint256 i;

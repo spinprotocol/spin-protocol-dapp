@@ -1,15 +1,11 @@
 pragma solidity ^0.4.24;
 
-import "../../libs/AccessRoles.sol";
+import "../system/EternalStorage.sol";
 
-
-contract Admin {
-  using AccessRoles for AccessRoles.Role;
+contract Admin is EternalStorage{
 
   event AdminAdded(address indexed account);
   event AdminRemoved(address indexed account);
-
-  AccessRoles.Role private admins;
 
   constructor() public {
     _addAdmin(msg.sender);
@@ -21,7 +17,7 @@ contract Admin {
   }
 
   function isAdmin(address account) public view returns (bool) {
-    return admins.has(account);
+    return _has(account);
   }
 
   function addAdmin(address account) public onlyAdmin {
@@ -33,12 +29,22 @@ contract Admin {
   }
 
   function _addAdmin(address account) private {
-    admins.add(account);
+    require(!_has(account));
+    bytes32 adminHash = keccak256(abi.encodePacked("admin", account));
+    boolStorage[adminHash] = true;
     emit AdminAdded(account);
   }
 
   function _removeAdmin(address account) private {
-    admins.remove(account);
+    require(_has(account));
+    bytes32 adminHash = keccak256(abi.encodePacked("admin", account));
+    boolStorage[adminHash] = false;
     emit AdminRemoved(account);
+  }
+
+  function _has(address account) public view returns(bool) {
+    require(account != address(0));
+    bytes32 adminHash = keccak256(abi.encodePacked("admin", account));
+    return boolStorage[adminHash];
   }
 }

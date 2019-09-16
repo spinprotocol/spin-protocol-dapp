@@ -2,15 +2,8 @@ const fs = require('fs');
 const mkdirp = require('mkdirp');
 const { go, log } = require('ffp-js');
 
-const contractName = {
-  PROXY : "Proxy",
-  UNIVERSAL_DB : "UniversalDB",
-  CAMPAIGN_DB : "CampaignDB",
-  REVENUELEDGER_DB : "RevenueLedgerDB",
-  PURCHASE_DB : "PurchaseDB"
-}
 
-const deployedFileWriter = (contract) => {
+const deployedFileWriter = contract => {
   try {
     const dir = `./deployed/${process.env.STAGE}`;
     mkdirp(dir, err => !err ? false : log(err));
@@ -24,12 +17,11 @@ const deployedFileWriter = (contract) => {
   }
 };
 
-const addressReader = (contractName) => {
+const fileReader = contractName => {
   try {
     return go(
       fs.readFileSync(`./deployed/${process.env.STAGE}/${contractName}.json`, 'utf8'),
-      JSON.parse,
-      a => a.address
+      JSON.parse
     );   
   } catch (e) {
     log(e);  
@@ -38,4 +30,4 @@ const addressReader = (contractName) => {
 
 const errorHandler = (err) => { if (err) throw err; }
 
-module.exports = { contractName, deployedFileWriter, addressReader }
+module.exports = { deployedFileWriter, fileReader }

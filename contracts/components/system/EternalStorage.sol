@@ -1,12 +1,14 @@
 pragma solidity ^0.4.24;
 
-import "../libs/LinkedListLib.sol";
+import "../../libs/LinkedListLib.sol";
+import "../../libs/AccessRoles.sol";
 
 /**
  * @title EternalStorage
- * @dev Holds all the neccessary state variables to carry out the storage of any contract.
+ * @dev This contract holds all the necessary state variables to carry out the storage of any contract.
  */
 contract EternalStorage {
+
   mapping(bytes32 => uint256) internal uintStorage;
   mapping(bytes32 => string) internal stringStorage;
   mapping(bytes32 => address) internal addressStorage;
