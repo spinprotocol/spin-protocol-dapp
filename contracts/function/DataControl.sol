@@ -2,17 +2,24 @@ pragma solidity ^0.4.24;
 
 import '../components/system/EternalStorage.sol';
 import "../libs/LinkedListLib.sol";
-import "../components/auth/Admin.sol";
+import "../components/auth/Authority.sol";
 
-contract DataControl is EternalStorage, Admin{
+contract DataControl is EternalStorage, Authority{
   using LinkedListLib for LinkedListLib.LinkedList;
 
-  string internal constant ERROR_ALREADY_EXIST = "Item already exists";
-  string internal constant ERROR_DOES_NOT_EXIST = "Item does not exist";
-
-  modifier onlyExistentItem(string contractName, bytes32 key, uint256 primaryIndex) {
-    require(doesNodeExist(contractName, key, primaryIndex), ERROR_DOES_NOT_EXIST);
+  modifier onlyExistentItem(string contractName, bytes32 tableKey, uint256 primaryIndex) {
+    require(doesNodeExist(contractName, tableKey, primaryIndex), "Item does not exist");
     _;
+  }
+  
+  function doesNodeExist(
+    string memory contractName,
+    bytes32 key,
+    uint256 nodeId
+  )
+    public view returns (bool)
+  {
+    return linkedListStorage[keccak256(abi.encodePacked(contractName, key))].nodeExists(nodeId);
   }
 
   function setIntStorage(
@@ -204,16 +211,6 @@ contract DataControl is EternalStorage, Admin{
     public view returns (bool)
   {
     return linkedListStorage[keccak256(abi.encodePacked(contractName, key))].listExists();
-  }
-
-  function doesNodeExist(
-    string memory contractName,
-    bytes32 key,
-    uint256 nodeId
-  )
-    public view returns (bool)
-  {
-    return linkedListStorage[keccak256(abi.encodePacked(contractName, key))].nodeExists(nodeId);
   }
 
   function getLinkedListSize(

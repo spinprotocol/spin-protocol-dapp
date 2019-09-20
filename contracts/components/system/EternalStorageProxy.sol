@@ -1,9 +1,7 @@
 pragma solidity ^0.4.24;
 
-import "../auth/Admin.sol";
 import "./EternalStorage.sol";
 import "./OwnedUpgradeabilityProxy.sol";
-
 
 /**
  * @title EternalStorageProxy
@@ -11,4 +9,8 @@ import "./OwnedUpgradeabilityProxy.sol";
  * Besides, it allows to upgrade the token's behaviour towards further implementations, and provides basic
  * authorization control functionalities
  */
-contract EternalStorageProxy is EternalStorage, OwnedUpgradeabilityProxy, Admin {}
+contract EternalStorageProxy is EternalStorage, OwnedUpgradeabilityProxy {
+    constructor() public {
+        boolStorage[keccak256(abi.encodePacked("Admin", msg.sender))] = true;
+    }
+}
