@@ -10,6 +10,11 @@ contract DataControl is EternalStorage, Admin{
   string internal constant ERROR_ALREADY_EXIST = "Item already exists";
   string internal constant ERROR_DOES_NOT_EXIST = "Item does not exist";
 
+  modifier onlyExistentItem(string contractName, bytes32 key, uint256 primaryIndex) {
+    require(doesNodeExist(contractName, key, primaryIndex), ERROR_DOES_NOT_EXIST);
+    _;
+  }
+
   function setIntStorage(
     string  contractName,
     bytes32 key,

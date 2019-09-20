@@ -1,10 +1,11 @@
-Object.assign(global, require('ffp-js'));
+const { match, go, log } =require('ffp-js');
 const { deployedFileWriter, fileReader } = require('../utils/contractData_fileController.js');
-
-const credentials = require('../credentials.json');
 const { CONTRACT, ACCOUNTS, WALLET } = require('../utils/generic-caver');
 
+const credentials = require('../credentials.json');
+
 const SpinProtocol = artifacts.require('SpinProtocol');
+const EternalStorageProxy = fileReader('EternalStorageProxy')//EternalStorageProxy EternalStorageProxy
 // const getSpinTokenAddress = network => credentials.klaytn.spin_token_address[network];
 
 /************** Create signer **************/
@@ -13,19 +14,20 @@ const createSigner = privateKey => go(
   WALLET.connect
 )
 
-const Signer = await match(process.env.STAGE)
+const Signer = match(process.env.STAGE)
 .case(network => network == 'prod')(_=> createSigner(credentials.klaytn.privateKey.cypress))
 .else(_=> createSigner(credentials.klaytn.privateKey.baobab));
 
-const EternalStorageProxy = await fileReader('EternalStorageProxy')
 /************** Deploy **************/
 module.exports = function(deployer) {
   deployer.deploy(SpinProtocol)
   /************** Version Setting **************/
-    .then(_ => go(
+    .then(async _ => go(
       CONTRACT.get(EternalStorageProxy.abi, EternalStorageProxy.address),
       async contract => {
         const version = await CONTRACT.read(contract, 'version()', {});
+        log(version);
+        log(SpinProtocol.address)
         return await CONTRACT.write(
             Signer, 
             contract, 

@@ -20,7 +20,7 @@ const deployedFileWriter = contract => {
 const fileReader = contractName => {
   try {
     return go(
-      fs.readFileSync(`./deployed/${process.env.STAGE}/${contractName}.json`, 'utf8'),
+      fs.readFileSync(`../deployed/${process.env.STAGE}/${contractName}.json`, 'utf8'),
       JSON.parse
     );   
   } catch (e) {
