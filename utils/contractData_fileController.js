@@ -1,11 +1,11 @@
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const { go, log } = require('ffp-js');
-
+const stage = !process.env.STAGE ? "dev" : rocess.env.STAGE
 
 const deployedFileWriter = contract => {
   try {
-    const dir = `./deployed/${process.env.STAGE}`;
+    const dir = `./deployed/${stage}`;
     mkdirp(dir, err => !err ? false : log(err));
     fs.writeFileSync(
       dir+`/${contract._json.contractName}.json`, 
@@ -20,7 +20,7 @@ const deployedFileWriter = contract => {
 const fileReader = contractName => {
   try {
     return go(
-      fs.readFileSync(`../deployed/${process.env.STAGE}/${contractName}.json`, 'utf8'),
+      fs.readFileSync(`../deployed/${stage}/${contractName}.json`, 'utf8'),
       JSON.parse
     );   
   } catch (e) {

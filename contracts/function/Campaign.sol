@@ -46,28 +46,28 @@ contract Campaign is DataControl {
     emit CampaignCreated(campaignId, revenueRatio, productId, startAt, endAt);
   }
 
-  function updateCampaign(
-    uint256 campaignId,
-    uint256 productId,
-    uint256 revenueRatio,
-    uint256 totalSupply,
-    uint256 startAt,
-    uint256 endAt
-  )
-    external
-    onlyExistentItem(campaignId)
-  {
-    require(this.getStartAt(campaignId) > now);
-    require(startAt > now);
-    require(startAt < endAt);
+  // function updateCampaign(
+  //   uint256 campaignId,
+  //   uint256 productId,
+  //   uint256 revenueRatio,
+  //   uint256 totalSupply,
+  //   uint256 startAt,
+  //   uint256 endAt
+  // )
+  //   external
+  //   onlyExistentItem(campaignId)
+  // {
+  //   require(this.getStartAt(campaignId) > now);
+  //   require(startAt > now);
+  //   require(startAt < endAt);
 
-    universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "productId")), productId);
-    universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "revenueRatio")), revenueRatio);
-    universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "totalSupply")), totalSupply);
-    universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "startAt")), startAt);
-    universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "endAt")), endAt);
-    emit CampaignUpdated(campaignId, block.timestamp);
-  }
+  //   universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "productId")), productId);
+  //   universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "revenueRatio")), revenueRatio);
+  //   universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "totalSupply")), totalSupply);
+  //   universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "startAt")), startAt);
+  //   universalDB.setUintStorage(CONTRACT_NAME_CAMPAIGN_DB, keccak256(abi.encodePacked(campaignId, "endAt")), endAt);
+  //   emit CampaignUpdated(campaignId, block.timestamp);
+  // }
   
   function getCampaign(
     uint256 campaignId

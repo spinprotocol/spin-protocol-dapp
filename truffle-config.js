@@ -8,19 +8,19 @@ module.exports = {
     development: {
       provider: providerFactory('baobab'),
       network_id: 1001,
-      gas: '3000000',
+      gas: '5000000',
       gasPrice: null
     },
     baobab: {
       provider: providerFactory('baobab'),
       network_id: 1001,
-      gas: '3000000',
+      gas: '5000000',
       gasPrice: null
     },
     cypress: {
       provider: providerFactory('cypress'),
       network_id: '8217',
-      gas: '3000000',
+      gas: '5000000',
       gasPrice: null
     }
   },
