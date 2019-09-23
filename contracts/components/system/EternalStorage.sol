@@ -1,7 +1,6 @@
 pragma solidity ^0.4.24;
 
 import "../../libs/LinkedListLib.sol";
-import "../../libs/AccessRoles.sol";
 
 /**
  * @title EternalStorage

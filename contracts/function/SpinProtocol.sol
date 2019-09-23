@@ -5,6 +5,13 @@ import './RevenueLedger.sol';
 
 /**
  * @title SpinProtocol
- * @dev 
  */
-contract SpinProtocol is Campaign, RevenueLedger {}
+contract SpinProtocol is Campaign, RevenueLedger {
+    function setA() public onlyAccessOwner {
+        setUintStorage("Test", keccak256(abi.encodePacked("Test")), 1);
+    }
+
+    function getA() public view returns (uint256) {
+        return getUintStorage("Test", keccak256(abi.encodePacked("Test")));
+    }
+}

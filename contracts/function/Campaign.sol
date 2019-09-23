@@ -1,6 +1,7 @@
 pragma solidity ^0.4.24;
 
 import './DataControl.sol';
+import './Purchase.sol';
 
 /**
  * @title Campaign
@@ -9,7 +10,7 @@ import './DataControl.sol';
  * TABLE_KEY : keccak256(abi.encodePacked("Table"))
  * LINKED_LIST_KEY_APPLIED_INFLUENCER = keccak256(abi.encodePacked("AppliedInfluencerList"))
  */
-contract Campaign is DataControl {
+contract Campaign is DataControl, Purchase {
 
   event CampaignCreated(uint256 indexed campaignId, uint256 revenueRatio, uint256 indexed productId, uint256 startAt, uint256 endAt);
   event CampaignUpdated(uint256 indexed campaignId, uint256 updatedAt);
@@ -87,6 +88,7 @@ contract Campaign is DataControl {
 
     require(this.getStartAt(campaignId) > now);
     require(removeNodeFromLinkedList(CONTRACT_NAME, TABLE_KEY, campaignId), "Item does not exist");
+    resetPurchaseCount(campaignId);
 
     emit CampaignDeleted(campaignId, now);
   }
