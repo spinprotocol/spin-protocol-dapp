@@ -14,13 +14,13 @@ contract Authority is EternalStorage{
     _;
   }
 
+  function proxyOwner() public view returns (address){
+    return _upgradeabilityOwner;
+  }
+
   modifier onlyAccessOwner() {
     require(isAccessOwner(msg.sender) || msg.sender == proxyOwner());
     _;
-  }
-
-  function proxyOwner() public view returns (address){
-    return _upgradeabilityOwner;
   }
 
   function isAccessOwner(address account) public view returns (bool) {
