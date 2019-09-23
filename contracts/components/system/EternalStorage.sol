@@ -8,7 +8,6 @@ import "../../libs/AccessRoles.sol";
  * @dev This contract holds all the necessary state variables to carry out the storage of any contract.
  */
 contract EternalStorage {
-
   mapping(bytes32 => uint256) internal uintStorage;
   mapping(bytes32 => string) internal stringStorage;
   mapping(bytes32 => address) internal addressStorage;

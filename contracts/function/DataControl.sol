@@ -7,19 +7,17 @@ import "../components/auth/Authority.sol";
 contract DataControl is EternalStorage, Authority{
   using LinkedListLib for LinkedListLib.LinkedList;
 
-  modifier onlyExistentItem(string contractName, bytes32 tableKey, uint256 primaryIndex) {
-    require(doesNodeExist(contractName, tableKey, primaryIndex), "Item does not exist");
+  modifier onlyExistentItem(string contractName, uint256 primaryIndex) {
+    require(doesNodeExist(contractName, primaryIndex), "Item does not exist");
     _;
   }
-  
-  function doesNodeExist(
-    string memory contractName,
-    bytes32 key,
-    uint256 nodeId
-  )
-    public view returns (bool)
+
+  function doesNodeExist(string contractName, uint256 nodeId) 
+    public
+    view
+    returns (bool)
   {
-    return linkedListStorage[keccak256(abi.encodePacked(contractName, key))].nodeExists(nodeId);
+    return linkedListStorage[keccak256(abi.encodePacked(contractName, keccak256(abi.encodePacked("Table"))))].nodeExists(nodeId);
   }
 
   function setIntStorage(

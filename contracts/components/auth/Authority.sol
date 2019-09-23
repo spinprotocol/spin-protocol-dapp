@@ -4,61 +4,37 @@ import "../system/EternalStorage.sol";
 
 contract Authority is EternalStorage{
 
+  address private _upgradeabilityOwner;
+
   event AuthAdded(string indexed auth, address indexed account);
   event AuthRemoved(string indexed auth, address indexed account);
-  event MastershipTransferred(address indexed previousMaster, address indexed newMaster);
 
-  modifier onlyMaster() {
-    require(isMaster(msg.sender));
+  modifier onlyProxyOwner() {
+    require(msg.sender == proxyOwner());
     _;
   }
-  
+
   modifier onlyAccessOwner() {
-    require(isAccessOwner(msg.sender) || isMaster(msg.sender));
+    require(isAccessOwner(msg.sender) || msg.sender == proxyOwner());
     _;
   }
-  
-  modifier onlyUpgradeOwner() {
-    require(isUpgradeOwner(msg.sender) || isMaster(msg.sender));
-    _;
-  }
-  
-  function isMaster(address account) public view returns (bool) {
-    require(account != address(0), "Authority: new owner is ther zero address");
-    bytes32 authHash = keccak256(abi.encodePacked("Master"));
-    return boolStorage[authHash];
-  }
-  
-  function transferMastership(address newMaster) public onlyMaster {
-    require(newMaster != address(0), "Authority: new owner is ther zero address");
-    emit MastershipTransferred(msg.sender, newMaster);
-    boolStorage[keccak256(abi.encodePacked("Master", msg.sender))] = false;
-    boolStorage[keccak256(abi.encodePacked("Master", newMaster))] = true;
+
+  function proxyOwner() public view returns (address){
+    return _upgradeabilityOwner;
   }
 
   function isAccessOwner(address account) public view returns (bool) {
     return _has("Access", account);
   }
 
-  function addAccessOwner(address account) public onlyMaster {
+  function addAccessOwner(address account) public onlyProxyOwner {
     _addAuth("Access", account);
   }
 
-  function removeAccessOwner(address account) public onlyMaster {
+  function removeAccessOwner(address account) public onlyProxyOwner {
     _removeAuth("Access", account);
   }
 
-  function isUpgradeOwner(address account) public view returns (bool) {
-    return _has("Upgrade", account);
-  }
-
-  function addUpgradeOwner(address account) public onlyMaster {
-    _addAuth("Upgrade", account);
-  }
-
-  function removeUpgradeOwner(address account) public onlyMaster {
-    _removeAuth("Upgrade", account);
-  }
   function _addAuth(string auth, address account) private {
     require(!_has(auth, account));
     bytes32 authHash = keccak256(abi.encodePacked(auth, account));
