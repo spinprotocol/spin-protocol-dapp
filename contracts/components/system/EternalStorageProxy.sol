@@ -1,7 +1,7 @@
 pragma solidity ^0.4.24;
 
 import "./EternalStorage.sol";
-import "../auth/OwnedUpgradeabilityProxy.sol";
+import "./OwnedUpgradeabilityProxy.sol";
 
 /**
  * @title EternalStorageProxy

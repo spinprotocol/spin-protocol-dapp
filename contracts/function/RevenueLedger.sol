@@ -30,9 +30,9 @@ contract RevenueLedger is DataControl {
     string memory CONTRACT_NAME = "RevenueLedger";
     bytes32 TABLE_KEY = keccak256(abi.encodePacked("Table"));
 
-    require(revenueLedgerId > 0);
-    require(campaignId > 0);
-    require(pushNodeToLinkedList(CONTRACT_NAME, TABLE_KEY, revenueLedgerId), "Item already exists");
+    require(revenueLedgerId > 0, "RevenueLedger : revenueLedgerId cannot be 0");
+    require(campaignId > 0, "RevenueLedger : campaignId cannot be 0");
+    require(pushNodeToLinkedList(CONTRACT_NAME, TABLE_KEY, revenueLedgerId), "RevenueLedger : Item already exists");
     
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(revenueLedgerId, "campaignId")), campaignId);
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(revenueLedgerId, "influencerId")), influencerId);
@@ -70,7 +70,7 @@ contract RevenueLedger is DataControl {
     string memory CONTRACT_NAME = "RevenueLedger";
     bytes32 TABLE_KEY = keccak256(abi.encodePacked("Table"));
 
-    require(removeNodeFromLinkedList(CONTRACT_NAME, TABLE_KEY, revenueLedgerId), "Item does not exist");
+    require(removeNodeFromLinkedList(CONTRACT_NAME, TABLE_KEY, revenueLedgerId), "RevenueLedger : Item does not exist");
 
     emit RevenueLedgerUpdated(revenueLedgerId, now);
   }

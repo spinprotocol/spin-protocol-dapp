@@ -1,6 +1,5 @@
 pragma solidity ^0.4.24;
 
-import './DataControl.sol';
 import './Purchase.sol';
 
 /**
@@ -10,7 +9,7 @@ import './Purchase.sol';
  * TABLE_KEY : keccak256(abi.encodePacked("Table"))
  * LINKED_LIST_KEY_APPLIED_INFLUENCER = keccak256(abi.encodePacked("AppliedInfluencerList"))
  */
-contract Campaign is DataControl, Purchase {
+contract Campaign is Purchase {
 
   event CampaignCreated(uint256 indexed campaignId, uint256 revenueRatio, uint256 indexed productId, uint256 startAt, uint256 endAt);
   event CampaignUpdated(uint256 indexed campaignId, uint256 updatedAt);
@@ -30,13 +29,13 @@ contract Campaign is DataControl, Purchase {
     string memory CONTRACT_NAME = "Campaign";
     bytes32 TABLE_KEY = keccak256(abi.encodePacked("Table"));
 
-    require(campaignId > 0, "campaignId cannot be 0");
-    require(productId > 0, "productId cannot be 0");
-    require(revenueRatio > 0, "revenueRatio cannot be 0");
-    require(totalSupply > 0, "totalSupply cannot be 0");
-    require(startAt > now, "The past time is not available.");
-    require(startAt < endAt, "startAt cannot be higher than endAt");
-    require(pushNodeToLinkedList(CONTRACT_NAME, TABLE_KEY, campaignId), "Item already exists");
+    require(campaignId > 0, "Campaign : campaignId cannot be 0");
+    require(productId > 0, "Campaign : productId cannot be 0");
+    require(revenueRatio > 0, "Campaign : revenueRatio cannot be 0");
+    require(totalSupply > 0, "Campaign : totalSupply cannot be 0");
+    require(startAt > now, "Campaign : The past time is not available.");
+    require(startAt < endAt, "Campaign : startAt cannot be higher than endAt");
+    require(pushNodeToLinkedList(CONTRACT_NAME, TABLE_KEY, campaignId), "Campaign : Item already exists");
 
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "productId")), productId);
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "revenueRatio")), revenueRatio);
@@ -59,12 +58,12 @@ contract Campaign is DataControl, Purchase {
     onlyAccessOwner
     onlyExistentItem("Campaign", campaignId)
   {
-    require(this.getStartAt(campaignId) > now);
-    require(productId > 0, "productId cannot be 0");
-    require(revenueRatio > 0, "revenueRatio cannot be 0");
-    require(totalSupply > 0, "totalSupply cannot be 0");
-    require(startAt > now);
-    require(startAt < endAt);
+    require(this.getStartAt(campaignId) > now, "Campaign : an ongoing campaign");
+    require(productId > 0, "Campaign : productId cannot be 0");
+    require(revenueRatio > 0, "Campaign : revenueRatio cannot be 0");
+    require(totalSupply > 0, "Campaign : totalSupply cannot be 0");
+    require(startAt > now, "Campaign : The past time is not available.");
+    require(startAt < endAt, "Campaign : startAt cannot be higher than endAt");
 
     string memory CONTRACT_NAME = "Campaign";
 
@@ -86,8 +85,8 @@ contract Campaign is DataControl, Purchase {
     string memory CONTRACT_NAME = "Campaign";
     bytes32 TABLE_KEY = keccak256(abi.encodePacked("Table"));
 
-    require(this.getStartAt(campaignId) > now);
-    require(removeNodeFromLinkedList(CONTRACT_NAME, TABLE_KEY, campaignId), "Item does not exist");
+    require(this.getStartAt(campaignId) > now , "Campaign : an ongoing campaign");
+    require(removeNodeFromLinkedList(CONTRACT_NAME, TABLE_KEY, campaignId), "Campaign : Item does not exist");
     resetPurchaseCount(campaignId);
 
     emit CampaignDeleted(campaignId, now);
@@ -104,8 +103,8 @@ contract Campaign is DataControl, Purchase {
     string memory CONTRACT_NAME = "Campaign";
     bytes32 LINKED_LIST_KEY_APPLIED_INFLUENCER = keccak256(abi.encodePacked("AppliedInfluencerList"));
 
-    require(this.getStartAt(campaignId) > now);
-    require(pushNodeToLinkedList(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, LINKED_LIST_KEY_APPLIED_INFLUENCER)), influencerId), "Item already exists");
+    require(this.getStartAt(campaignId) > now, "Campaign : an ongoing campaign");
+    require(pushNodeToLinkedList(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, LINKED_LIST_KEY_APPLIED_INFLUENCER)), influencerId), "Campaign : Item already exists");
 
     emit CampaignUpdated(campaignId, now);
   }
@@ -121,7 +120,7 @@ contract Campaign is DataControl, Purchase {
     string memory CONTRACT_NAME = "Campaign";
     bytes32 LINKED_LIST_KEY_APPLIED_INFLUENCER = keccak256(abi.encodePacked("AppliedInfluencerList"));
 
-    require(removeNodeFromLinkedList(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, LINKED_LIST_KEY_APPLIED_INFLUENCER)), influencerId), "Item already exists");
+    require(removeNodeFromLinkedList(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, LINKED_LIST_KEY_APPLIED_INFLUENCER)), influencerId), "Campaign : Item already exists");
 
     emit CampaignUpdated(campaignId, now);
   }
@@ -135,8 +134,7 @@ contract Campaign is DataControl, Purchase {
     onlyExistentItem("Campaign", campaignId)
   {
     uint256 startAt = this.getStartAt(campaignId);
-    require(startAt < now);
-    require(startAt < endAt);
+    require(startAt < endAt, "Campaign : startAt cannot be higher than endAt");
 
     string memory CONTRACT_NAME = "Campaign";
 
