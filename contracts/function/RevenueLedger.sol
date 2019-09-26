@@ -25,7 +25,7 @@ contract RevenueLedger is DataControl {
     uint256 fiatRatio
   )
     public
-    onlyAccessOwner
+    onlyAdmin
   {
     string memory CONTRACT_NAME = "RevenueLedger";
     bytes32 TABLE_KEY = keccak256(abi.encodePacked("Table"));
@@ -52,7 +52,7 @@ contract RevenueLedger is DataControl {
     bool state
   )
     public
-    onlyAccessOwner
+    onlyAdmin
     onlyExistentItem("RevenueLedger", revenueLedgerId)
   {
     string memory CONTRACT_NAME = "RevenueLedger";
@@ -64,7 +64,7 @@ contract RevenueLedger is DataControl {
     uint256 revenueLedgerId
   )
     public
-    onlyAccessOwner
+    onlyAdmin
     onlyExistentItem("RevenueLedger", revenueLedgerId)
   {
     string memory CONTRACT_NAME = "RevenueLedger";

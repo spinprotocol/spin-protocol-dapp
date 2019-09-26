@@ -1,6 +1,6 @@
 pragma solidity ^0.4.24;
 
-import './Purchase.sol';
+import './DataControl.sol';
 
 /**
  * @title Campaign
@@ -9,11 +9,16 @@ import './Purchase.sol';
  * TABLE_KEY : keccak256(abi.encodePacked("Table"))
  * LINKED_LIST_KEY_APPLIED_INFLUENCER = keccak256(abi.encodePacked("AppliedInfluencerList"))
  */
-contract Campaign is Purchase {
+contract Campaign is DataControl {
 
   event CampaignCreated(uint256 indexed campaignId, uint256 revenueRatio, uint256 indexed productId, uint256 startAt, uint256 endAt);
   event CampaignUpdated(uint256 indexed campaignId, uint256 updatedAt);
   event CampaignDeleted(uint256 indexed campaignId, uint256 deletedAt);
+
+  modifier onlyWriter(uint256 campaignId) {
+    require(getAddressStorage("Campaign", keccak256(abi.encodePacked(campaignId, "writer"))) == msg.sender || isAdmin(msg.sender), "Campaign : The caller and the writer do not match.");  
+    _;
+  }
 
   function createCampaign(
     uint256 campaignId,
@@ -24,7 +29,7 @@ contract Campaign is Purchase {
     uint256 endAt
   )
     public
-    onlyAccessOwner
+    onlySupplier
   {
     string memory CONTRACT_NAME = "Campaign";
     bytes32 TABLE_KEY = keccak256(abi.encodePacked("Table"));
@@ -43,6 +48,7 @@ contract Campaign is Purchase {
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "startAt")), startAt);
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "endAt")), endAt);
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "createdAt")), now);
+    setAddressStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "writer")), msg.sender);
     emit CampaignCreated(campaignId, revenueRatio, productId, startAt, endAt);
   }
 
@@ -55,7 +61,8 @@ contract Campaign is Purchase {
     uint256 endAt
   )
     public
-    onlyAccessOwner
+    onlySupplier
+    onlyWriter(campaignId)
     onlyExistentItem("Campaign", campaignId)
   {
     require(this.getStartAt(campaignId) > now, "Campaign : an ongoing campaign");
@@ -79,7 +86,8 @@ contract Campaign is Purchase {
     uint256 campaignId
   )
     public
-    onlyAccessOwner
+    onlySupplier
+    onlyWriter(campaignId)
     onlyExistentItem("Campaign", campaignId)
   {
     string memory CONTRACT_NAME = "Campaign";
@@ -87,7 +95,6 @@ contract Campaign is Purchase {
 
     require(this.getStartAt(campaignId) > now , "Campaign : an ongoing campaign");
     require(removeNodeFromLinkedList(CONTRACT_NAME, TABLE_KEY, campaignId), "Campaign : Item does not exist");
-    resetPurchaseCount(campaignId);
 
     emit CampaignDeleted(campaignId, now);
   }
@@ -97,7 +104,7 @@ contract Campaign is Purchase {
     uint256 influencerId
   )
     public
-    onlyAccessOwner
+    onlyInfluencer
     onlyExistentItem("Campaign", campaignId)
   {
     string memory CONTRACT_NAME = "Campaign";
@@ -105,6 +112,7 @@ contract Campaign is Purchase {
 
     require(this.getStartAt(campaignId) > now, "Campaign : an ongoing campaign");
     require(pushNodeToLinkedList(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, LINKED_LIST_KEY_APPLIED_INFLUENCER)), influencerId), "Campaign : Item already exists");
+    setAddressStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, influencerId)), msg.sender);
 
     emit CampaignUpdated(campaignId, now);
   }
@@ -114,13 +122,14 @@ contract Campaign is Purchase {
     uint256 influencerId
   )
     public
-    onlyAccessOwner
+    onlyInfluencer
     onlyExistentItem("Campaign", campaignId)
   {
     string memory CONTRACT_NAME = "Campaign";
     bytes32 LINKED_LIST_KEY_APPLIED_INFLUENCER = keccak256(abi.encodePacked("AppliedInfluencerList"));
-
+    require(getAddressStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, influencerId))) == msg.sender || isAdmin(msg.sender));
     require(removeNodeFromLinkedList(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, LINKED_LIST_KEY_APPLIED_INFLUENCER)), influencerId), "Campaign : Item already exists");
+    setAddressStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, influencerId)), address(0));
 
     emit CampaignUpdated(campaignId, now);
   }
@@ -130,7 +139,8 @@ contract Campaign is Purchase {
     uint256 endAt
   )
     public
-    onlyAccessOwner
+    onlySupplier
+    onlyWriter(campaignId)
     onlyExistentItem("Campaign", campaignId)
   {
     uint256 startAt = this.getStartAt(campaignId);
@@ -153,7 +163,8 @@ contract Campaign is Purchase {
       uint256[] memory appliedInfluencerList,
       uint256 startAt,
       uint256 endAt,
-      uint256 createdAt
+      uint256 createdAt,
+      address writer
     )
   {
     string memory CONTRACT_NAME = "Campaign";
@@ -166,6 +177,7 @@ contract Campaign is Purchase {
     startAt = getUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "startAt")));
     endAt = getUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "endAt")));
     createdAt = getUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "createdAt")));
+    writer = getAddressStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "writer")));
   }
 
   function getStartAt(uint256 campaignId)

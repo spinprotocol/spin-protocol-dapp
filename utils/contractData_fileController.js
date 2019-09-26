@@ -3,12 +3,12 @@ const mkdirp = require('mkdirp');
 const { go, log } = require('ffp-js');
 const stage = !process.env.STAGE ? "dev" : process.env.STAGE
 
-const deployedFileWriter = contract => {
+const deployedFileWriter = (contract, name) => {
   try {
     const dir = `./deployed/${stage}`;
     mkdirp(dir, err => !err ? false : log(err));
     fs.writeFileSync(
-      dir+`/${contract._json.contractName}.json`, 
+      dir+`/${!name ? contract._json.contractName : name}.json`, 
       `{ "address": "${contract.address}", "abi": ${JSON.stringify(contract._json.abi)} }`, 
       errorHandler
     );

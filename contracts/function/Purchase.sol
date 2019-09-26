@@ -11,81 +11,66 @@ import '../libs/SafeMath.sol';
 contract Purchase is DataControl {
   using SafeMath for uint256;
 
-  event PurchaseAdd(uint256 indexed campaignId, uint256 updatedAt);
-  event PurchaseSub(uint256 indexed campaignId, uint256 updatedAt);
-  event PurchaseReset(uint256 indexed campaignId, uint256 resetAt);
+  event PurchaseAdd(string indexed category, uint256 indexed productId, string indexed userId, uint256 count, uint256 updatedAt);
+  event PurchaseSub(string indexed category, uint256 indexed productId, string indexed userId, uint256 count, uint256 updatedAt);
+  event PurchaseReset(string indexed category, uint256 indexed productId, uint256 resetAt);
 
   function addPurchaseCount(
-    uint256 campaignId,
-    uint256 count
+    string category,
+    uint256 productId,
+    uint256 count,
+    string userId
   )
     public
-    onlyAccessOwner
-    onlyExistentItem("Campaign" ,campaignId)
+    onlyUser
   {
     require(count > 0, "Purchase : count cannot be 0");
-    string memory CONTRACT_NAME = "Purchase";
-    bytes32 TABLE_KEY = keccak256(abi.encodePacked("Table"));
 
-    uint256 purchaseCount = getUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "purchaseCount")));
+    uint256 purchaseCount = getUintStorage(category, keccak256(abi.encodePacked(productId,"count")));
 
-    if(purchaseCount == 0){
-        require(pushNodeToLinkedList(CONTRACT_NAME, TABLE_KEY, campaignId), "Purchase : Item already exists");
-    }
+    setUintStorage(category, keccak256(abi.encodePacked(productId, "count")), purchaseCount.add(count));
 
-    setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "purchaseCount")), purchaseCount.add(count));
-
-    emit PurchaseAdd(campaignId, now);
+    emit PurchaseAdd(category, productId, userId, count, now);
   }
 
   function subPurchaseCount(
-    uint256 campaignId,
-    uint256 count
+    string category,
+    uint256 productId,
+    uint256 count,
+    string userId
   )
     public
-    onlyAccessOwner
-    onlyExistentItem("Campaign" ,campaignId)
+    onlyUser
   {
     require(count > 0, "Purchase : count cannot be 0");
-    string memory CONTRACT_NAME = "Purchase";
-    bytes32 TABLE_KEY = keccak256(abi.encodePacked("Table"));
 
-    uint256 purchaseCount = getUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "purchaseCount")));
+    uint256 purchaseCount = getUintStorage(category, keccak256(abi.encodePacked(productId, "count")));
 
-    setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "purchaseCount")), purchaseCount.sub(count));
+    setUintStorage(category, keccak256(abi.encodePacked(productId, "count")), purchaseCount.sub(count));
 
-    if(purchaseCount.sub(count) == 0){
-        require(removeNodeFromLinkedList(CONTRACT_NAME, TABLE_KEY, campaignId), "Purchase : Item does not exist");
-    }
-
-    emit PurchaseSub(campaignId, now);
+    emit PurchaseSub(category, productId, userId, count, now);
   }
 
   function resetPurchaseCount(
-      uint256 campaignId
+    string category,
+    uint256 productId
   )
     public
-    onlyAccessOwner
+    onlyAdmin
   {
-    string memory CONTRACT_NAME = "Purchase";
-    bytes32 TABLE_KEY = keccak256(abi.encodePacked("Table"));
+    setUintStorage(category, keccak256(abi.encodePacked(productId, "count")), 0);
 
-    setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "purchaseCount")), 0);
-
-    require(removeNodeFromLinkedList(CONTRACT_NAME, TABLE_KEY, campaignId), "Purchase : Item does not exist");
-
-    emit PurchaseReset(campaignId, now);
+    emit PurchaseReset(category, productId, now);
   }
 
   function getPurchaseCount(
-    uint256 campaignId
+    string category,
+    uint256 productId
   )
     public
     view
-    onlyExistentItem("Campaign" ,campaignId)
     returns(uint256)
   {
-    string memory CONTRACT_NAME = "Purchase";
-    return getUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "purchaseCount")));
+    return getUintStorage(category, keccak256(abi.encodePacked(productId, "count")));
   }
 }

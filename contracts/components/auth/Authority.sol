@@ -4,35 +4,96 @@ import "../system/EternalStorage.sol";
 
 contract Authority is EternalStorage{
 
-  address private _upgradeabilityOwner;
+  address private _upgradeability;
 
   event AuthAdded(string indexed auth, address indexed account);
   event AuthRemoved(string indexed auth, address indexed account);
 
-  modifier onlyProxyOwner() {
-    require(msg.sender == proxyOwner());
+  modifier onlyProxy() {
+    require(msg.sender == proxy());
     _;
   }
 
-  function proxyOwner() public view returns (address){
-    return _upgradeabilityOwner;
+  function proxy() public view returns (address){
+    return _upgradeability;
   }
 
-  modifier onlyAccessOwner() {
-    require(isAccessOwner(msg.sender) || msg.sender == proxyOwner());
+  modifier onlyAdmin() {
+    require(isAdmin(msg.sender) || msg.sender == proxy());
     _;
   }
 
-  function isAccessOwner(address account) public view returns (bool) {
-    return _has("Access", account);
+  modifier onlySupplier() {
+    require(isSupplier(msg.sender) || isAdmin(msg.sender) || msg.sender == proxy());
+    _;
   }
 
-  function addAccessOwner(address account) public onlyProxyOwner {
-    _addAuth("Access", account);
+  modifier onlyInfluencer() {
+    require(isInfluencer(msg.sender) || isAdmin(msg.sender) || msg.sender == proxy());
+    _;
   }
 
-  function removeAccessOwner(address account) public onlyProxyOwner {
-    _removeAuth("Access", account);
+  modifier onlyWT() {
+    require(isWT(msg.sender) || isAdmin(msg.sender) || msg.sender == proxy());
+    _;
+  }
+
+  modifier onlyUser() {
+    require(
+      isSupplier(msg.sender) 
+      || isInfluencer(msg.sender) 
+      || isWT(msg.sender) 
+      || isAdmin(msg.sender)
+      || msg.sender == proxy());
+    _;
+  }
+
+  function isAdmin(address account) public view returns (bool) {
+    return _has("Admin", account);
+  }
+
+  function addAdmin(address account) public onlyProxy {
+    _addAuth("Admin", account);
+  }
+
+  function removeAdmin(address account) public onlyProxy {
+    _removeAuth("Admin", account);
+  }
+
+  function isSupplier(address account) public view returns (bool) {
+    return _has("Supplier", account);
+  }
+
+  function addSupplier(address account) public onlyAdmin {
+    _addAuth("Supplier", account);
+  }
+
+  function removeSupplier(address account) public onlyAdmin {
+    _removeAuth("Supplier", account);
+  }
+
+  function isInfluencer(address account) public view returns (bool) {
+    return _has("Influencer", account);
+  }
+
+  function addInfluencer(address account) public onlyAdmin {
+    _addAuth("Influencer", account);
+  }
+
+  function removeInfluencer(address account) public onlyAdmin {
+    _removeAuth("Influencer", account);
+  }
+
+  function isWT(address account) public view returns (bool) {
+    return _has("WT", account);
+  }
+
+  function addWT(address account) public onlyAdmin {
+    _addAuth("WT", account);
+  }
+
+  function removeWT(address account) public onlyAdmin {
+    _removeAuth("WT", account);
   }
 
   function _addAuth(string auth, address account) private {

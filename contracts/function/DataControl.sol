@@ -26,7 +26,6 @@ contract DataControl is EternalStorage, Authority{
     int256 value
   )
     internal
-    onlyAccessOwner
   {
     intStorage[keccak256(abi.encodePacked(contractName, key))] = value;
   }
@@ -46,7 +45,6 @@ contract DataControl is EternalStorage, Authority{
     uint256 value
   )
     internal
-    onlyAccessOwner
   {
     uintStorage[keccak256(abi.encodePacked(contractName, key))] = value;
   }
@@ -66,7 +64,6 @@ contract DataControl is EternalStorage, Authority{
     string  value
   )
     internal
-    onlyAccessOwner
   {
     stringStorage[keccak256(abi.encodePacked(contractName, key))] = value;
   }
@@ -86,7 +83,6 @@ contract DataControl is EternalStorage, Authority{
     address value
   )
     internal
-    onlyAccessOwner
   {
     addressStorage[keccak256(abi.encodePacked(contractName, key))] = value;
   }
@@ -106,7 +102,6 @@ contract DataControl is EternalStorage, Authority{
     bytes  value
   )
     internal
-    onlyAccessOwner
   {
     bytesStorage[keccak256(abi.encodePacked(contractName, key))] = value;
   }
@@ -126,7 +121,6 @@ contract DataControl is EternalStorage, Authority{
     bool value
   )
     internal
-    onlyAccessOwner
   {
     boolStorage[keccak256(abi.encodePacked(contractName, key))] = value;
   }
@@ -146,7 +140,6 @@ contract DataControl is EternalStorage, Authority{
     uint256 nodeId
   )
     internal
-    onlyAccessOwner
     returns (bool)
   {
     if (linkedListStorage[keccak256(abi.encodePacked(contractName, key))].nodeExists(nodeId)) {
@@ -163,7 +156,6 @@ contract DataControl is EternalStorage, Authority{
     uint256 nodeId
   )
     internal
-    onlyAccessOwner
     returns (bool)
   {
     if (!linkedListStorage[keccak256(abi.encodePacked(contractName, key))].nodeExists(nodeId)) {

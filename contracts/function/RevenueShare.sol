@@ -2,16 +2,16 @@ pragma solidity ^0.4.24;
 
 import "../libs/SafeMath.sol";
 import "../components/token/IERC20.sol";
-import './DataControl.sol';
+import './RevenueLedger.sol';
 
 /**
  * @title RevenueShare
  * @dev Spin revenue transfer of inpluencer.
  */
-contract RevenueShare is DataControl {
+contract RevenueShare is RevenueLedger {
     using SafeMath for uint256;
 
-    function sendToken(string _tokenName, address _to, uint256 _amt) public onlyAccessOwner {
+    function sendToken(string _tokenName, address _to, uint256 _amt) public onlyAdmin {
         _sendToken(_tokenName, _to, _amt);
     }
 
@@ -32,13 +32,12 @@ contract RevenueShare is DataControl {
     * @param _marketPrice : The value of this parameter must be (_marketPrice * 100) to resolve the decimal point issue.
     */
     function revenueSpin(
-        uint256 _revenue,
-        uint256 _spinRatio,
+        uint256 _spinAmount,
         uint256 _marketPrice,
         uint256 _rounding
     ) public pure returns(uint256 spin){
-        spin = _revenue.mul(1 ether);
-        spin = spin.mul(_spinRatio).div(_marketPrice);
+        spin = _spinAmount.mul(1 ether).mul(100);
+        spin = spin.div(_marketPrice);
         spin = rounding(spin, uint256(18).sub(_rounding));
     }
 
@@ -48,18 +47,18 @@ contract RevenueShare is DataControl {
     function revenueShare(
         uint256 _revenueLedgerId,
         address _to,
-        uint256 _revenue,
-        uint256 _spinRatio,
+        uint256 _spinAmount,
         uint256 _marketPrice,
         uint256 _rounding
-    ) public onlyAccessOwner {
-        uint256 campaignId = getUintStorage("RevenueLedger", keccak256(abi.encodePacked(_revenueLedgerId, "campaignId")));
-        bool isAccount = getBoolStorage("RevenueLedger", keccak256(abi.encodePacked(_revenueLedgerId, "isAccount")));
-        require(campaignId > 0 && !isAccount, "RevenueShare : Empty data or already share");
+    ) public onlyAdmin {
+        uint256 campaignId;
+        bool isAccount;
+        (campaignId,,,,,,,,isAccount) = getRevenueLedger(_revenueLedgerId);
+        require(campaignId > 0 && !isAccount, "Empty data or already share");
 
-        uint256 spin = revenueSpin(_revenue, _spinRatio, _marketPrice, _rounding);
+        uint256 spin = revenueSpin(_spinAmount, _marketPrice, _rounding);
         _sendToken("SPIN", _to, spin);
-        setBoolStorage("RevenueLedger", keccak256(abi.encodePacked(_revenueLedgerId, "isAccount")), true);
+        updateIsAccount(_revenueLedgerId,true);
     }
 
     function getBalance(string _tokenName) public view returns(uint256){
@@ -67,7 +66,7 @@ contract RevenueShare is DataControl {
         return token.balanceOf(this);
     }
 
-    function setTokenAddr(address _tokenAddr, string _tokenName) public onlyAccessOwner {
+    function setTokenAddr(address _tokenAddr, string _tokenName) public onlyAdmin {
         setAddressStorage("SpinProtocol", keccak256(abi.encodePacked(_tokenName)), _tokenAddr);
     }
 }

@@ -11,9 +11,9 @@
     "prod": "STAGE=prod truffle migrate --reset --network cypress",
     "dev": "STAGE=dev truffle migrate --reset --network baobab",
     "staging": "STAGE=staging truffle migrate --reset --network baobab",
-    "update-prod": "STAGE=prod truffle migrate --reset --network cypress --f 3",
-    "update-dev": "STAGE=dev truffle migrate --reset --network baobab --f 3",
-    "update-staging": "STAGE=staging truffle migrate --reset --network baobab --f 3"
+    "prod-update": "STAGE=prod truffle migrate --reset --network cypress --f 3",
+    "dev-update": "STAGE=dev truffle migrate --reset --network baobab --f 3",
+    "staging-update": "STAGE=staging truffle migrate --reset --network baobab --f 3"
   },
   "author": "Harace Moon",
   "license": "ISC",
