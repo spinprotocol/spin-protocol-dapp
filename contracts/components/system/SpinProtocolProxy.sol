@@ -137,8 +137,7 @@ contract SpinProtocolProxy is ProxyBase {
   function revenueShare(
     uint256 _revenueLedgerId,
     address _to,
-    uint256 _revenue,
-    uint256 _spinRatio,
+    uint256 _spinAmount,
     uint256 _marketPrice,
     uint256 _rounding
   ) 
@@ -147,8 +146,7 @@ contract SpinProtocolProxy is ProxyBase {
     ISpinProtocol(addressOfSpinProtocol()).revenueShare(
       _revenueLedgerId,
       _to,
-      _revenue,
-      _spinRatio,
+      _spinAmount,
       _marketPrice,
       _rounding
     );
