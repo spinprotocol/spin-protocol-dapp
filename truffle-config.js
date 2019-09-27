@@ -1,4 +1,4 @@
-const PrivateKeyConnector = require('connect-privkey-to-provider');
+const PrivateKeyConnector = require('truffle-hdwallet-provider-klaytn');
 const credentials = require('./credentials.json');
 const { go } = require('ffp-js');
 

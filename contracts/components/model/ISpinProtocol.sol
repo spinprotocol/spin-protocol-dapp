@@ -62,8 +62,7 @@ interface ISpinProtocol {
   function revenueShare(
     uint256 _revenueLedgerId,
     address _to,
-    uint256 _revenue,
-    uint256 _spinRatio,
+    uint256 _spinAmount,
     uint256 _marketPrice,
     uint256 _rounding
   ) external;
