@@ -1,24 +1,29 @@
 const HDWalletProvider = require('truffle-hdwallet-provider-klaytn');
 const credentials = require('./credentials.json');
 
-const providerFactory = network => new HDWalletProvider(credentials.klaytn.privateKey[network], `https://api.${network}.klaytn.net:8651`);
+const stage = !process.env.STAGE? 'dev' : process.env.STAGE;
+
+const providerFactory = () => new HDWalletProvider(
+      credentials[stage].deployer.pk, 
+      `https://api.${stage === 'prod' ? 'cypress' : 'baobab'}.klaytn.net:8651`
+    );
 
 module.exports = {
   networks: {
     development: {
-      provider: providerFactory('baobab'),
+      provider: providerFactory(),
       network_id: 1001,
       gas: '50000000',
       gasPrice: null
     },
     baobab: {
-      provider: providerFactory('baobab'),
+      provider: providerFactory(),
       network_id: 1001,
       gas: '50000000',
       gasPrice: null
     },
     cypress: {
-      provider: providerFactory('cypress'),
+      provider: providerFactory(),
       network_id: 8217,
       gas: '50000000',
       gasPrice: null

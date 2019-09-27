@@ -4,24 +4,18 @@ const moment = require("moment");
 require("moment-timezone");
 moment.tz.setDefault("Asia/Seoul");
 
-const setEN = network => network === 'prod' ? 
-    `https://api.cypress.klaytn.net:8651` 
-    : `https://api.baobab.klaytn.net:8651`;
+const stage = !process.env.STAGE? 'dev' : process.env.STAGE;
+
 const Caver = require('caver-js');
-const caver = new Caver(setEN(process.env.STAGE));
+const caver = new Caver(`https://api.${ stage === 'prod' ? 'cypress' : 'baobab' }.klaytn.net:8651` );
 
 const credentials = require('../credentials.json');
 
 /***************** Signer Setting *****************/
-const connectSigner = privateKey => go(
-    caver.klay.accounts.privateKeyToAccount(privateKey),
-    account => caver.klay.accounts.wallet.add(account)
-  )
+log(credentials[stage].feePayer.pk)
 
-const Signer = match(process.env.STAGE)
-    .case(network => network == 'prod')(_=> connectSigner(credentials.klaytn.privateKey.cypress))
-    .else(_=> connectSigner(credentials.klaytn.privateKey.baobab));
-  
+const Signer = caver.klay.accounts.wallet.add(credentials[stage].deployer.pk);
+const feePayer = caver.klay.accounts.wallet.add(credentials[stage].feePayer.pk, credentials[stage].feePayer.address);
 
 /***************** Contract Setting *****************/
 const getContract = (abi, address) => new caver.klay.Contract(abi, address)
@@ -50,7 +44,7 @@ module.exports = (proxy, func) => go(
     getContract(proxy.abi, proxy.address),
     contract => {proxy = contract},
     _ => readVersion(proxy),
-    version => !version ? `1-${date}` : `${Number(version.split("-")[0])+1}-${nowDate}`,
+    version => !version ? `1-${nowDate}` : `${Number(version.split("-")[0])+1}-${nowDate}`,
     version => writeUpgradeTo(proxy, version, func.address),
     txReceipt => log('\r  -> Version Setting Tx :', txReceipt.transactionHash)
 )
