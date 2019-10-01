@@ -40,9 +40,9 @@ contract Authority is EternalStorage{
 
   modifier onlyUser() {
     require(
-      isSupplier(msg.sender) 
-      || isInfluencer(msg.sender) 
-      || isWT(msg.sender) 
+      isSupplier(msg.sender)
+      || isInfluencer(msg.sender)
+      || isWT(msg.sender)
       || isAdmin(msg.sender)
       || msg.sender == proxy());
     _;

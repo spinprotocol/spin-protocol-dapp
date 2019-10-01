@@ -2,23 +2,15 @@ pragma solidity ^0.4.24;
 
 import "../libs/SafeMath.sol";
 import "../components/token/IERC20.sol";
-import './RevenueLedger.sol';
+import "./RevenueLedger.sol";
+import "../components/token/TokenControl.sol";
 
 /**
  * @title RevenueShare
  * @dev Spin revenue transfer of inpluencer.
  */
-contract RevenueShare is RevenueLedger {
+contract RevenueShare is RevenueLedger, TokenControl {
     using SafeMath for uint256;
-
-    function sendToken(string _tokenName, address _to, uint256 _amt) public onlyAdmin {
-        _sendToken(_tokenName, _to, _amt);
-    }
-
-    function _sendToken(string _tokenName, address _to, uint256 _amt) internal {
-        IERC20 token = IERC20(getAddressStorage("SpinProtocol", keccak256(abi.encodePacked(_tokenName))));
-        require(token.transfer(_to,_amt), "RevenueShare : Token Transfer Fail");
-    }
 
     /**
     * @dev Decimal cropping.
@@ -59,14 +51,5 @@ contract RevenueShare is RevenueLedger {
         uint256 spin = revenueSpin(_spinAmount, _marketPrice, _rounding);
         _sendToken("SPIN", _to, spin);
         updateIsAccount(_revenueLedgerId,true);
-    }
-
-    function getBalance(string _tokenName) public view returns(uint256){
-        IERC20 token = IERC20(getAddressStorage("SpinProtocol", keccak256(abi.encodePacked(_tokenName))));
-        return token.balanceOf(this);
-    }
-
-    function setTokenAddr(address _tokenAddr, string _tokenName) public onlyAdmin {
-        setAddressStorage("SpinProtocol", keccak256(abi.encodePacked(_tokenName)), _tokenAddr);
     }
 }

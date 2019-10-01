@@ -1,7 +1,7 @@
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const { go, log } = require('ffp-js');
-const stage = !process.env.STAGE ? "dev" : process.env.STAGE
+const stage = process.env.STAGE || 'dev';
 
 const deployedFileWriter = (contract, name) => {
   try {

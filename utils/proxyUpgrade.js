@@ -4,35 +4,67 @@ const moment = require("moment");
 require("moment-timezone");
 moment.tz.setDefault("Asia/Seoul");
 
-const stage = !process.env.STAGE? 'dev' : process.env.STAGE;
+const stage = process.env.STAGE || 'dev';
 
 const Caver = require('caver-js');
 const caver = new Caver(`https://api.${ stage === 'prod' ? 'cypress' : 'baobab' }.klaytn.net:8651` );
 
 const credentials = require('../credentials.json');
 
-/***************** Signer Setting *****************/
-log(credentials[stage].feePayer.pk)
-
-const Signer = caver.klay.accounts.wallet.add(credentials[stage].deployer.pk);
+/***************** Deployer Setting *****************/
+const Deployer = caver.klay.accounts.wallet.add(credentials[stage].deployer.pk);
 const feePayer = caver.klay.accounts.wallet.add(credentials[stage].feePayer.pk, credentials[stage].feePayer.address);
 
 /***************** Contract Setting *****************/
 const getContract = (abi, address) => new caver.klay.Contract(abi, address)
 
-const writeUpgradeTo = (contract, version, funcAddr) => 
-    contract.methods['upgradeTo(string,address)'](version.toString(), funcAddr).send(
-            { 
-                from: Signer.address, 
-                gasPrice: '25000000000', 
-                gas: 20000000
-            }
-        )
+const encodeFunc = (funcName, paramTypes, params) => go(
+    `${funcName}(${paramTypes})`,
+    func => caver.klay.abi.encodeFunctionSignature(func),
+    funcSig => funcSig + caver.klay.abi.encodeParameters(paramTypes, params).substring(2)
+)
+
+const signTx = (inputData, toAddr) => go(
+    caver.klay.accounts.signTransaction({
+        from: Deployer.address,
+        to: toAddr,
+        data: inputData,
+        gasPrice: '25000000000', 
+        gas: 20000000,
+        type: "FEE_DELEGATED_SMART_CONTRACT_EXECUTION"
+    }, Deployer.privateKey),
+    signed => signed.rawTransaction
+)
+
+const send = senderRawTransaction => caver.klay.sendTransaction({ senderRawTransaction, feePayer: feePayer.address })
+
+const writeUpgradeTo = (contractAddr, params) => go(
+    encodeFunc('upgradeTo', ["string","address"], params),
+    inputData => signTx(inputData, contractAddr),
+    send
+)
+
+const addAdmin = (funcAbi, contractAddr, newAdminAddr) => 
+    !readAdmin(contractAddr, funcAbi, newAdminAddr) ? 
+    go(
+        encodeFunc('addAdmin', ["address"], [newAdminAddr]),
+        inputData => signTx(inputData, contractAddr),
+        send,
+        txReceipt => txReceipt.transactionHash
+    )  
+    : "Already"
 
 const readVersion = contract => go(
-        contract.methods['version()']().call(),
-        res => res[0]
-    )
+    contract.methods['version()']().call(),
+    res => res[0]
+)
+
+const readAdmin = (contractAddr, funcAbi, account) => go(
+    getContract(funcAbi, contractAddr),
+    contract => contract.methods['isAdmin(address)'](account).call(),
+    tap(log),
+    res => res[0]
+)
 
 
 /***************** Now Date *****************/
@@ -45,6 +77,8 @@ module.exports = (proxy, func) => go(
     contract => {proxy = contract},
     _ => readVersion(proxy),
     version => !version ? `1-${nowDate}` : `${Number(version.split("-")[0])+1}-${nowDate}`,
-    version => writeUpgradeTo(proxy, version, func.address),
-    txReceipt => log('\r  -> Version Setting Tx :', txReceipt.transactionHash)
+    version => writeUpgradeTo(proxy._address, [version, func.address]),
+    txReceipt => log('\r  -> Version Setting Tx :', txReceipt.transactionHash),
+    _ => addAdmin(func.abi, proxy._address, credentials[stage].signer.address),
+    message => log(`\r  -> Admin Setting to [ ${credentials[stage].signer.address} ] Tx :`, message)
 )

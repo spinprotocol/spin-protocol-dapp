@@ -41,6 +41,7 @@ contract Campaign is DataControl {
     require(startAt > now, "Campaign : The past time is not available.");
     require(startAt < endAt, "Campaign : startAt cannot be higher than endAt");
     require(pushNodeToLinkedList(CONTRACT_NAME, TABLE_KEY, campaignId), "Campaign : Item already exists");
+    pushNodeToLinkedList(CONTRACT_NAME, TABLE_KEY, campaignId);
 
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "productId")), productId);
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "revenueRatio")), revenueRatio);

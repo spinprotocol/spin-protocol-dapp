@@ -1,13 +1,13 @@
 const HDWalletProvider = require('truffle-hdwallet-provider-klaytn');
 const credentials = require('./credentials.json');
 
-const stage = !process.env.STAGE? 'dev' : process.env.STAGE;
+const stage = process.env.STAGE || 'dev';
 
 const providerFactory = () => new HDWalletProvider(
       credentials[stage].deployer.pk, 
       `https://api.${stage === 'prod' ? 'cypress' : 'baobab'}.klaytn.net:8651`
     );
-
+    
 module.exports = {
   networks: {
     development: {
