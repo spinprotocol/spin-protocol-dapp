@@ -33,7 +33,7 @@ contract RevenueLedger is DataControl {
     require(revenueLedgerId > 0, "RevenueLedger : revenueLedgerId cannot be 0");
     require(campaignId > 0, "RevenueLedger : campaignId cannot be 0");
     require(pushNodeToLinkedList(CONTRACT_NAME, TABLE_KEY, revenueLedgerId), "RevenueLedger : Item already exists");
-    
+
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(revenueLedgerId, "campaignId")), campaignId);
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(revenueLedgerId, "influencerId")), influencerId);
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(revenueLedgerId, "salesAmount")), salesAmount);
@@ -43,7 +43,7 @@ contract RevenueLedger is DataControl {
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(revenueLedgerId, "spinRatio")), spinRatio);
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(revenueLedgerId, "fiatRatio")), fiatRatio);
     setBoolStorage(CONTRACT_NAME, keccak256(abi.encodePacked(revenueLedgerId, "isAccount")), false);
-    
+
     emit RevenueLedgerCreated(revenueLedgerId);
   }
 

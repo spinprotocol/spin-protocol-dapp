@@ -7,7 +7,11 @@ const Purchase_Proxy = fileReader('Purchase_Proxy');
 module.exports = function(deployer) {
   deployer.deploy(Purchase)
     .then(_ =>  upgradeProxy(Purchase_Proxy, Purchase))
-    .then(_ => Purchase.address = Purchase_Proxy.address)
-    .then(_ => deployedFileWriter(Purchase))
+    .then(_ => {
+      const funcAddr = Purchase.address;
+      Purchase.address = Purchase_Proxy.address
+      return funcAddr
+    })
+    .then(funcAddr => deployedFileWriter(Purchase, null, funcAddr))
 };
 

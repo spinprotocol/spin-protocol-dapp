@@ -7,6 +7,10 @@ const Campaign_Proxy = fileReader('Campaign_Proxy');
 module.exports = function(deployer) {
   deployer.deploy(Campaign)
     .then(_ => upgradeProxy(Campaign_Proxy, Campaign))
-    .then(_ => Campaign.address = Campaign_Proxy.address)
-    .then(_ => deployedFileWriter(Campaign))
+    .then(_ => {
+      const funcAddr = Campaign.address;
+      Campaign.address = Campaign_Proxy.address
+      return funcAddr
+    })
+    .then(funcAddr => deployedFileWriter(Campaign, null, funcAddr))
 };

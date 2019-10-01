@@ -8,7 +8,11 @@ const RevenueLedger_Proxy = fileReader('RevenueLedger_Proxy');
 module.exports = function(deployer) {
   deployer.deploy(RevenueLedger)
     .then(_ => upgradeProxy(RevenueLedger_Proxy, RevenueLedger))
-    .then(_ => RevenueLedger.address = RevenueLedger_Proxy.address)
-    .then(_ => deployedFileWriter(RevenueLedger, "RevenueLedger"))
+    .then(_ => {
+      const funcAddr = RevenueLedger.address;
+      RevenueLedger.address = RevenueLedger_Proxy.address
+      return funcAddr
+    })
+    .then(funcAddr => deployedFileWriter(RevenueLedger, "RevenueLedger", funcAddr))
 };
 

@@ -1,8 +1,6 @@
 Object.assign(global, require('ffp-js'));
 
-const moment = require("moment");
-require("moment-timezone");
-moment.tz.setDefault("Asia/Seoul");
+const nowDate = require('../utils/getTime.js');
 
 const stage = process.env.STAGE || 'dev';
 
@@ -45,14 +43,17 @@ const writeUpgradeTo = (contractAddr, params) => go(
 )
 
 const addAdmin = (funcAbi, contractAddr, newAdminAddr) => 
-    !readAdmin(contractAddr, funcAbi, newAdminAddr) ? 
     go(
-        encodeFunc('addAdmin', ["address"], [newAdminAddr]),
-        inputData => signTx(inputData, contractAddr),
-        send,
-        txReceipt => txReceipt.transactionHash
-    )  
-    : "Already"
+        readAdmin(contractAddr, funcAbi, newAdminAddr),
+        check => !check ? 
+        go(
+            encodeFunc('addAdmin', ["address"], [newAdminAddr]),
+            inputData => signTx(inputData, contractAddr),
+            send,
+            txReceipt => txReceipt.transactionHash
+        )  
+        : "Already"
+    )
 
 const readVersion = contract => go(
     contract.methods['version()']().call(),
@@ -61,14 +62,8 @@ const readVersion = contract => go(
 
 const readAdmin = (contractAddr, funcAbi, account) => go(
     getContract(funcAbi, contractAddr),
-    contract => contract.methods['isAdmin(address)'](account).call(),
-    tap(log),
-    res => res[0]
+    contract => contract.methods['isAdmin(address)'](account).call()
 )
-
-
-/***************** Now Date *****************/
-const nowDate = moment().format("YYMMDD");
 
 
 
@@ -76,7 +71,7 @@ module.exports = (proxy, func) => go(
     getContract(proxy.abi, proxy.address),
     contract => {proxy = contract},
     _ => readVersion(proxy),
-    version => !version ? `1-${nowDate}` : `${Number(version.split("-")[0])+1}-${nowDate}`,
+    version => !version ? `1-${nowDate("YYMMDD")}` : `${Number(version.split("-")[0])+1}-${nowDate("YYMMDD")}`,
     version => writeUpgradeTo(proxy._address, [version, func.address]),
     txReceipt => log('\r  -> Version Setting Tx :', txReceipt.transactionHash),
     _ => addAdmin(func.abi, proxy._address, credentials[stage].signer.address),
