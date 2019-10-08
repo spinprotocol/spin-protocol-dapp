@@ -7,7 +7,7 @@ const providerFactory = () => new HDWalletProvider(
       credentials[stage].deployer.pk, 
       `https://api.${stage === 'prod' ? 'cypress' : 'baobab'}.klaytn.net:8651`
     );
-    
+
 module.exports = {
   networks: {
     development: {
