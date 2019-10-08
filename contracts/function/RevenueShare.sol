@@ -1,25 +1,16 @@
 pragma solidity ^0.4.24;
 
-import "../../libs/SafeMath.sol";
-import "../../token/IERC20.sol";
-import "../system/Proxied.sol";
-import "./ISpinProtocol.sol";
+import "../libs/SafeMath.sol";
+import "../components/token/IERC20.sol";
+import "./RevenueLedger.sol";
+import "../components/token/TokenControl.sol";
 
 /**
- * @title Calculate
+ * @title RevenueShare
  * @dev Spin revenue transfer of inpluencer.
  */
-contract RevenueShare is Proxied {
+contract RevenueShare is RevenueLedger, TokenControl {
     using SafeMath for uint256;
-
-    function sendToken(address _to, uint256 _amt) external onlyAdmin {
-        _sendToken(_to, _amt);
-    }
-
-    function _sendToken(address _to, uint256 _amt) internal {
-        IERC20 token = IERC20(proxy.addressOfToken());
-        require(token.transfer(_to,_amt), "Token Transfer Fail");
-    }
 
     /**
     * @dev Decimal cropping.
@@ -51,19 +42,14 @@ contract RevenueShare is Proxied {
         uint256 _spinAmount,
         uint256 _marketPrice,
         uint256 _rounding
-    ) external onlyProxy {
+    ) public onlyAdmin {
         uint256 campaignId;
         bool isAccount;
-        (campaignId,,,,,,,,isAccount) = ISpinProtocol(proxy.getContract(CONTRACT_NAME_REVENUE_LEDGER_DB)).getRevenueLedger(_revenueLedgerId);
+        (campaignId,,,,,,,,isAccount) = getRevenueLedger(_revenueLedgerId);
         require(campaignId > 0 && !isAccount, "Empty data or already share");
 
         uint256 spin = revenueSpin(_spinAmount, _marketPrice, _rounding);
-        _sendToken(_to, spin);
-        ISpinProtocol(proxy.getContract(CONTRACT_NAME_REVENUE_LEDGER_DB)).updateIsAccount(_revenueLedgerId,true);
-    }
-
-    function getBalance() public view returns(uint256){
-        IERC20 token = IERC20(proxy.addressOfToken());
-        return token.balanceOf(this);
+        _sendToken("SPIN", _to, spin);
+        updateIsAccount(_revenueLedgerId,true);
     }
 }

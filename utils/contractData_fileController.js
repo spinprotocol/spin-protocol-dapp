@@ -1,22 +1,36 @@
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const { go, log } = require('ffp-js');
+const nowDate = require('./getTime.js');
+const stage = process.env.STAGE || 'dev';
 
-const contractName = {
-  PROXY : "Proxy",
-  UNIVERSAL_DB : "UniversalDB",
-  CAMPAIGN_DB : "CampaignDB",
-  REVENUELEDGER_DB : "RevenueLedgerDB",
-  PURCHASE_DB : "PurchaseDB"
+const getVersion = (contractName, newAddr) => {
+  try {
+    return go(
+      fs.readFileSync(`./deployed/${stage}/${contractName}.json`, 'utf8'),
+      JSON.parse,
+      json => json.version,
+      history => {
+        if (!history) history = {}
+        history[nowDate("YYMMDD-HH:mm:ss")] = newAddr
+        return history
+      }
+    );   
+  } catch (e) {
+    const history = {}
+    history[nowDate("YYMMDD-HH:mm:ss")] = newAddr
+    return history
+  }
 }
 
-const deployedFileWriter = (contract) => {
+const deployedFileWriter = (contract, name, funcAddr) => {
   try {
-    const dir = `./deployed/${process.env.STAGE}`;
+    const dir = `./deployed/${stage}`;
+    name = name || contract._json.contractName;
     mkdirp(dir, err => !err ? false : log(err));
     fs.writeFileSync(
-      dir+`/${contract._json.contractName}.json`, 
-      `{ "address": "${contract.address}", "abi": ${JSON.stringify(contract._json.abi)} }`, 
+      dir+`/${name}.json`, 
+      `{\n  "address": "${contract.address}", \n  "abi": \n${JSON.stringify(contract._json.abi)}, \n  "version" : ${JSON.stringify(getVersion(name, funcAddr || contract.address))} \n}`, 
       errorHandler
     );
   } catch (e) {
@@ -24,12 +38,11 @@ const deployedFileWriter = (contract) => {
   }
 };
 
-const addressReader = (contractName) => {
+const fileReader = contractName => {
   try {
     return go(
-      fs.readFileSync(`./deployed/${process.env.STAGE}/${contractName}.json`, 'utf8'),
-      JSON.parse,
-      a => a.address
+      fs.readFileSync(`../deployed/${stage}/${contractName}.json`, 'utf8'),
+      JSON.parse
     );   
   } catch (e) {
     log(e);  
@@ -38,4 +51,4 @@ const addressReader = (contractName) => {
 
 const errorHandler = (err) => { if (err) throw err; }
 
-module.exports = { contractName, deployedFileWriter, addressReader }
+module.exports = { deployedFileWriter, fileReader }
