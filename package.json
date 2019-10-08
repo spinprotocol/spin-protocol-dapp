@@ -7,8 +7,29 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "initialize-contract": "node ./utils/initialize.js"
+    "prod-init": "STAGE=prod truffle migrate --reset --network cypress --to 5 && STAGE=prod npm run prod-update-Campaign &&  npm run prod-update-RevenueLedger &&  npm run prod-update-Purchase &&  npm run prod-update-Event",
+    "dev-init": "STAGE=dev truffle migrate --reset --network baobab --to 5 && npm run dev-update-Campaign &&  npm run dev-update-RevenueLedger &&  npm run dev-update-Purchase &&  npm run dev-update-Event",
+    "staging-init": "STAGE=staging truffle migrate --reset --network baobab --to 5 && npm run staging-update-Campaign &&  npm run staging-update-RevenueLedger &&  npm run staging-update-Purchase &&  npm run staging-update-Event",
+
+    "prod-update-All": "npm run prod-update-Campaign &&  npm run prod-update-RevenueLedger &&  npm run prod-update-Purchase &&  npm run prod-update-Event",
+    "dev-update-All": "npm run dev-update-Campaign &&  npm run dev-update-RevenueLedger &&  npm run dev-update-Purchase &&  npm run dev-update-Event",
+    "staging-update-All": "npm run staging-update-Campaign &&  npm run staging-update-RevenueLedger &&  npm run staging-update-Purchase &&  npm run staging-update-Event",
+
+    "prod-update-Campaign": "STAGE=prod truffle migrate --reset --network cypress --f 12 --to 12",
+    "dev-update-Campaign": "STAGE=dev truffle migrate --reset --network baobab --f 12 --to 12",
+    "staging-update-Campaign": "STAGE=staging truffle migrate --reset --network baobab --f 12 --to 12",
+
+    "prod-update-RevenueLedger": "STAGE=prod truffle migrate --reset --network cypress --f 13 --to 13",
+    "dev-update-RevenueLedger": "STAGE=dev truffle migrate --reset --network baobab --f 13 --to 13",
+    "staging-update-RevenueLedger": "STAGE=staging truffle migrate --reset --network baobab --f 13 --to 13",
+
+    "prod-update-Purchase": "STAGE=prod truffle migrate --reset --network cypress --f 14 --to 14",
+    "dev-update-Purchase": "STAGE=dev truffle migrate --reset --network baobab --f 14 --to 14",
+    "staging-update-Purchase": "STAGE=staging truffle migrate --reset --network baobab --f 14 --to 14",
+
+    "prod-update-Event": "STAGE=prod truffle migrate --reset --network cypress --f 15 --to 15",
+    "dev-update-Event": "STAGE=dev truffle migrate --reset --network baobab --f 15 --to 15",
+    "staging-update-Event": "STAGE=staging truffle migrate --reset --network baobab --f 15 --to 15"
   },
   "author": "Harace Moon",
   "license": "ISC",
@@ -18,11 +39,14 @@
     "chai-as-promised": "^7.1.1",
     "chai-bignumber": "^3.0.0",
     "chai-shallow-deep-equal": "^1.4.6",
-    "connect-privkey-to-provider": "0.0.3",
     "eslint": "^5.16.0",
     "eth-gas-reporter": "^0.1.12",
     "ffp-js": "^0.0.19",
     "solhint": "^2.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "moment": "^2.24.0",
+    "moment-timezone": "^0.5.26",
+    "truffle-hdwallet-provider-klaytn": "^1.0.13-a"
+  }
 }

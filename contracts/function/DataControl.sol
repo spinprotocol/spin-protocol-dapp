@@ -1,19 +1,23 @@
 pragma solidity ^0.4.24;
 
-import "./EternalStorage.sol";
+import '../components/system/EternalStorage.sol';
 import "../libs/LinkedListLib.sol";
-import "../components/system/Proxied.sol";
+import "../components/auth/Authority.sol";
 
-
-/**
- * @title Generic Eternal Storage Unit which can only be accessed through the proxied contracts
- * @dev This contract holds all the necessary state variables to carry out the storage of any contract.
- * This contract is not supposed to re-deployed after it's deployed very first time. It should be persistent on the chain.
- */
-contract UniversalDB is Proxied, EternalStorage {
+contract DataControl is EternalStorage, Authority{
   using LinkedListLib for LinkedListLib.LinkedList;
 
-  constructor (Proxy _proxy) public Proxied(_proxy) {
+  modifier onlyExistentItem(string contractName, uint256 primaryIndex) {
+    require(doesNodeExist(contractName, primaryIndex), "Item does not exist");
+    _;
+  }
+
+  function doesNodeExist(string contractName, uint256 nodeId) 
+    public
+    view
+    returns (bool)
+  {
+    return linkedListStorage[keccak256(abi.encodePacked(contractName, keccak256(abi.encodePacked("Table"))))].nodeExists(nodeId);
   }
 
   function setIntStorage(
@@ -21,8 +25,7 @@ contract UniversalDB is Proxied, EternalStorage {
     bytes32 key,
     int256 value
   )
-    external
-    onlyAuthorizedContract(contractName)
+    internal
   {
     intStorage[keccak256(abi.encodePacked(contractName, key))] = value;
   }
@@ -41,8 +44,7 @@ contract UniversalDB is Proxied, EternalStorage {
     bytes32 key,
     uint256 value
   )
-    external
-    onlyAuthorizedContract(contractName)
+    internal
   {
     uintStorage[keccak256(abi.encodePacked(contractName, key))] = value;
   }
@@ -61,8 +63,7 @@ contract UniversalDB is Proxied, EternalStorage {
     bytes32 key,
     string  value
   )
-    external
-    onlyAuthorizedContract(contractName)
+    internal
   {
     stringStorage[keccak256(abi.encodePacked(contractName, key))] = value;
   }
@@ -81,8 +82,7 @@ contract UniversalDB is Proxied, EternalStorage {
     bytes32 key,
     address value
   )
-    external
-    onlyAuthorizedContract(contractName)
+    internal
   {
     addressStorage[keccak256(abi.encodePacked(contractName, key))] = value;
   }
@@ -101,8 +101,7 @@ contract UniversalDB is Proxied, EternalStorage {
     bytes32 key,
     bytes  value
   )
-    external
-    onlyAuthorizedContract(contractName)
+    internal
   {
     bytesStorage[keccak256(abi.encodePacked(contractName, key))] = value;
   }
@@ -121,8 +120,7 @@ contract UniversalDB is Proxied, EternalStorage {
     bytes32 key,
     bool value
   )
-    external
-    onlyAuthorizedContract(contractName)
+    internal
   {
     boolStorage[keccak256(abi.encodePacked(contractName, key))] = value;
   }
@@ -141,8 +139,8 @@ contract UniversalDB is Proxied, EternalStorage {
     bytes32 key,
     uint256 nodeId
   )
-    external
-    onlyAuthorizedContract(contractName) returns (bool)
+    internal
+    returns (bool)
   {
     if (linkedListStorage[keccak256(abi.encodePacked(contractName, key))].nodeExists(nodeId)) {
       return false;
@@ -157,13 +155,13 @@ contract UniversalDB is Proxied, EternalStorage {
     bytes32 key,
     uint256 nodeId
   )
-    external
-    onlyAuthorizedContract(contractName) returns (bool)
+    internal
+    returns (bool)
   {
     if (!linkedListStorage[keccak256(abi.encodePacked(contractName, key))].nodeExists(nodeId)) {
       return false;
     }
-    
+
     linkedListStorage[keccak256(abi.encodePacked(contractName, key))].remove(nodeId);
     return true;
   }
@@ -183,8 +181,7 @@ contract UniversalDB is Proxied, EternalStorage {
     string memory contractName,
     bytes32 key
   )
-    public
-    view returns (uint256[] memory nodes)
+    public view returns (uint256[] memory nodes)
   {
     uint256 nextNode;
     uint256 i;
@@ -204,16 +201,6 @@ contract UniversalDB is Proxied, EternalStorage {
     public view returns (bool)
   {
     return linkedListStorage[keccak256(abi.encodePacked(contractName, key))].listExists();
-  }
-
-  function doesNodeExist(
-    string memory contractName,
-    bytes32 key,
-    uint256 nodeId
-  )
-    public view returns (bool)
-  {
-    return linkedListStorage[keccak256(abi.encodePacked(contractName, key))].nodeExists(nodeId);
   }
 
   function getLinkedListSize(

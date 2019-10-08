@@ -1,37 +1,33 @@
-const PrivateKeyConnector = require('connect-privkey-to-provider');
+const HDWalletProvider = require('truffle-hdwallet-provider-klaytn');
 const credentials = require('./credentials.json');
-const { go } = require('ffp-js');
 
-const providerFactory = network => go(
-  `https://api.${network}.klaytn.net:8651`,
-  host => new PrivateKeyConnector(credentials.klaytn.privateKey[network], host)
-);
+const stage = process.env.STAGE || 'dev';
+
+const providerFactory = () => new HDWalletProvider(
+      credentials[stage].deployer.pk, 
+      `https://api.${stage === 'prod' ? 'cypress' : 'baobab'}.klaytn.net:8651`
+    );
 
 module.exports = {
   networks: {
-    /**
-     * Klaytn Network
-     */
     development: {
-      host: "127.0.0.1",
-      port: 8551,
-      from: '0x3dec1e5bd5220b13fc52e27e2332aa3fa756a06e',
+      provider: providerFactory(),
       network_id: 1001,
-      gas: 20000000, // transaction gas limit
-      gasPrice: 25000000000 // gasPrice of Baobab is 25 Gpeb
-    },
-    cypress: {
-      provider: providerFactory('cypress'),
-      network_id: 8217,
-      gas: 20000000,
+      gas: '50000000',
       gasPrice: null
     },
     baobab: {
-      provider: providerFactory('baobab'),
+      provider: providerFactory(),
       network_id: 1001,
-      gas: 10000000,
+      gas: '50000000',
       gasPrice: null
     },
+    cypress: {
+      provider: providerFactory(),
+      network_id: 8217,
+      gas: '50000000',
+      gasPrice: null
+    }
   },
   mocha: {
     useColors: true,
