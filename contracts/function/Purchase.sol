@@ -29,6 +29,7 @@ contract Purchase is DataControl {
     uint256 purchaseCount = getUintStorage(category, keccak256(abi.encodePacked(productId,"count")));
 
     setUintStorage(category, keccak256(abi.encodePacked(productId, "count")), purchaseCount.add(count));
+    setUintStorage(category, keccak256(abi.encodePacked(productId, userId)), purchaseCount.add(count));
 
     emit PurchaseAdd(category, productId, userId, count, now);
   }
@@ -47,6 +48,7 @@ contract Purchase is DataControl {
     uint256 purchaseCount = getUintStorage(category, keccak256(abi.encodePacked(productId, "count")));
 
     setUintStorage(category, keccak256(abi.encodePacked(productId, "count")), purchaseCount.sub(count));
+    setUintStorage(category, keccak256(abi.encodePacked(productId, userId)), purchaseCount.sub(count));
 
     emit PurchaseSub(category, productId, userId, count, now);
   }
@@ -73,4 +75,17 @@ contract Purchase is DataControl {
   {
     return getUintStorage(category, keccak256(abi.encodePacked(productId, "count")));
   }
+
+  function getPurchaseCountByUser(
+    string category,
+    uint256 productId,
+    string userId
+  )
+    public
+    view
+    returns(uint256)
+  {
+    return getUintStorage(category, keccak256(abi.encodePacked(productId, userId)));
+  }
+
 }

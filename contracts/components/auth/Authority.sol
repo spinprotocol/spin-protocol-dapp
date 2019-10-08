@@ -33,8 +33,8 @@ contract Authority is EternalStorage{
     _;
   }
 
-  modifier onlyWT() {
-    require(isWT(msg.sender) || isAdmin(msg.sender) || msg.sender == proxy());
+  modifier onlyWt() {
+    require(isWt(msg.sender) || isAdmin(msg.sender) || msg.sender == proxy());
     _;
   }
 
@@ -42,58 +42,58 @@ contract Authority is EternalStorage{
     require(
       isSupplier(msg.sender)
       || isInfluencer(msg.sender)
-      || isWT(msg.sender)
+      || isWt(msg.sender)
       || isAdmin(msg.sender)
       || msg.sender == proxy());
     _;
   }
 
   function isAdmin(address account) public view returns (bool) {
-    return _has("Admin", account);
+    return _has("admin", account);
   }
 
   function addAdmin(address account) public onlyProxy {
-    _addAuth("Admin", account);
+    _addAuth("admin", account);
   }
 
   function removeAdmin(address account) public onlyProxy {
-    _removeAuth("Admin", account);
+    _removeAuth("admin", account);
   }
 
   function isSupplier(address account) public view returns (bool) {
-    return _has("Supplier", account);
+    return _has("supplier", account);
   }
 
   function addSupplier(address account) public onlyAdmin {
-    _addAuth("Supplier", account);
+    _addAuth("supplier", account);
   }
 
   function removeSupplier(address account) public onlyAdmin {
-    _removeAuth("Supplier", account);
+    _removeAuth("supplier", account);
   }
 
   function isInfluencer(address account) public view returns (bool) {
-    return _has("Influencer", account);
+    return _has("influencer", account);
   }
 
   function addInfluencer(address account) public onlyAdmin {
-    _addAuth("Influencer", account);
+    _addAuth("influencer", account);
   }
 
   function removeInfluencer(address account) public onlyAdmin {
-    _removeAuth("Influencer", account);
+    _removeAuth("influencer", account);
   }
 
-  function isWT(address account) public view returns (bool) {
-    return _has("WT", account);
+  function isWt(address account) public view returns (bool) {
+    return _has("wt", account);
   }
 
-  function addWT(address account) public onlyAdmin {
-    _addAuth("WT", account);
+  function addWt(address account) public onlyAdmin {
+    _addAuth("wt", account);
   }
 
-  function removeWT(address account) public onlyAdmin {
-    _removeAuth("WT", account);
+  function removeWt(address account) public onlyAdmin {
+    _removeAuth("wt", account);
   }
 
   function _addAuth(string auth, address account) private {

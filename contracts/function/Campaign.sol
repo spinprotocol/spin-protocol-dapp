@@ -40,8 +40,7 @@ contract Campaign is DataControl {
     require(totalSupply > 0, "Campaign : totalSupply cannot be 0");
     require(startAt > now, "Campaign : The past time is not available.");
     require(startAt < endAt, "Campaign : startAt cannot be higher than endAt");
-    // require(pushNodeToLinkedList(CONTRACT_NAME, TABLE_KEY, campaignId), "Campaign : Item already exists");
-    pushNodeToLinkedList(CONTRACT_NAME, TABLE_KEY, campaignId);
+    require(pushNodeToLinkedList(CONTRACT_NAME, TABLE_KEY, campaignId), "Campaign : Item already exists");
 
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "productId")), productId);
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "revenueRatio")), revenueRatio);
@@ -50,7 +49,7 @@ contract Campaign is DataControl {
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "endAt")), endAt);
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "createdAt")), now);
     setAddressStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "writer")), msg.sender);
-    // emit CampaignCreated(campaignId, revenueRatio, productId, startAt, endAt);
+    emit CampaignCreated(campaignId, revenueRatio, productId, startAt, endAt);
   }
 
   function updateCampaign(
@@ -63,7 +62,7 @@ contract Campaign is DataControl {
   )
     public
     onlySupplier
-    onlyWriter(campaignId)
+    // onlyWriter(campaignId)
     onlyExistentItem("Campaign", campaignId)
   {
     require(this.getStartAt(campaignId) > now, "Campaign : an ongoing campaign");
@@ -88,7 +87,7 @@ contract Campaign is DataControl {
   )
     public
     onlySupplier
-    onlyWriter(campaignId)
+    // onlyWriter(campaignId)
     onlyExistentItem("Campaign", campaignId)
   {
     string memory CONTRACT_NAME = "Campaign";
@@ -111,7 +110,7 @@ contract Campaign is DataControl {
     string memory CONTRACT_NAME = "Campaign";
     bytes32 LINKED_LIST_KEY_APPLIED_INFLUENCER = keccak256(abi.encodePacked("AppliedInfluencerList"));
 
-    // require(this.getStartAt(campaignId) > now, "Campaign : an ongoing campaign");
+    require(this.getStartAt(campaignId) > now, "Campaign : an ongoing campaign");
     require(pushNodeToLinkedList(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, LINKED_LIST_KEY_APPLIED_INFLUENCER)), influencerId), "Campaign : Item already exists");
     setAddressStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, influencerId)), msg.sender);
 
@@ -128,7 +127,7 @@ contract Campaign is DataControl {
   {
     string memory CONTRACT_NAME = "Campaign";
     bytes32 LINKED_LIST_KEY_APPLIED_INFLUENCER = keccak256(abi.encodePacked("AppliedInfluencerList"));
-    require(getAddressStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, influencerId))) == msg.sender || isAdmin(msg.sender));
+    // require(getAddressStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, influencerId))) == msg.sender || isAdmin(msg.sender));
     require(removeNodeFromLinkedList(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, LINKED_LIST_KEY_APPLIED_INFLUENCER)), influencerId), "Campaign : Item already exists");
     setAddressStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, influencerId)), address(0));
 

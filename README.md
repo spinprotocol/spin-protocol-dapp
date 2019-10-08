@@ -5,7 +5,7 @@ Decentralized Application for SPIN Protocol ecosystem
 1. Install truffle globally
 
 ```bash
-  $ npm install truffle@4.1.15 -g
+  $ npm install truffle@5.0.26 -g
 ```
 
 2. Then install project dependencies
@@ -14,14 +14,27 @@ Decentralized Application for SPIN Protocol ecosystem
   $ npm install
 ```
 
-### Deploying whole system at once
+
+## Deployment guide
 ! Check the migrate history '/deployed/migrate/'
+
+### Initial Deploying whole system with Proxy
 ```bash
-# Deploy whole contracts
-truffle migrate --network <network_name> --f <Start migrations number> --to <End migrations number>
+# Stage development
+npm run dev-init
 ```
 
-### Contract initialization
+### Interlink to Proxy after all function update
 ```bash
-NETWORK=<network_name> npm run initialize-contract
+# Stage development
+npm run dev-update-All
 ```
+
+### Interlink to Proxy after specific function update
+```bash
+# Stage development
+# Contract name example : Campaign, RevenueLedger, Purchase, Event
+npm run dev-update-<Contract name>
+```
+
+

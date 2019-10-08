@@ -16,11 +16,17 @@ contract Event is DataControl, TokenControl {
     event AttendEvent(uint256 _eventId, string _userId, address _userWallet, uint256 _rewardAmount);
     event RewardEvent(uint256 _eventId, string _userId, address _userWallet, uint256 _rewardAmount);
 
-    function pushHistory(uint256 _eventId, string _userId, address _userWallet, uint256 _rewardAmount) public onlyUser {
+    function pushHistory(uint256 eventId, string email, address wallet_addr, uint256 amount) public onlyUser {
         string memory CONTRACT_NAME = "Event";
-        uint256 userBenefit = getEventBenefitCount(_eventId, _userId);
-        setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(_eventId, _userId)), userBenefit.add(1));
-        emit AttendEvent(_eventId, _userId, _userWallet, _rewardAmount);
+        uint256 userBenefit = getEventBenefitCount(eventId, email);
+        setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(eventId, email)), userBenefit.add(1));
+        emit AttendEvent(eventId, email, wallet_addr, amount);
+    }
+
+    function removeHistory(uint256 eventId, string email) public onlyUser {
+        string memory CONTRACT_NAME = "Event";
+        uint256 userBenefit = getEventBenefitCount(eventId, email);
+        setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(eventId, email)), userBenefit.sub(1));
     }
 
     function sendReward(uint256 _eventId, string[] _userId, address[] _userWallet, uint256[] _rewardAmount)

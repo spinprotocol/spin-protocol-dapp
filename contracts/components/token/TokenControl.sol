@@ -12,17 +12,21 @@ contract TokenControl is DataControl {
         setAddressStorage("SpinProtocol", keccak256(abi.encodePacked(_tokenName)), _tokenAddr);
     }
 
+    function getTokenAddr(string _tokenName) public view returns(address) {
+        return getAddressStorage("SpinProtocol", keccak256(abi.encodePacked(_tokenName)));
+    }
+
     function sendToken(string _tokenName, address _to, uint256 _amt) public onlyAdmin {
         _sendToken(_tokenName, _to, _amt);
     }
 
     function _sendToken(string _tokenName, address _to, uint256 _amt) internal {
-        IERC20 token = IERC20(getAddressStorage("SpinProtocol", keccak256(abi.encodePacked(_tokenName))));
+        IERC20 token = IERC20(getTokenAddr(_tokenName));
         require(token.transfer(_to,_amt), "RevenueShare : Token Transfer Fail");
     }
 
     function getBalance(string _tokenName) public view returns(uint256){
-        IERC20 token = IERC20(getAddressStorage("SpinProtocol", keccak256(abi.encodePacked(_tokenName))));
+        IERC20 token = IERC20(getTokenAddr(_tokenName));
         return token.balanceOf(this);
     }
 }
