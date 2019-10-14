@@ -1,5 +1,6 @@
 const { deployedFileWriter, fileReader } = require('../utils/contractData_fileController.js');
 const upgradeProxy = require('../utils/proxyUpgrade.js');
+const { setAuthStorage } = require('../utils/addAuth.js');
 
 const RevenueLedger = artifacts.require('RevenueShare');
 const RevenueLedger_Proxy = fileReader('RevenueLedger_Proxy');
@@ -14,5 +15,6 @@ module.exports = function(deployer) {
       return funcAddr
     })
     .then(funcAddr => deployedFileWriter(RevenueLedger, "RevenueLedger", funcAddr))
-};
+    .then(_ => setAuthStorage(RevenueLedger))
+  };
 

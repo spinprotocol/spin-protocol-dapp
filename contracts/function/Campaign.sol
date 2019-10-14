@@ -140,7 +140,7 @@ contract Campaign is DataControl {
   )
     public
     onlySupplier
-    onlyWriter(campaignId)
+    // onlyWriter(campaignId)
     onlyExistentItem("Campaign", campaignId)
   {
     uint256 startAt = this.getStartAt(campaignId);
