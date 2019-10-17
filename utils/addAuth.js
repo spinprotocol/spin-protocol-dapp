@@ -26,7 +26,7 @@ const addAuth = contract =>
         encodeFunc('addAuth', ["string","address"], ["admin",signer.address]),
         inputData => signTx(inputData, contract.address),
         send,
-        txReceipt => txReceipt.transactionHash
+        txReceipt => log(`\r  -> addAuth [${signer.address}] Tx :`, txReceipt.transactionHash)
     )
 
 const setAuthStorage = contract => go(

@@ -1,8 +1,9 @@
 pragma solidity ^0.4.24;
 
 import "../system/EternalStorage.sol";
+import "./AuthStorage.sol";
 
-contract Authority is EternalStorage{
+contract Authority is EternalStorage {
   address private _upgradeability;
 
   modifier onlyProxy() {
@@ -71,6 +72,7 @@ contract Authority is EternalStorage{
 
   function _has(string auth, address account) private view returns(bool) {
     require(account != address(0));
-    return getAuthStorage().call(bytes4(keccak256("isAuth(string,address)")),auth,account);
+    AuthStorage authStorage = AuthStorage(getAuthStorage());
+    return authStorage.isAuth(auth,account);
   }
 }
