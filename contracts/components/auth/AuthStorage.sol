@@ -1,7 +1,6 @@
 pragma solidity ^0.4.24;
 
 contract AuthStorage {
-
   mapping(bytes32 => bool) internal boolStorage;
 
   event AuthAdded(string indexed auth, address indexed account);
@@ -24,19 +23,23 @@ contract AuthStorage {
     _addAuth(auth, account);
   }
 
+  function addAuths(string auth, address[] accounts) public onlyAdmin {
+    for(uint256 i = 0; i < accounts.length; i++){
+      _addAuth(auth, accounts[i]);
+    }
+  }
+
   function removeAuth(string auth, address account) public onlyAdmin {
     _removeAuth(auth, account);
   }
 
   function _addAuth(string auth, address account) private {
-    require(!_has(auth, account));
     bytes32 authHash = keccak256(abi.encodePacked(auth, account));
     boolStorage[authHash] = true;
     emit AuthAdded(auth, account);
   }
 
   function _removeAuth(string auth, address account) private {
-    require(_has(auth, account));
     bytes32 authHash = keccak256(abi.encodePacked(auth, account));
     boolStorage[authHash] = false;
     emit AuthRemoved(auth, account);
