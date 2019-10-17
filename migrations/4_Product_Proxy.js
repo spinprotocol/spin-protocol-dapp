@@ -5,5 +5,5 @@ const EternalStorageProxy = artifacts.require('EternalStorageProxy');
 /************** Deploy **************/
 module.exports = function(deployer) {
   deployer.deploy(EternalStorageProxy)
-  .then(_ => deployedFileWriter(EternalStorageProxy, "Purchase_Proxy"))
+  .then(_ => deployedFileWriter(EternalStorageProxy, "Product_Proxy"))
 };
