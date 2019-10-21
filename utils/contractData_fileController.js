@@ -30,7 +30,11 @@ const deployedFileWriter = (contract, name, funcAddr) => {
     mkdirp(dir, err => !err ? false : log(err));
     fs.writeFileSync(
       dir+`/${name}.json`, 
-      `{\n  "address": "${contract.address}", \n  "abi": \n${JSON.stringify(contract._json.abi)}, \n  "version" : ${JSON.stringify(getVersion(name, funcAddr || contract.address))} \n}`, 
+      JSON.stringify({
+        address : contract.address,
+        abi : contract._json.abi,
+        version : getVersion(name, funcAddr || contract.address)
+      },null,'\t'),
       errorHandler
     );
   } catch (e) {
