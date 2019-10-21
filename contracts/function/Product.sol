@@ -14,7 +14,7 @@ contract Product is DataControl {
   event PurchaseSub(string indexed category, uint256 indexed productId, uint256 indexed memberNo, uint256 count, uint256 updatedAt);
   event ViewProduct(string indexed category, uint256 indexed productId, uint256 indexed memberNo, uint256 updatedAt);
 
-  function viewProduct(string category, uint256 productId, uint256 memberNo) public onlyUser {
+  function addViewCount(string category, uint256 productId, uint256 memberNo) public onlyUser {
     uint256 viewCount = getUintStorage(category, keccak256(abi.encodePacked(productId, "view")));
     setUintStorage(category, keccak256(abi.encodePacked(productId, "view")), viewCount.add(1));
 
