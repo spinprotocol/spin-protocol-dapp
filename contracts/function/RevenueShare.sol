@@ -28,7 +28,7 @@ contract RevenueShare is RevenueLedger, TokenControl {
         uint256 _marketPrice,
         uint256 _rounding
     ) public pure returns(uint256 spin){
-        spin = _spinAmount.mul(1 ether);
+        spin = _spinAmount.mul(1 ether).mul(100);
         spin = spin.div(_marketPrice);
         spin = rounding(spin, uint256(18).sub(_rounding));
     }
@@ -50,6 +50,6 @@ contract RevenueShare is RevenueLedger, TokenControl {
 
         uint256 spin = revenueSpin(_spinAmount, _marketPrice, _rounding);
         _sendToken("SPIN", _to, spin);
-        updateIsAccount(_revenueLedgerId,true);
+        updateIsAccount(_revenueLedgerId, true);
     }
 }

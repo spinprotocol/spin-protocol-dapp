@@ -128,6 +128,7 @@ contract Campaign is DataControl {
     string memory CONTRACT_NAME = "Campaign";
     bytes32 LINKED_LIST_KEY_APPLIED_INFLUENCER = keccak256(abi.encodePacked("AppliedInfluencerList"));
     // require(getAddressStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, influencerId))) == msg.sender || isAdmin(msg.sender));
+    require(this.getStartAt(campaignId) > now, "Campaign : an ongoing campaign");
     require(removeNodeFromLinkedList(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, LINKED_LIST_KEY_APPLIED_INFLUENCER)), influencerId), "Campaign : Item already exists");
     setAddressStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, influencerId)), address(0));
 

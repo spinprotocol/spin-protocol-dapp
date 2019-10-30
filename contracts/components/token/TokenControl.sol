@@ -4,8 +4,8 @@ import "./IERC20.sol";
 import '../../function/DataControl.sol';
 
 /**
- * @title RevenueShare
- * @dev Spin revenue transfer of inpluencer.
+ * @title TokenControl
+ * @dev Token send and get balance
  */
 contract TokenControl is DataControl {
     function setTokenAddr(address _tokenAddr, string _tokenName) public onlyAdmin {
