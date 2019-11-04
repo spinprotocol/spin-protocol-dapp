@@ -15,23 +15,27 @@ const { evmError } = require('../utils/errorFilter.js')
 
 describe('[Init] setting check', () => {
     it('[Auth] init admin of Campaign', async () => {
+        const account = Signer.address
+
         assert.equal(
             true,
             await viewContract(
                 METADATA.Campaign, 
                 'isAdmin(address)', 
-                [Signer.address]
+                [account]
             )
         )
     })
 
     it('[Token] init token address of RevenueLedger', async () => {
+        const _tokenName = "SPIN"
+
         assert.equal(
             UTILS.toChecksumAddr(Token),
             await viewContract(
                 METADATA.RevenueLedger, 
                 'getTokenAddr(string)', 
-                ["SPIN"]
+                [_tokenName]
             )
         )
     })
@@ -39,25 +43,30 @@ describe('[Init] setting check', () => {
 })
 
 describe('[AuthStorage] Auth function', () => {
-    it('(Non-admin) address', async () => {
+    it('(Non-admin) isAdmin()', async () => {
+        const account = Test.address
+
         assert.equal(
             false,
             await viewContract(
                 METADATA.Campaign, 
                 'isAdmin(address)', 
-                [Test.address]
+                [account]
             )
         )
     })
 
     it('➡️  addAuth(admin,Test)', async () => {
+        const auth = "admin"
+        const account = Test.address
+
         assert.equal(
             true,
             await go(
                 callContract(
                     'addAuth', 
-                    ["string","address"], 
-                    ["admin",Test.address], 
+                    ["string" ,"address"], 
+                    [auth, account], 
                     METADATA.AuthStorage._address
                 ),
                 a => a.status
@@ -66,6 +75,8 @@ describe('[AuthStorage] Auth function', () => {
     })
 
     it('isAdmin(Test) of Campaign', async () => {
+        const account = Test.address
+
         assert.equal(
             true,
             await viewContract(
@@ -77,13 +88,16 @@ describe('[AuthStorage] Auth function', () => {
     })
 
     it('➡️  removeAuth(admin,Test)', async () => {
+        const auth = "admin"
+        const account = Test.address
+
         assert.equal(
             true,
             await go(
                 callContract(
                     'removeAuth', 
                     ["string","address"], 
-                    ["admin",Test.address], 
+                    [auth, account], 
                     METADATA.AuthStorage._address
                 ),
                 a => a.status
@@ -92,12 +106,14 @@ describe('[AuthStorage] Auth function', () => {
     })
 
     it('removeAuth(Test) of Campaign', async () => {
+        const account = Test.address
+
         assert.equal(
             false,
             await viewContract(
                 METADATA.Campaign,
                 'isAdmin(address)',
-                [Test.address]
+                [account]
             )
         )
     })
@@ -106,43 +122,65 @@ describe('[AuthStorage] Auth function', () => {
 describe('[Token] Token Control function', () => {
 
     before('test token send', async () => {
-        await callContract(
+        const to = METADATA.RevenueLedger._address
+        const amount = UTILS.toPeb(1)
+
+        await go(
+            log(`\t -> Send test token : 1 SPIN`),
+            _ => callContract(
                 'transfer', 
                 ['address', 'uint256'], 
-                [METADATA.RevenueLedger._address, UTILS.toPeb(1)], 
+                [to, amount], 
                 Token
             )
+        )
     })
 
     it('getBalance(SPIN) : 1', async () => {
+        const tokenName = "SPIN"
+
         assert.equal(
             UTILS.toPeb(1),
             await viewContract(
                 METADATA.RevenueLedger, 
                 'getBalance(string)', 
-                ["SPIN"]
+                [tokenName]
             )
         )
     })
 
-    it('➡️  (Non-admin) sendToken(Deployer,1)', () => 
-        evmError(() => callContract(
-            'sendToken', 
-            ["string","address","uint256"], 
-            ["SPIN", Deployer.address, UTILS.toPeb(1)], 
-            METADATA.RevenueLedger._address,
-            true
-        ))
-    )
+    it('➡️  (Non-admin) sendToken(Deployer,1)', async () => {
+        const tokenName = "SPIN"
+        const to = Deployer.address
+        const amount = UTILS.toPeb(1)
+
+        assert.equal(
+            'evm: execution reverted',
+            await go(
+                () => callContract(
+                    'sendToken', 
+                    ["string","address","uint256"], 
+                    [tokenName, to, amount], 
+                    METADATA.RevenueLedger._address,
+                    true
+                ),
+                evmError
+            )
+        )
+    })
 
     it('➡️  sendToken(Deployer,1)', async () => {
+        const tokenName = "SPIN"
+        const to = Deployer.address
+        const amount = UTILS.toPeb(1)
+
         assert.equal(
             true,
             await go(
                 callContract(
                     'sendToken', 
                     ["string","address","uint256"], 
-                    ["SPIN", Deployer.address, UTILS.toPeb(1)], 
+                    [tokenName, to, amount], 
                     METADATA.RevenueLedger._address
                 ),
                 a => a.status
@@ -151,12 +189,14 @@ describe('[Token] Token Control function', () => {
     })
 
     it('getBalance(SPIN) : 0', async () => {
+        const tokenName = "SPIN"
+
         assert.equal(
             0,
             await viewContract(
                 METADATA.RevenueLedger, 
                 'getBalance(string)', 
-                ["SPIN"]
+                [tokenName]
             )
         )
     })

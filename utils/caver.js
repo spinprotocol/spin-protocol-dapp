@@ -57,10 +57,16 @@ const signTx = (inputData, toAddr, test) => go(
         gas: 20000000,
         type: "FEE_DELEGATED_SMART_CONTRACT_EXECUTION"
     }, !test ? Deployer.privateKey : Test.privateKey),
-    signed => signed.rawTransaction
+    ({ rawTransaction }) => rawTransaction
 )
 
-const send = senderRawTransaction => caver.klay.sendTransaction({ senderRawTransaction, feePayer: feePayer.address })
+const send = senderRawTransaction => 
+    caver.klay.sendTransaction(
+        { 
+            senderRawTransaction, 
+            feePayer: feePayer.address 
+        }
+    )
 
 const viewContract = (contract, funcSig, params) => go(
     contract,

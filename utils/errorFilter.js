@@ -1,7 +1,5 @@
-const assert = require('assert');
-
 module.exports = {
     evmError : f => f()
-    .then(_ => assert.equal(false, "Success Tx"))
-    .catch(e => assert.equal('evm: execution reverted', e.message.substring(0,23)))
+        .then(_ => ("Success Tx"))
+        .catch(e => (e.message.substring(0,23)))
 }

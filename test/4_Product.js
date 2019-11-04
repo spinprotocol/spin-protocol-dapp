@@ -11,11 +11,14 @@ const { METADATA } = require('../utils/metadata');
 describe('[Product] function check', () => {
     let initProductData = {}; //viewCount, purchaseCount
     let initUserPurchaseCount = 0; //userId : 99
-    const callData = ["test", 1]
+    const category = "test"
+    const productId = 1
 
     before('test token send', async () => {
-        initProductData = await viewContract( METADATA.Product, "getProductData(string,uint256)", callData)
-        initUserPurchaseCount = await viewContract(METADATA.Product, 'getPurchaseCountByUser(string,uint256,uint256)', [...callData, 99])
+        const memberNo = 99
+
+        initProductData = await viewContract( METADATA.Product, "getProductData(string,uint256)", [category, productId])
+        initUserPurchaseCount = await viewContract(METADATA.Product, 'getPurchaseCountByUser(string,uint256,uint256)', [category, productId, memberNo])
     })
 
     it('➡️  addViewCount()', async () => {
@@ -25,10 +28,10 @@ describe('[Product] function check', () => {
                 callContract(
                     'addViewCount', 
                     ["string","uint256","uint256"], 
-                    [ ...callData, 10], 
+                    [category, productId, 10], 
                     METADATA.Product._address
                 ),
-                _ => viewContract( METADATA.Product,"getProductData(string,uint256)", callData),
+                _ => viewContract( METADATA.Product,"getProductData(string,uint256)", [category, productId]),
                 ({viewCount}) => viewCount
             )
         )
@@ -41,10 +44,10 @@ describe('[Product] function check', () => {
                 callContract(
                     'addPurchaseCount', 
                     ["string","uint256","uint256","uint256"], 
-                    [ ...callData, 5, 10], 
+                    [category, productId, 5, 10], 
                     METADATA.Product._address
                 ),
-                _ => viewContract( METADATA.Product,"getProductData(string,uint256)", callData),
+                _ => viewContract( METADATA.Product,"getProductData(string,uint256)", [category, productId,]),
                 ({purchaseCount}) => purchaseCount
             )
         )
@@ -57,10 +60,10 @@ describe('[Product] function check', () => {
                 callContract(
                     'addPurchaseCount', 
                     ["string","uint256","uint256","uint256"], 
-                    [ ...callData, 2, 99], 
+                    [category, productId, 2, 99], 
                     METADATA.Product._address
                 ),
-                _ => viewContract( METADATA.Product,"getProductData(string,uint256)", callData),
+                _ => viewContract( METADATA.Product,"getProductData(string,uint256)", [category, productId]),
                 ({purchaseCount}) => purchaseCount
             )
         )
@@ -73,19 +76,21 @@ describe('[Product] function check', () => {
                 callContract(
                     'subPurchaseCount', 
                     ["string","uint256","uint256","uint256"], 
-                    [ ...callData, 5, 10], 
+                    [category, productId, 5, 10], 
                     METADATA.Product._address
                 ),
-                _ => viewContract( METADATA.Product,"getProductData(string,uint256)", callData),
+                _ => viewContract( METADATA.Product,"getProductData(string,uint256)", [category, productId]),
                 ({purchaseCount}) => purchaseCount
             )
         )
     })
 
     it('getPurchaseCountByUser()', async () => {
+        const memberNo = 99
+
         assert.equal(
             Number(initUserPurchaseCount) + 2,
-            await viewContract(METADATA.Product, 'getPurchaseCountByUser(string,uint256,uint256)', [...callData, 99])
+            await viewContract(METADATA.Product, 'getPurchaseCountByUser(string,uint256,uint256)', [category, productId, memberNo])
         )
     })
 
@@ -99,7 +104,7 @@ describe('[Product] function check', () => {
                     METADATA.Product, 
                     "ViewProduct", 
                     {
-                        productId : 1,
+                        productId,
                         memberNo : 10
                     },
                     10868210
@@ -117,7 +122,7 @@ describe('[Product] function check', () => {
                     METADATA.Product, 
                     "PurchaseAdd", 
                     {
-                        productId : 1,
+                        productId,
                         memberNo : 10
                     },
                     10868210
