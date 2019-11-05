@@ -37,7 +37,7 @@ describe('[Campaign] function check', () => {
             await go(
                 () => callContract(
                     'createCampaign', 
-                    ["uint256","uint256","uint256","uint256","uint256","uint256"], 
+                    ["uint256", "uint256", "uint256", "uint256", "uint256", "uint256"], 
                     [campaignId, productId, revenueRatio, totalSupply, startAt, endAt], 
                     METADATA.Campaign._address,
                     true
@@ -60,7 +60,7 @@ describe('[Campaign] function check', () => {
             await go(
                 callContract(
                     'createCampaign', 
-                    ["uint256","uint256","uint256","uint256","uint256","uint256"], 
+                    ["uint256", "uint256", "uint256", "uint256", "uint256", "uint256"], 
                     [campaignId, productId, revenueRatio, totalSupply, startAt, endAt], 
                     METADATA.Campaign._address
                 ),
@@ -117,7 +117,7 @@ describe('[Campaign] function check', () => {
             await go(
                 callContract(
                     'createCampaign', 
-                    ["uint256","uint256","uint256","uint256","uint256","uint256"], 
+                    ["uint256", "uint256", "uint256", "uint256", "uint256", "uint256"], 
                     [campaignId, productId, revenueRatio, totalSupply, startAt, endAt], 
                     METADATA.Campaign._address
                 ),
@@ -139,7 +139,7 @@ describe('[Campaign] function check', () => {
             await go(
                 () => callContract(
                     'createCampaign', 
-                    ["uint256","uint256","uint256","uint256","uint256","uint256"], 
+                    ["uint256", "uint256", "uint256", "uint256", "uint256", "uint256"], 
                     [campaignId, productId, revenueRatio, totalSupply, startAt, endAt], 
                     METADATA.Campaign._address
                 ),
@@ -157,8 +157,8 @@ describe('[Campaign] function check', () => {
             await go(
                 callContract(
                     'attendCampaign', 
-                    ["uint256","uint256"], 
-                    [campaignId,influencerId], 
+                    ["uint256", "uint256"], 
+                    [campaignId, influencerId], 
                     METADATA.Campaign._address
                 ),
                 a => a.status
@@ -187,8 +187,8 @@ describe('[Campaign] function check', () => {
             await go(
                 callContract(
                     'cancelCampaign', 
-                    ["uint256","uint256"], 
-                    [campaignId,influencerId], 
+                    ["uint256", "uint256"], 
+                    [campaignId, influencerId], 
                     METADATA.Campaign._address
                 ),
                 a => a.status
@@ -209,7 +209,7 @@ describe('[Campaign] function check', () => {
             await go(
                 () => callContract(
                     'updateCampaign', 
-                    ["uint256","uint256","uint256","uint256","uint256","uint256"], 
+                    ["uint256", "uint256", "uint256", "uint256", "uint256", "uint256"], 
                     [campaignId, productId, revenueRatio, totalSupply, startAt, endAt], 
                     METADATA.Campaign._address,
                     true
@@ -232,7 +232,7 @@ describe('[Campaign] function check', () => {
             await go(
                 callContract(
                     'updateCampaign', 
-                    ["uint256","uint256","uint256","uint256","uint256","uint256"],
+                    ["uint256", "uint256", "uint256", "uint256", "uint256", "uint256"],
                     [campaignId, productId, revenueRatio, totalSupply, startAt, endAt], 
                     METADATA.Campaign._address
                 ),
@@ -250,8 +250,8 @@ describe('[Campaign] function check', () => {
             await go(
                 () => callContract(
                     'attendCampaign', 
-                    ["uint256","uint256"], 
-                    [campaignId,influencerId], 
+                    ["uint256", "uint256"], 
+                    [campaignId, influencerId], 
                     METADATA.Campaign._address,
                     true
                 ),
@@ -286,7 +286,7 @@ describe('[Campaign] function check', () => {
             await go(
                 callContract(
                     'updateSaleEnd', 
-                    ["uint256","uint256"],
+                    ["uint256", "uint256"],
                     [campaignId, endAt],
                     METADATA.Campaign._address
                 ),

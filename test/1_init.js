@@ -65,7 +65,7 @@ describe('[AuthStorage] Auth function', () => {
             await go(
                 callContract(
                     'addAuth', 
-                    ["string" ,"address"], 
+                    ["string", "address"], 
                     [auth, account], 
                     METADATA.AuthStorage._address
                 ),
@@ -96,7 +96,7 @@ describe('[AuthStorage] Auth function', () => {
             await go(
                 callContract(
                     'removeAuth', 
-                    ["string","address"], 
+                    ["string", "address"], 
                     [auth, account], 
                     METADATA.AuthStorage._address
                 ),
@@ -159,7 +159,7 @@ describe('[Token] Token Control function', () => {
             await go(
                 () => callContract(
                     'sendToken', 
-                    ["string","address","uint256"], 
+                    ["string", "address", "uint256"], 
                     [tokenName, to, amount], 
                     METADATA.RevenueLedger._address,
                     true
@@ -179,7 +179,7 @@ describe('[Token] Token Control function', () => {
             await go(
                 callContract(
                     'sendToken', 
-                    ["string","address","uint256"], 
+                    ["string", "address", "uint256"], 
                     [tokenName, to, amount], 
                     METADATA.RevenueLedger._address
                 ),

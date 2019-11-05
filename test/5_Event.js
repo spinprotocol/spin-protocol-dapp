@@ -3,9 +3,7 @@ const assert = require('assert');
 
 const {
     Deployer,
-    Signer,
     Token,
-    Test,
     UTILS,
     viewContract,
     callContract
@@ -32,10 +30,10 @@ describe('[Event] function check', () => {
 
     it('➡️  pushHistory()', async () => {
         const sendData = [
-            [1,"test1",Deployer.address,1], 
-            [1,"test1",Deployer.address,1], 
-            [1,"test2",Deployer.address,3],
-            [1,"test2",Deployer.address,3]]
+            [1, "test1", Deployer.address, 1], 
+            [1, "test1", Deployer.address, 1], 
+            [1, "test2", Deployer.address, 3],
+            [1, "test2", Deployer.address, 3]]
 
         assert.equal(
             true,
@@ -44,7 +42,7 @@ describe('[Event] function check', () => {
                 map(data => go(
                     callContract(
                         'pushHistory', 
-                        ["uint256","string","address","uint256"], 
+                        ["uint256", "string", "address", "uint256"], 
                         data, 
                         METADATA.Event._address
                     ),
@@ -75,7 +73,7 @@ describe('[Event] function check', () => {
             await go(
                 callContract(
                     'removeHistory', 
-                    ["uint256","string"], 
+                    ["uint256", "string"], 
                     [eventId, userId],
                     METADATA.Event._address
                 ),
@@ -86,16 +84,16 @@ describe('[Event] function check', () => {
 
     it('➡️  (Non-admin) sendReward()', () => {
         const eventId = 1
-        const userIds = ["test1","test2","test1"]
-        const userWallets = [Deployer.address,Deployer.address,Deployer.address]
-        const rewardAmounts = [1,1,8]
+        const userIds = ["test1", "test2", "test1"]
+        const userWallets = [Deployer.address, Deployer.address, Deployer.address]
+        const rewardAmounts = [1, 1, 8]
 
         assert.equal(
             'evm: execution reverted',
             await go(
                 () => callContract(
                     'sendReward', 
-                    ["uint256","string[]","address[]","uint256[]"], 
+                    ["uint256", "string[]", "address[]", "uint256[]"], 
                     [eventId, userIds, userWallets, rewardAmounts], 
                     METADATA.Event._address,
                     true
@@ -107,7 +105,7 @@ describe('[Event] function check', () => {
 
     it('➡️  sendReward()', async () => {
         const eventId = 1
-        const userIds = ["test1","test2","test1"]
+        const userIds = ["test1", "test2", "test1"]
         const userWallets = [Deployer.address,Deployer.address,Deployer.address]
         const rewardAmounts = [1,7,1]
 
@@ -116,7 +114,7 @@ describe('[Event] function check', () => {
             await go(
                 callContract(
                     'sendReward', 
-                    ["uint256","string[]","address[]","uint256[]"], 
+                    ["uint256", "string[]", "address[]", "uint256[]"], 
                     [eventId, userIds, userWallets, rewardAmounts], 
                     METADATA.Event._address
                 ),
@@ -136,7 +134,7 @@ describe('[Event] function check', () => {
             await go(
                 () => callContract(
                     'sendReward', 
-                    ["uint256","string[]","address[]","uint256[]"], 
+                    ["uint256", "string[]", "address[]", "uint256[]"], 
                     [eventId, userIds, userWallets, rewardAmounts], 
                     METADATA.Event._address
             ),

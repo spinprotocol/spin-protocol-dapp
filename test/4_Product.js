@@ -22,13 +22,15 @@ describe('[Product] function check', () => {
     })
 
     it('➡️  addViewCount()', async () => {
+        const memberNo = 10;
+        
         assert.equal(
             Number(initProductData.viewCount) + 1,
             await go(
                 callContract(
                     'addViewCount', 
-                    ["string","uint256","uint256"], 
-                    [category, productId, 10], 
+                    ["string", "uint256", "uint256"], 
+                    [category, productId, memberNo], 
                     METADATA.Product._address
                 ),
                 _ => viewContract( METADATA.Product,"getProductData(string,uint256)", [category, productId]),
@@ -38,13 +40,16 @@ describe('[Product] function check', () => {
     })
 
     it('➡️  addPurchaseCount()', async () => {
+        const count = 5;
+        const memberNo = 10;
+
         assert.equal(
             Number(initProductData.purchaseCount) + 5,
             await go(
                 callContract(
                     'addPurchaseCount', 
-                    ["string","uint256","uint256","uint256"], 
-                    [category, productId, 5, 10], 
+                    ["string", "uint256", "uint256", "uint256"], 
+                    [category, productId, count, memberNo], 
                     METADATA.Product._address
                 ),
                 _ => viewContract( METADATA.Product,"getProductData(string,uint256)", [category, productId,]),
@@ -54,13 +59,16 @@ describe('[Product] function check', () => {
     })
 
     it('➡️  addPurchaseCount()', async () => {
+        const count = 2;
+        const memberNo = 99;
+
         assert.equal(
             Number(initProductData.purchaseCount) + 7,
             await go(
                 callContract(
                     'addPurchaseCount', 
-                    ["string","uint256","uint256","uint256"], 
-                    [category, productId, 2, 99], 
+                    ["string", "uint256", "uint256", "uint256"], 
+                    [category, productId, count, memberNo], 
                     METADATA.Product._address
                 ),
                 _ => viewContract( METADATA.Product,"getProductData(string,uint256)", [category, productId]),
@@ -70,13 +78,16 @@ describe('[Product] function check', () => {
     })
 
     it('➡️  subPurchaseCount()', async () => {
+        const count = 5;
+        const memberNo = 10;
+
         assert.equal(
             Number(initProductData.purchaseCount) + 2,
             await go(
                 callContract(
                     'subPurchaseCount', 
-                    ["string","uint256","uint256","uint256"], 
-                    [category, productId, 5, 10], 
+                    ["string", "uint256", "uint256", "uint256"], 
+                    [category, productId, count, memberNo], 
                     METADATA.Product._address
                 ),
                 _ => viewContract( METADATA.Product,"getProductData(string,uint256)", [category, productId]),
@@ -90,11 +101,13 @@ describe('[Product] function check', () => {
 
         assert.equal(
             Number(initUserPurchaseCount) + 2,
-            await viewContract(METADATA.Product, 'getPurchaseCountByUser(string,uint256,uint256)', [category, productId, memberNo])
+            await viewContract(
+                METADATA.Product, 
+                'getPurchaseCountByUser(string,uint256,uint256)', 
+                [category, productId, memberNo]
+            )
         )
     })
-
-    //event catch - view, purchase
 
     it('catch view event', async () => {
         assert.equal(

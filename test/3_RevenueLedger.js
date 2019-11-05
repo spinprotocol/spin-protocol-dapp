@@ -53,7 +53,7 @@ describe('[RevenueLedger] function check', () => {
             await go(
                 () => callContract(
                     'createRevenueLedger', 
-                    ["uint256","uint256","uint256","uint256","uint256","uint256","uint256","uint256","uint256"], 
+                    ["uint256", "uint256", "uint256", "uint256", "uint256", "uint256", "uint256", "uint256", "uint256"], 
                     [revenueLedgerId, campaignId, influencerId, salesAmount, salesPrice, profit, revenueRatio, spinRatio, fiatRatio], 
                     METADATA.RevenueLedger._address,
                     true
@@ -79,7 +79,7 @@ describe('[RevenueLedger] function check', () => {
             await go(
                 callContract(
                     'createRevenueLedger', 
-                    ["uint256","uint256","uint256","uint256","uint256","uint256","uint256","uint256","uint256"], 
+                    ["uint256", "uint256", "uint256", "uint256", "uint256", "uint256", "uint256", "uint256","uint256"], 
                     [revenueLedgerId, campaignId, influencerId, salesAmount, salesPrice, profit, revenueRatio, spinRatio, fiatRatio], 
                     METADATA.RevenueLedger._address
                 ),
@@ -115,7 +115,11 @@ describe('[RevenueLedger] function check', () => {
 
         assert.equal(
             UTILS.toPeb(expectedReturn),
-            await viewContract(METADATA.RevenueLedger, 'revenueSpin(uint256,uint256,uint256)', [_spinAmount,_marketPrice,_rounding])
+            await viewContract(
+                METADATA.RevenueLedger, 
+                'revenueSpin(uint256,uint256,uint256)', 
+                [_spinAmount, _marketPrice, _rounding]
+            )
         )
     })
 
@@ -128,7 +132,7 @@ describe('[RevenueLedger] function check', () => {
             await go(
                 () => callContract(
                     'revenueShare', 
-                    ["uint256","address","uint256","uint256","uint256"], 
+                    ["uint256", "address", "uint256", "uint256", "uint256"], 
                     [_revenueLedgerId, _to, _spinAmount, _marketPrice, _rounding], 
                     METADATA.RevenueLedger._address,
                     true
@@ -147,7 +151,7 @@ describe('[RevenueLedger] function check', () => {
             await go(
                 callContract(
                     'revenueShare', 
-                    ["uint256","address","uint256","uint256","uint256"], 
+                    ["uint256", "address", "uint256", "uint256", "uint256"], 
                     [_revenueLedgerId, _to, _spinAmount, _marketPrice, _rounding], 
                     METADATA.RevenueLedger._address
                 ),
@@ -165,7 +169,7 @@ describe('[RevenueLedger] function check', () => {
             await go(
                 () => callContract(
                     'revenueShare', 
-                    ["uint256","address","uint256","uint256","uint256"], 
+                    ["uint256", "address", "uint256", "uint256", "uint256"], 
                     [_revenueLedgerId, _to, _spinAmount, _marketPrice, _rounding], 
                     METADATA.RevenueLedger._address
                 ),
@@ -183,7 +187,7 @@ describe('[RevenueLedger] function check', () => {
             await go(
                 callContract(
                     'updateIsAccount', 
-                    ["uint256","bool"], 
+                    ["uint256", "bool"], 
                     [revenueLedgerId, state], 
                     METADATA.RevenueLedger._address
                 ),
@@ -201,7 +205,7 @@ describe('[RevenueLedger] function check', () => {
             await go(
                 callContract(
                     'revenueShare', 
-                    ["uint256","address","uint256","uint256","uint256"], 
+                    ["uint256", "address", "uint256", "uint256", "uint256"], 
                     [_revenueLedgerId, _to, _spinAmount, _marketPrice, _rounding], 
                     METADATA.RevenueLedger._address
                 ),
