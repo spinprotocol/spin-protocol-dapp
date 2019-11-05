@@ -29,7 +29,9 @@
 
     "prod-update-Event": "STAGE=prod truffle migrate --reset --network cypress --f 15 --to 15",
     "dev-update-Event": "STAGE=dev truffle migrate --reset --network baobab --f 15 --to 15",
-    "staging-update-Event": "STAGE=staging truffle migrate --reset --network baobab --f 15 --to 15"
+    "staging-update-Event": "STAGE=staging truffle migrate --reset --network baobab --f 15 --to 15",
+
+    "test": "STAGE=test truffle migrate --reset --to 5 && STAGE=test truffle migrate --reset --f 12 --to 12 && STAGE=test truffle migrate --reset --f 13 --to 13 && STAGE=test truffle migrate --reset --f 14 --to 14 && STAGE=test truffle migrate --reset --f 15 --to 15 && mocha --timeout 15000"
   },
   "author": "Harace Moon",
   "license": "ISC",

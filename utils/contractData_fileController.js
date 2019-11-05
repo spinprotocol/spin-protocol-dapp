@@ -1,7 +1,13 @@
 const fs = require('fs');
 const mkdirp = require('mkdirp');
-const { go, log } = require('ffp-js');
-const nowDate = require('./getTime.js');
+Object.assign(global, require('ffp-js'));
+
+const moment = require("moment");
+require("moment-timezone");
+moment.tz.setDefault("Asia/Seoul");
+
+const nowDate = format => moment().format(format);
+
 const stage = process.env.STAGE || 'dev';
 
 const getVersion = (contractName, newAddr) => {
