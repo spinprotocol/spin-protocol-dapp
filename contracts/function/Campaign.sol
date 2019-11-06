@@ -201,6 +201,6 @@ contract Campaign is DataControl {
 
     if(campaignType == 0) return (startAt > now);
     else if (campaignType == 1) return  (endAt > now);
-    else return false
+    else return false;
   }
 }

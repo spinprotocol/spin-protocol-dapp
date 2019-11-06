@@ -7,13 +7,13 @@
     "test": "test"
   },
   "scripts": {
-    "prod-init": "STAGE=prod truffle migrate --reset --network cypress --to 5 && npm run prod-update-All",
-    "dev-init": "STAGE=dev truffle migrate --reset --network baobab --to 5 && npm run dev-update-All",
-    "staging-init": "STAGE=staging truffle migrate --reset --network baobab --to 5 && npm run staging-update-All",
+    "prod-init": "STAGE=prod truffle migrate --reset --network cypress --to 6 && npm run prod-update-All",
+    "dev-init": "STAGE=dev truffle migrate --reset --network baobab --to 6 && npm run dev-update-All",
+    "staging-init": "STAGE=staging truffle migrate --reset --network baobab --to 6 && npm run staging-update-All",
 
-    "prod-update-All": "npm run prod-update-Campaign &&  npm run prod-update-RevenueLedger &&  npm run prod-update-Product &&  npm run prod-update-Event",
-    "dev-update-All": "npm run dev-update-Campaign &&  npm run dev-update-RevenueLedger &&  npm run dev-update-Product &&  npm run dev-update-Event",
-    "staging-update-All": "npm run staging-update-Campaign &&  npm run staging-update-RevenueLedger &&  npm run staging-update-Product &&  npm run staging-update-Event",
+    "prod-update-All": "npm run prod-update-Campaign &&  npm run prod-update-RevenueLedger &&  npm run prod-update-Product && npm run prod-update-Event && npm run prod-update-ReferralLedger",
+    "dev-update-All": "npm run dev-update-Campaign &&  npm run dev-update-RevenueLedger &&  npm run dev-update-Product && npm run dev-update-Event && npm run prod-update-ReferralLedger",
+    "staging-update-All": "npm run staging-update-Campaign &&  npm run staging-update-RevenueLedger &&  npm run staging-update-Product && npm run staging-update-Event && npm run prod-update-ReferralLedger",
 
     "prod-update-Campaign": "STAGE=prod truffle migrate --reset --network cypress --f 12 --to 12",
     "dev-update-Campaign": "STAGE=dev truffle migrate --reset --network baobab --f 12 --to 12",
@@ -30,6 +30,10 @@
     "prod-update-Event": "STAGE=prod truffle migrate --reset --network cypress --f 15 --to 15",
     "dev-update-Event": "STAGE=dev truffle migrate --reset --network baobab --f 15 --to 15",
     "staging-update-Event": "STAGE=staging truffle migrate --reset --network baobab --f 15 --to 15",
+
+    "prod-update-ReferralLedger": "STAGE=prod truffle migrate --reset --network cypress --f 16 --to 16",
+    "dev-update-ReferralLedger": "STAGE=dev truffle migrate --reset --network baobab --f 16 --to 16",
+    "staging-update-ReferralLedger": "STAGE=staging truffle migrate --reset --network baobab --f 16 --to 16",
 
     "test": "STAGE=test truffle migrate --reset --to 5 && STAGE=test truffle migrate --reset --f 12 --to 12 && STAGE=test truffle migrate --reset --f 13 --to 13 && STAGE=test truffle migrate --reset --f 14 --to 14 && STAGE=test truffle migrate --reset --f 15 --to 15 && mocha --timeout 15000"
   },
