@@ -1,7 +1,6 @@
 pragma solidity ^0.4.24;
 
 import "../libs/SafeMath.sol";
-import "../components/token/IERC20.sol";
 import "./RevenueLedger.sol";
 import "../components/token/TokenControl.sol";
 
