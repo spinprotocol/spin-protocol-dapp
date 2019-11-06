@@ -28,7 +28,7 @@ describe('[Init] setting check', () => {
     })
 
     it('[Token] init token address of RevenueLedger', async () => {
-        const _tokenName = "SPIN"
+        const _tokenName = 'SPIN'
 
         assert.equal(
             UTILS.toChecksumAddr(Token),
@@ -57,7 +57,7 @@ describe('[AuthStorage] Auth function', () => {
     })
 
     it('➡️  addAuth(admin,Test)', async () => {
-        const auth = "admin"
+        const auth = 'admin'
         const account = Test.address
 
         assert.equal(
@@ -65,7 +65,7 @@ describe('[AuthStorage] Auth function', () => {
             await go(
                 callContract(
                     'addAuth', 
-                    ["string", "address"], 
+                    ['string', 'address'], 
                     [auth, account], 
                     METADATA.AuthStorage._address
                 ),
@@ -88,7 +88,7 @@ describe('[AuthStorage] Auth function', () => {
     })
 
     it('➡️  removeAuth(admin,Test)', async () => {
-        const auth = "admin"
+        const auth = 'admin'
         const account = Test.address
 
         assert.equal(
@@ -96,7 +96,7 @@ describe('[AuthStorage] Auth function', () => {
             await go(
                 callContract(
                     'removeAuth', 
-                    ["string", "address"], 
+                    ['string', 'address'], 
                     [auth, account], 
                     METADATA.AuthStorage._address
                 ),
@@ -137,7 +137,7 @@ describe('[Token] Token Control function', () => {
     })
 
     it('getBalance(SPIN) : 1', async () => {
-        const tokenName = "SPIN"
+        const tokenName = 'SPIN'
 
         assert.equal(
             UTILS.toPeb(1),
@@ -150,7 +150,7 @@ describe('[Token] Token Control function', () => {
     })
 
     it('➡️  (Non-admin) sendToken(Deployer,1)', async () => {
-        const tokenName = "SPIN"
+        const tokenName = 'SPIN'
         const to = Deployer.address
         const amount = UTILS.toPeb(1)
 
@@ -159,7 +159,7 @@ describe('[Token] Token Control function', () => {
             await go(
                 () => callContract(
                     'sendToken', 
-                    ["string", "address", "uint256"], 
+                    ['string', 'address', 'uint256'], 
                     [tokenName, to, amount], 
                     METADATA.RevenueLedger._address,
                     true
@@ -170,7 +170,7 @@ describe('[Token] Token Control function', () => {
     })
 
     it('➡️  sendToken(Deployer,1)', async () => {
-        const tokenName = "SPIN"
+        const tokenName = 'SPIN'
         const to = Deployer.address
         const amount = UTILS.toPeb(1)
 
@@ -179,7 +179,7 @@ describe('[Token] Token Control function', () => {
             await go(
                 callContract(
                     'sendToken', 
-                    ["string", "address", "uint256"], 
+                    ['string', 'address', 'uint256'], 
                     [tokenName, to, amount], 
                     METADATA.RevenueLedger._address
                 ),
@@ -189,7 +189,7 @@ describe('[Token] Token Control function', () => {
     })
 
     it('getBalance(SPIN) : 0', async () => {
-        const tokenName = "SPIN"
+        const tokenName = 'SPIN'
 
         assert.equal(
             0,

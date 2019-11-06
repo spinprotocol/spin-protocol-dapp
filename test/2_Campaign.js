@@ -13,7 +13,7 @@ const { METADATA } = require('../utils/metadata.js');
 describe('[Campaign] function check', () => {
 
     before('Test influencer add auth', async () => {
-        const auth = "influencer"
+        const auth = 'influencer'
         const account = Test.address
 
         await callContract(
@@ -37,7 +37,7 @@ describe('[Campaign] function check', () => {
             await go(
                 () => callContract(
                     'createCampaign', 
-                    ["uint256", "uint256", "uint256", "uint256", "uint256", "uint256"], 
+                    ['uint256', 'uint256', 'uint256', 'uint256', 'uint256', 'uint256'], 
                     [campaignId, productId, revenueRatio, totalSupply, startAt, endAt], 
                     METADATA.Campaign._address,
                     true
@@ -60,7 +60,7 @@ describe('[Campaign] function check', () => {
             await go(
                 callContract(
                     'createCampaign', 
-                    ["uint256", "uint256", "uint256", "uint256", "uint256", "uint256"], 
+                    ['uint256', 'uint256', 'uint256', 'uint256', 'uint256', 'uint256'], 
                     [campaignId, productId, revenueRatio, totalSupply, startAt, endAt], 
                     METADATA.Campaign._address
                 ),
@@ -77,7 +77,7 @@ describe('[Campaign] function check', () => {
             await go(
                 () => callContract(
                     'deleteCampaign', 
-                    ["uint256"], 
+                    ['uint256'], 
                     [campaignId], 
                     METADATA.Campaign._address,
                     true
@@ -95,7 +95,7 @@ describe('[Campaign] function check', () => {
             await go(
                 callContract(
                     'deleteCampaign', 
-                    ["uint256"], 
+                    ['uint256'], 
                     [campaignId], 
                     METADATA.Campaign._address
                 ),
@@ -117,7 +117,7 @@ describe('[Campaign] function check', () => {
             await go(
                 callContract(
                     'createCampaign', 
-                    ["uint256", "uint256", "uint256", "uint256", "uint256", "uint256"], 
+                    ['uint256', 'uint256', 'uint256', 'uint256', 'uint256', 'uint256'], 
                     [campaignId, productId, revenueRatio, totalSupply, startAt, endAt], 
                     METADATA.Campaign._address
                 ),
@@ -139,7 +139,7 @@ describe('[Campaign] function check', () => {
             await go(
                 () => callContract(
                     'createCampaign', 
-                    ["uint256", "uint256", "uint256", "uint256", "uint256", "uint256"], 
+                    ['uint256', 'uint256', 'uint256', 'uint256', 'uint256', 'uint256'], 
                     [campaignId, productId, revenueRatio, totalSupply, startAt, endAt], 
                     METADATA.Campaign._address
                 ),
@@ -157,7 +157,7 @@ describe('[Campaign] function check', () => {
             await go(
                 callContract(
                     'attendCampaign', 
-                    ["uint256", "uint256"], 
+                    ['uint256', 'uint256'], 
                     [campaignId, influencerId], 
                     METADATA.Campaign._address
                 ),
@@ -173,7 +173,7 @@ describe('[Campaign] function check', () => {
             true,
             await go(
                 viewContract(METADATA.Campaign,'getCampaign(uint256)',[campaignId]),
-                ({ appliedInfluencerList }) => appliedInfluencerList[0] === "100"
+                ({ appliedInfluencerList }) => appliedInfluencerList[0] === '100'
             )
         )
     })
@@ -187,7 +187,7 @@ describe('[Campaign] function check', () => {
             await go(
                 callContract(
                     'cancelCampaign', 
-                    ["uint256", "uint256"], 
+                    ['uint256', 'uint256'], 
                     [campaignId, influencerId], 
                     METADATA.Campaign._address
                 ),
@@ -209,7 +209,7 @@ describe('[Campaign] function check', () => {
             await go(
                 () => callContract(
                     'updateCampaign', 
-                    ["uint256", "uint256", "uint256", "uint256", "uint256", "uint256"], 
+                    ['uint256', 'uint256', 'uint256', 'uint256', 'uint256', 'uint256'], 
                     [campaignId, productId, revenueRatio, totalSupply, startAt, endAt], 
                     METADATA.Campaign._address,
                     true
@@ -232,7 +232,7 @@ describe('[Campaign] function check', () => {
             await go(
                 callContract(
                     'updateCampaign', 
-                    ["uint256", "uint256", "uint256", "uint256", "uint256", "uint256"],
+                    ['uint256', 'uint256', 'uint256', 'uint256', 'uint256', 'uint256'],
                     [campaignId, productId, revenueRatio, totalSupply, startAt, endAt], 
                     METADATA.Campaign._address
                 ),
@@ -250,7 +250,7 @@ describe('[Campaign] function check', () => {
             await go(
                 () => callContract(
                     'attendCampaign', 
-                    ["uint256", "uint256"], 
+                    ['uint256', 'uint256'], 
                     [campaignId, influencerId], 
                     METADATA.Campaign._address,
                     true
@@ -268,7 +268,7 @@ describe('[Campaign] function check', () => {
             await go(
                 () => callContract(
                     'deleteCampaign', 
-                    ["uint256"], 
+                    ['uint256'], 
                     [campaignId], 
                     METADATA.Campaign._address
                 ),
@@ -286,7 +286,7 @@ describe('[Campaign] function check', () => {
             await go(
                 callContract(
                     'updateSaleEnd', 
-                    ["uint256", "uint256"],
+                    ['uint256', 'uint256'],
                     [campaignId, endAt],
                     METADATA.Campaign._address
                 ),
@@ -296,7 +296,7 @@ describe('[Campaign] function check', () => {
     })
 
     after('Test influencer remove auth', async () => {
-        const auth = "influencer"
+        const auth = 'influencer'
         const account = Test.address
 
         await callContract(
