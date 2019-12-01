@@ -13,7 +13,6 @@ contract Campaign is DataControl {
 
   event CampaignCreated(
     uint256 indexed campaignId,
-    uint256 indexed campaignType,
     uint256 revenueRatio,
     uint256 indexed productId,
     uint256 startAt,
@@ -22,7 +21,7 @@ contract Campaign is DataControl {
   event CampaignDeleted(uint256 indexed campaignId, uint256 deletedAt);
 
   modifier onlyWriter(uint256 campaignId) {
-    require(getAddressStorage("Campaign", keccak256(abi.encodePacked(campaignId, "writer"))) == msg.sender || isAdmin(msg.sender), "Campaign : The caller and the writer do not match.");  
+    require(getAddressStorage("Campaign", keccak256(abi.encodePacked(campaignId, "writer"))) == msg.sender || isAdmin(msg.sender), "Campaign : The caller and the writer do not match.");
     _;
   }
 
@@ -57,7 +56,7 @@ contract Campaign is DataControl {
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "endAt")), endAt);
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "createdAt")), now);
     setAddressStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "writer")), msg.sender);
-    emit CampaignCreated(campaignId, campaignType, revenueRatio, productId, startAt, endAt);
+    emit CampaignCreated(campaignId, revenueRatio, productId, startAt, endAt);
   }
 
   function updateCampaign(
@@ -73,7 +72,7 @@ contract Campaign is DataControl {
     // onlyWriter(campaignId)
     onlyExistentItem("Campaign", campaignId)
   {
-    require(this.isChangerbleCampaign(campaignId), "Campaign : an ongoing campaign");
+    // require(this.isChangerbleCampaign(campaignId), "Campaign : an ongoing campaign");
     require(productId > 0, "Campaign : productId cannot be 0");
     require(revenueRatio > 0, "Campaign : revenueRatio cannot be 0");
     require(totalSupply > 0, "Campaign : totalSupply cannot be 0");
@@ -101,7 +100,7 @@ contract Campaign is DataControl {
     string memory CONTRACT_NAME = "Campaign";
     bytes32 TABLE_KEY = keccak256(abi.encodePacked("Table"));
 
-    require(this.isChangerbleCampaign(campaignId), "Campaign : an ongoing campaign");
+    // require(this.isChangerbleCampaign(campaignId), "Campaign : an ongoing campaign");
     require(removeNodeFromLinkedList(CONTRACT_NAME, TABLE_KEY, campaignId), "Campaign : Item does not exist");
 
     emit CampaignDeleted(campaignId, now);
@@ -200,7 +199,7 @@ contract Campaign is DataControl {
     (uint256 campaignType,,,,,uint256 startAt, uint256 endAt,,) = this.getCampaign(campaignId);
 
     if(campaignType == 0) return (startAt > now);
-    else if (campaignType == 1) return  (endAt > now);
+    else if (campaignType == 1) return (endAt > now);
     else return false;
   }
 }

@@ -40,7 +40,7 @@ const deployedFileWriter = (contract, name, funcAddr) => {
         address : contract.address,
         abi : contract._json.abi,
         version : getVersion(name, funcAddr || contract.address)
-      },null,'\t'),
+      }, null, '\t'),
       errorHandler
     );
   } catch (e) {
