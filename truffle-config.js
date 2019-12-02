@@ -1,7 +1,7 @@
 const HDWalletProvider = require('truffle-hdwallet-provider-klaytn');
 const credentials = require('./credentials.json');
 
-const stage = process.env.STAGE || 'dev';
+const stage = (!process.env.STAGE || process.env.STAGE == 'test') ? 'dev' : process.env.STAGE;
 
 const providerFactory = () => new HDWalletProvider(
       credentials[stage].deployer.pk, 

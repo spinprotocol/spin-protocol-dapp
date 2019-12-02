@@ -1,5 +1,6 @@
 const { deployedFileWriter } = require('../utils/contractData_fileController.js');
-const { addAuth } = require('../utils/addAuth.js');
+const { addAuth } = require('../utils/settingContract.js');
+
 const AuthStorage = artifacts.require("AuthStorage");
 const Migrations = artifacts.require("Migrations");
 

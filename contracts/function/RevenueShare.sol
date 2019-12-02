@@ -1,7 +1,6 @@
 pragma solidity ^0.4.24;
 
 import "../libs/SafeMath.sol";
-import "../components/token/IERC20.sol";
 import "./RevenueLedger.sol";
 import "../components/token/TokenControl.sol";
 
@@ -50,6 +49,6 @@ contract RevenueShare is RevenueLedger, TokenControl {
 
         uint256 spin = revenueSpin(_spinAmount, _marketPrice, _rounding);
         _sendToken("SPIN", _to, spin);
-        updateIsAccount(_revenueLedgerId,true);
+        updateIsAccount(_revenueLedgerId, true);
     }
 }

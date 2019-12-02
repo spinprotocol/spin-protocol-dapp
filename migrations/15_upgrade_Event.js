@@ -1,10 +1,9 @@
 const { deployedFileWriter, fileReader } = require('../utils/contractData_fileController.js');
-const upgradeProxy = require('../utils/proxyUpgrade.js');
-const { setAuthStorage } = require('../utils/addAuth.js');
-
+const { upgradeProxy, setAuthStorage, setTokenAddr } = require('../utils/settingContract.js');
 
 const Event = artifacts.require('Event');
 const Event_Proxy = fileReader('Event_Proxy');
+const AuthStorage = fileReader('AuthStorage');
 
 module.exports = function(deployer) {
   deployer.deploy(Event)
@@ -15,6 +14,7 @@ module.exports = function(deployer) {
       return funcAddr
     })
     .then(funcAddr => deployedFileWriter(Event, null, funcAddr))
-    .then(_ => setAuthStorage(Event))
+    .then(_ => setAuthStorage(Event, AuthStorage.address))
+    .then(_ => setTokenAddr(Event))
   };
 
