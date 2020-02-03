@@ -90,7 +90,7 @@ contract ReferralLedger is DataControl, TokenControl {
 
     require(!isAccount, "Already share");
 
-    _sendToken("SPIN", toAddr, amount.mul(1 ether));
+    _sendToken("SPIN", toAddr, amount);
     setBoolStorage(CONTRACT_NAME, keccak256(abi.encodePacked(referralLedgerId, "isAccount")), true);
   }
 }
