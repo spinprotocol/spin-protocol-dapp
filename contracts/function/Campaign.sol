@@ -27,7 +27,7 @@ contract Campaign is DataControl {
 
   function createCampaign(
     uint256 campaignId,
-    uint256 campaignType,
+    uint256 campaignType, //0: group, 1: regular, 2: ad
     uint256 productId,
     uint256 revenueRatio,
     uint256 totalSupply,
@@ -41,17 +41,20 @@ contract Campaign is DataControl {
     bytes32 TABLE_KEY = keccak256(abi.encodePacked("Table"));
 
     require(campaignId > 0, "Campaign : campaignId cannot be 0");
-    require(productId > 0, "Campaign : productId cannot be 0");
-    require(revenueRatio > 0, "Campaign : revenueRatio cannot be 0");
-    require(totalSupply > 0, "Campaign : totalSupply cannot be 0");
     require(startAt > now, "Campaign : The past time is not available.");
     require(startAt < endAt, "Campaign : startAt cannot be higher than endAt");
     require(pushNodeToLinkedList(CONTRACT_NAME, TABLE_KEY, campaignId), "Campaign : Item already exists");
 
-    setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "productId")), productId);
+    if(campaignType != 2) {
+      require(productId > 0, "Campaign : productId cannot be 0");
+      require(revenueRatio > 0, "Campaign : revenueRatio cannot be 0");
+      require(totalSupply > 0, "Campaign : totalSupply cannot be 0");
+      setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "productId")), productId);
+      setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "revenueRatio")), revenueRatio);
+      setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "totalSupply")), totalSupply);
+    }
+
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "campaignType")), campaignType);
-    setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "revenueRatio")), revenueRatio);
-    setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "totalSupply")), totalSupply);
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "startAt")), startAt);
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "endAt")), endAt);
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "createdAt")), now);
@@ -72,14 +75,11 @@ contract Campaign is DataControl {
     // onlyWriter(campaignId)
     onlyExistentItem("Campaign", campaignId)
   {
+    string memory CONTRACT_NAME = "Campaign";
+
     // require(this.isChangerbleCampaign(campaignId), "Campaign : an ongoing campaign");
-    require(productId > 0, "Campaign : productId cannot be 0");
-    require(revenueRatio > 0, "Campaign : revenueRatio cannot be 0");
-    require(totalSupply > 0, "Campaign : totalSupply cannot be 0");
     require(startAt > now, "Campaign : The past time is not available.");
     require(startAt < endAt, "Campaign : startAt cannot be higher than endAt");
-
-    string memory CONTRACT_NAME = "Campaign";
 
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "productId")), productId);
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(campaignId, "revenueRatio")), revenueRatio);
@@ -199,7 +199,7 @@ contract Campaign is DataControl {
     (uint256 campaignType,,,,,uint256 startAt, uint256 endAt,,) = this.getCampaign(campaignId);
 
     if(campaignType == 0) return (startAt > now);
-    else if (campaignType == 1) return (endAt > now);
+    else if (campaignType == 1 || campaignType == 2) return (endAt > now);
     else return false;
   }
 }
