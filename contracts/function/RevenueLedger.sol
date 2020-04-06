@@ -1,6 +1,9 @@
 pragma solidity ^0.4.24;
 
+import "../libs/SafeMath.sol";
+import "../components/token/TokenControl.sol";
 import './DataControl.sol';
+import './TokenUtil.sol';
 
 /**
  * @title RevenueLedgerDB
@@ -8,7 +11,8 @@ import './DataControl.sol';
  * CONTRACT_NAME = "RevenueLedger"
  * TABLE_KEY = keccak256(abi.encodePacked("Table"))
  */
-contract RevenueLedger is DataControl {
+contract RevenueLedger is DataControl, TokenControl, TokenUtil {
+  using SafeMath for uint256;
 
   event RevenueLedgerCreated(uint256 indexed revenueLedgerId);
   event RevenueLedgerUpdated(uint256 indexed revenueLedgerId, uint256 updatedAt);
@@ -113,4 +117,24 @@ contract RevenueLedger is DataControl {
     bytes32 TABLE_KEY = keccak256(abi.encodePacked("Table"));
     return getNodes(CONTRACT_NAME, TABLE_KEY);
   }
+
+  /**
+    * @dev Token transfer after calculates.
+    */
+    function revenueShare(
+        uint256 _revenueLedgerId,
+        address _to,
+        uint256 _tokenAmount,
+        uint256 _marketPrice,
+        uint256 _rounding
+    ) public onlyAdmin {
+        uint256 campaignId;
+        bool isAccount;
+        (campaignId,,,,,,,,isAccount) = getRevenueLedger(_revenueLedgerId);
+        require(campaignId > 0 && !isAccount, "Empty data or already share");
+
+        uint256 token = calculateToken(_tokenAmount, _marketPrice, _rounding);
+        _sendToken("SPIN", _to, token);
+        RevenueLedger.updateIsAccount(_revenueLedgerId, true);
+    }
 }
