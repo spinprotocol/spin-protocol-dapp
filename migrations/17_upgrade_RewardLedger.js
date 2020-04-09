@@ -1,7 +1,7 @@
 const { deployedFileWriter, fileReader } = require('../utils/contractData_fileController.js');
 const { upgradeProxy, setAuthStorage, setTokenAddr } = require('../utils/settingContract.js');
 
-const RewardLedger = artifacts.require('RevenueShare');
+const RewardLedger = artifacts.require('RewardLedger');
 const RewardLedger_Proxy = fileReader('RewardLedger_Proxy');
 const AuthStorage = fileReader('AuthStorage');
 

@@ -1,10 +1,7 @@
 /node_modules
 
 /build
-/deployed
 
 credentials.json
 
 *.DS_Store
-
-contracts_0.5.7

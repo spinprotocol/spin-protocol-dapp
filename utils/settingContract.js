@@ -15,6 +15,7 @@ const {
 const nowDate = format => moment().format(format);
 
 const upgradeProxy = (proxyFile, func) => {
+    log(proxyFile)
         const ProxyContract = getContract(proxyFile.abi, proxyFile.address)
 
         return go(

@@ -1,5 +1,4 @@
 const fs = require('fs');
-const mkdirp = require('mkdirp');
 Object.assign(global, require('ffp-js'));
 
 const moment = require("moment");
@@ -33,7 +32,6 @@ const deployedFileWriter = (contract, name, funcAddr) => {
   try {
     const dir = `./deployed/${stage}`;
     name = name || contract._json.contractName;
-    mkdirp(dir, err => !err ? false : log(err));
     fs.writeFileSync(
       dir+`/${name}.json`, 
       JSON.stringify({

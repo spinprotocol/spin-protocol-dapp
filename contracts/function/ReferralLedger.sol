@@ -1,8 +1,10 @@
 pragma solidity ^0.4.24;
 
 import "../libs/SafeMath.sol";
-import './DataControl.sol';
 import "../components/token/TokenControl.sol";
+import "./DataControl.sol"; 
+import "./TokenUtil.sol"; 
+
 
 /**
  * @title ReferralLedgerDB

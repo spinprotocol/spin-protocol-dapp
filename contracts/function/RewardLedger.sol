@@ -2,8 +2,8 @@ pragma solidity ^0.4.24;
 
 import "../libs/SafeMath.sol";
 import "../components/token/TokenControl.sol";
-import './DataControl.sol'; 
-import './TokenUtil.sol'; 
+import "./DataControl.sol"; 
+import "./TokenUtil.sol"; 
 
 /**
  * @title RewardLedgerDB
@@ -24,7 +24,6 @@ contract RewardLedger is DataControl, TokenControl, TokenUtil {
     uint256 samplePrice,
     uint256 rewardPrice,
     uint256 profit,
-    uint256 rewardRatio,
     uint256 spinRatio,
     uint256 fiatRatio
   )
@@ -43,7 +42,6 @@ contract RewardLedger is DataControl, TokenControl, TokenUtil {
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(rewardLedgerId, "samplePrice")), samplePrice);
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(rewardLedgerId, "rewardPrice")), rewardPrice);
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(rewardLedgerId, "profit")), profit);
-    setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(rewardLedgerId, "rewardRatio")), rewardRatio);
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(rewardLedgerId, "spinRatio")), spinRatio);
     setUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(rewardLedgerId, "fiatRatio")), fiatRatio);
     setBoolStorage(CONTRACT_NAME, keccak256(abi.encodePacked(rewardLedgerId, "isAccount")), false);
@@ -90,7 +88,6 @@ contract RewardLedger is DataControl, TokenControl, TokenUtil {
       uint256 samplePrice,
       uint256 rewardPrice,
       uint256 profit,
-      uint256 rewardRatio,
       uint256 spinRatio,
       uint256 fiatRatio,
       bool isAccount
@@ -102,7 +99,6 @@ contract RewardLedger is DataControl, TokenControl, TokenUtil {
     samplePrice = getUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(rewardLedgerId, "samplePrice")));
     rewardPrice = getUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(rewardLedgerId, "rewardPrice")));
     profit = getUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(rewardLedgerId, "profit")));
-    rewardRatio = getUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(rewardLedgerId, "rewardRatio")));
     spinRatio = getUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(rewardLedgerId, "spinRatio")));
     fiatRatio = getUintStorage(CONTRACT_NAME, keccak256(abi.encodePacked(rewardLedgerId, "fiatRatio")));
     isAccount = getBoolStorage(CONTRACT_NAME, keccak256(abi.encodePacked(rewardLedgerId, "isAccount")));
@@ -130,7 +126,7 @@ contract RewardLedger is DataControl, TokenControl, TokenUtil {
   ) public onlyAdmin {
       uint256 campaignId;
       bool isAccount;
-      (campaignId,,,,,,,,isAccount) = getRewardLedger(_rewardLedgerId);
+      (campaignId,,,,,,,isAccount) = getRewardLedger(_rewardLedgerId);
       require(campaignId > 0 && !isAccount, "Empty data or already share");
 
       uint256 token = calculateToken(_tokenAmount, _marketPrice, _rounding);
