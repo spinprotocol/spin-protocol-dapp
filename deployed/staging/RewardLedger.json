@@ -1,0 +1,745 @@
+{
+	"address": "0x8f1EdD4d71d7A0a24674D649351c5bb56bE056eA",
+	"abi": [
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"name": "account",
+					"type": "address"
+				}
+			],
+			"name": "isWt",
+			"outputs": [
+				{
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function",
+			"signature": "0x0308fecf"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"name": "contractName",
+					"type": "string"
+				},
+				{
+					"name": "key",
+					"type": "bytes32"
+				}
+			],
+			"name": "getUintStorage",
+			"outputs": [
+				{
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function",
+			"signature": "0x08acb556"
+		},
+		{
+			"constant": false,
+			"inputs": [
+				{
+					"name": "_tokenAddr",
+					"type": "address"
+				},
+				{
+					"name": "_tokenName",
+					"type": "string"
+				}
+			],
+			"name": "setTokenAddr",
+			"outputs": [],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function",
+			"signature": "0x16a171dd"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"name": "contractName",
+					"type": "string"
+				},
+				{
+					"name": "key",
+					"type": "bytes32"
+				}
+			],
+			"name": "getStringStorage",
+			"outputs": [
+				{
+					"name": "",
+					"type": "string"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function",
+			"signature": "0x1a84fbb8"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"name": "contractName",
+					"type": "string"
+				},
+				{
+					"name": "key",
+					"type": "bytes32"
+				}
+			],
+			"name": "getBoolStorage",
+			"outputs": [
+				{
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function",
+			"signature": "0x1c58c8bb"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"name": "account",
+					"type": "address"
+				}
+			],
+			"name": "isAdmin",
+			"outputs": [
+				{
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function",
+			"signature": "0x24d7806c"
+		},
+		{
+			"constant": false,
+			"inputs": [
+				{
+					"name": "account",
+					"type": "address"
+				}
+			],
+			"name": "setAuthStorage",
+			"outputs": [],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function",
+			"signature": "0x378b5d39"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"name": "_tokenName",
+					"type": "string"
+				}
+			],
+			"name": "getBalance",
+			"outputs": [
+				{
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function",
+			"signature": "0x3a51d246"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"name": "account",
+					"type": "address"
+				}
+			],
+			"name": "isInfluencer",
+			"outputs": [
+				{
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function",
+			"signature": "0x42f00a92"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"name": "account",
+					"type": "address"
+				}
+			],
+			"name": "isSupplier",
+			"outputs": [
+				{
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function",
+			"signature": "0x46336542"
+		},
+		{
+			"constant": false,
+			"inputs": [
+				{
+					"name": "_tokenName",
+					"type": "string"
+				},
+				{
+					"name": "_to",
+					"type": "address"
+				},
+				{
+					"name": "_amt",
+					"type": "uint256"
+				}
+			],
+			"name": "sendToken",
+			"outputs": [],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function",
+			"signature": "0x4ad16656"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"name": "_tokenName",
+					"type": "string"
+				}
+			],
+			"name": "getTokenAddr",
+			"outputs": [
+				{
+					"name": "",
+					"type": "address"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function",
+			"signature": "0x6ff4206f"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"name": "contractName",
+					"type": "string"
+				},
+				{
+					"name": "key",
+					"type": "bytes32"
+				}
+			],
+			"name": "getBytesStorage",
+			"outputs": [
+				{
+					"name": "",
+					"type": "bytes"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function",
+			"signature": "0x773cdbd7"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"name": "contractName",
+					"type": "string"
+				},
+				{
+					"name": "nodeId",
+					"type": "uint256"
+				}
+			],
+			"name": "doesNodeExist",
+			"outputs": [
+				{
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function",
+			"signature": "0x820254a2"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"name": "contractName",
+					"type": "string"
+				},
+				{
+					"name": "key",
+					"type": "bytes32"
+				}
+			],
+			"name": "doesListExist",
+			"outputs": [
+				{
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function",
+			"signature": "0x9081fd01"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"name": "contractName",
+					"type": "string"
+				},
+				{
+					"name": "key",
+					"type": "bytes32"
+				}
+			],
+			"name": "getNodes",
+			"outputs": [
+				{
+					"name": "nodes",
+					"type": "uint256[]"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function",
+			"signature": "0x93840d0f"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"name": "contractName",
+					"type": "string"
+				},
+				{
+					"name": "key",
+					"type": "bytes32"
+				},
+				{
+					"name": "nodeId",
+					"type": "uint256"
+				},
+				{
+					"name": "dir",
+					"type": "bool"
+				}
+			],
+			"name": "getAdjacent",
+			"outputs": [
+				{
+					"name": "",
+					"type": "bool"
+				},
+				{
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function",
+			"signature": "0x9a481f4e"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"name": "_value",
+					"type": "uint256"
+				},
+				{
+					"name": "_num",
+					"type": "uint256"
+				}
+			],
+			"name": "rounding",
+			"outputs": [
+				{
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"payable": false,
+			"stateMutability": "pure",
+			"type": "function",
+			"signature": "0x9cd86d1f"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"name": "contractName",
+					"type": "string"
+				},
+				{
+					"name": "key",
+					"type": "bytes32"
+				}
+			],
+			"name": "getAddressStorage",
+			"outputs": [
+				{
+					"name": "",
+					"type": "address"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function",
+			"signature": "0xb93a5b5e"
+		},
+		{
+			"constant": true,
+			"inputs": [],
+			"name": "getAuthStorage",
+			"outputs": [
+				{
+					"name": "",
+					"type": "address"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function",
+			"signature": "0xb95ca819"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"name": "contractName",
+					"type": "string"
+				},
+				{
+					"name": "key",
+					"type": "bytes32"
+				}
+			],
+			"name": "getLinkedListSize",
+			"outputs": [
+				{
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function",
+			"signature": "0xc7db8da2"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"name": "contractName",
+					"type": "string"
+				},
+				{
+					"name": "key",
+					"type": "bytes32"
+				}
+			],
+			"name": "getIntStorage",
+			"outputs": [
+				{
+					"name": "",
+					"type": "int256"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function",
+			"signature": "0xe8ad272c"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"name": "_tokenAmount",
+					"type": "uint256"
+				},
+				{
+					"name": "_marketPrice",
+					"type": "uint256"
+				},
+				{
+					"name": "_rounding",
+					"type": "uint256"
+				}
+			],
+			"name": "calculateToken",
+			"outputs": [
+				{
+					"name": "token",
+					"type": "uint256"
+				}
+			],
+			"payable": false,
+			"stateMutability": "pure",
+			"type": "function",
+			"signature": "0xebee536f"
+		},
+		{
+			"constant": true,
+			"inputs": [],
+			"name": "proxy",
+			"outputs": [
+				{
+					"name": "",
+					"type": "address"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function",
+			"signature": "0xec556889"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": true,
+					"name": "rewardLedgerId",
+					"type": "uint256"
+				}
+			],
+			"name": "RewardLedgerCreated",
+			"type": "event",
+			"signature": "0x8ef79e387736a85dcfcaf23092cc6e6cff1184f3e29afd80b416a4d7bc8182cb"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": true,
+					"name": "rewardLedgerId",
+					"type": "uint256"
+				},
+				{
+					"indexed": false,
+					"name": "updatedAt",
+					"type": "uint256"
+				}
+			],
+			"name": "RewardLedgerUpdated",
+			"type": "event",
+			"signature": "0x465fddbbe0984e07140076401f284b9e6c8fddd042a8a0dd935d74ce048c9859"
+		},
+		{
+			"constant": false,
+			"inputs": [
+				{
+					"name": "rewardLedgerId",
+					"type": "uint256"
+				},
+				{
+					"name": "campaignId",
+					"type": "uint256"
+				},
+				{
+					"name": "influencerId",
+					"type": "uint256"
+				},
+				{
+					"name": "samplePrice",
+					"type": "uint256"
+				},
+				{
+					"name": "rewardPrice",
+					"type": "uint256"
+				},
+				{
+					"name": "profit",
+					"type": "uint256"
+				},
+				{
+					"name": "spinRatio",
+					"type": "uint256"
+				},
+				{
+					"name": "fiatRatio",
+					"type": "uint256"
+				}
+			],
+			"name": "createRewardLedger",
+			"outputs": [],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function",
+			"signature": "0x5ebc0bae"
+		},
+		{
+			"constant": false,
+			"inputs": [
+				{
+					"name": "rewardLedgerId",
+					"type": "uint256"
+				},
+				{
+					"name": "state",
+					"type": "bool"
+				}
+			],
+			"name": "updateIsAccount",
+			"outputs": [],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function",
+			"signature": "0x0bf2f7d2"
+		},
+		{
+			"constant": false,
+			"inputs": [
+				{
+					"name": "rewardLedgerId",
+					"type": "uint256"
+				}
+			],
+			"name": "deleteRewardLedger",
+			"outputs": [],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function",
+			"signature": "0x03734637"
+		},
+		{
+			"constant": true,
+			"inputs": [
+				{
+					"name": "rewardLedgerId",
+					"type": "uint256"
+				}
+			],
+			"name": "getRewardLedger",
+			"outputs": [
+				{
+					"name": "campaignId",
+					"type": "uint256"
+				},
+				{
+					"name": "influencerId",
+					"type": "uint256"
+				},
+				{
+					"name": "samplePrice",
+					"type": "uint256"
+				},
+				{
+					"name": "rewardPrice",
+					"type": "uint256"
+				},
+				{
+					"name": "profit",
+					"type": "uint256"
+				},
+				{
+					"name": "spinRatio",
+					"type": "uint256"
+				},
+				{
+					"name": "fiatRatio",
+					"type": "uint256"
+				},
+				{
+					"name": "isAccount",
+					"type": "bool"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function",
+			"signature": "0xeefab54f"
+		},
+		{
+			"constant": true,
+			"inputs": [],
+			"name": "getRewardLedgerList",
+			"outputs": [
+				{
+					"name": "",
+					"type": "uint256[]"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function",
+			"signature": "0xd80ececb"
+		},
+		{
+			"constant": false,
+			"inputs": [
+				{
+					"name": "_rewardLedgerId",
+					"type": "uint256"
+				},
+				{
+					"name": "_to",
+					"type": "address"
+				},
+				{
+					"name": "_tokenAmount",
+					"type": "uint256"
+				},
+				{
+					"name": "_marketPrice",
+					"type": "uint256"
+				},
+				{
+					"name": "_rounding",
+					"type": "uint256"
+				}
+			],
+			"name": "rewardShare",
+			"outputs": [],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function",
+			"signature": "0xc82bb877"
+		}
+	],
+	"version": {
+		"200413-18:20:32": "0x19BC6405De55967d1120603926360808F529Bcb7"
+	}
+}
